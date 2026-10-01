@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import './experience.css';
 import './launch-flight.css';
+import './hero-landscape.css';
 
 // ========================================
 // ROOT LAYOUT — SEO, Fonts, Meta

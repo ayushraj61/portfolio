@@ -80,14 +80,14 @@ export default function JourneyIndicator() {
       progress.set(journeyProgress * 100);
 
       const ship = flightShipRef.current;
-      const earth = document.querySelector('.hero-visual-planet');
+      const launchPoint = document.querySelector('.hero-launch-point');
       const rail = document.querySelector('.journey-rail');
-      if (ship && earth && rail) {
+      if (ship && launchPoint && rail) {
         const reduceFlightMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const earthRect = earth.getBoundingClientRect();
+        const launchRect = launchPoint.getBoundingClientRect();
         const railRect = rail.getBoundingClientRect();
-        const startX = earthRect.left + earthRect.width * 0.82;
-        const startY = earthRect.top + earthRect.height * 0.38;
+        const startX = launchRect.left + 5;
+        const startY = launchRect.top + 5;
         const endX = railRect.left + railRect.width / 2 - 22;
         const endY = railRect.top + railRect.height * journeyProgress;
         const t = reduceFlightMotion ? 1 : launchProgress * launchProgress * (3 - 2 * launchProgress);

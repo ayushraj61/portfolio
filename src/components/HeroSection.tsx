@@ -31,11 +31,7 @@ export default function HeroSection() {
 
   return (
     <section className="hero" id="hero">
-      {/* Nebula overlays */}
-      <div className="nebula-overlay nebula-1" />
-      <div className="nebula-overlay nebula-2" />
-
-      {/* Abstract system diagram — bigger, more visible */}
+      {/* A view from the ground after the arrival flight. */}
       <HeroVisual />
 
       <div className="container">
