@@ -20,35 +20,73 @@
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
-  background: #08121d;
+  background: #040b15;
 }
 
 .hero-sky-photo {
   position: absolute;
-  inset: -3%;
-  background-image: url('/hero/night-sky.webp');
-  background-size: cover;
+  inset: -24px;
+  z-index: 0;
+  background-image: url('/hero/sky-plate.webp');
+  background-size: 100% auto;
   background-position: center bottom;
-  transform: translate3d(var(--sky-x, 0px), var(--sky-y, 0px), 0) scale(1.04);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 24%);
+  filter: brightness(.56) contrast(1.2) saturate(.82);
+  transform: translate3d(var(--sky-x, 0px), var(--sky-y, 0px), 0);
   will-change: transform;
 }
 
 .hero-sky-shade {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background:
-    linear-gradient(90deg, rgba(3, 7, 13, .89) 0%, rgba(3, 8, 15, .72) 38%, rgba(4, 9, 18, .25) 72%, rgba(3, 7, 13, .3) 100%),
-    linear-gradient(180deg, rgba(2, 6, 12, .34), transparent 32%, rgba(2, 5, 9, .13) 66%, rgba(3, 6, 11, .82) 100%);
+    radial-gradient(ellipse 38% 50% at 83% 72%, rgba(117, 153, 188, .08), transparent 74%),
+    linear-gradient(90deg, rgba(2, 6, 12, .7) 0%, rgba(2, 7, 14, .54) 38%, rgba(3, 8, 17, .2) 72%, rgba(3, 7, 13, .34) 100%),
+    linear-gradient(180deg, rgba(2, 6, 12, .22), transparent 32%, rgba(2, 5, 9, .08) 66%, rgba(3, 6, 11, .42) 100%);
+}
+
+.hero-cosmos {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .hero-moon-scene {
   position: absolute;
+  z-index: 3;
   top: 15%;
   right: 13%;
-  width: clamp(180px, 19vw, 300px);
+  width: clamp(54px, 5.7vw, 90px);
   aspect-ratio: 1;
   transform: translate3d(var(--moon-x, 0px), var(--moon-y, 0px), 0);
   will-change: transform;
+}
+
+.hero-rocks-layer {
+  position: absolute;
+  inset: -24px;
+  z-index: 4;
+  background: url('/hero/rocks_silhouette.png') center bottom / 100% auto no-repeat;
+  transform: translate3d(var(--rocks-x, 0px), var(--rocks-y, 0px), 0);
+  will-change: transform;
+  filter: brightness(.62) contrast(1.28);
+  pointer-events: none;
+}
+
+.hero-rocks-moonlight {
+  position: absolute;
+  inset: -24px;
+  z-index: 4;
+  background: url('/hero/rocks_silhouette.png') center bottom / 100% auto no-repeat;
+  mask-image: radial-gradient(ellipse 41% 43% at 83% 68%, #000 0%, rgba(0, 0, 0, .62) 48%, transparent 100%);
+  filter: brightness(1.9) contrast(.82) saturate(.45);
+  transform: translate3d(var(--rocks-x, 0px), var(--rocks-y, 0px), 0);
+  will-change: transform;
+  pointer-events: none;
 }
 
 .hero-moon-halo {
@@ -103,6 +141,7 @@
 .hero-moon-label i, .hero-launch-point i { position: absolute; left: -3px; top: -3px; width: 5px; height: 5px; background: var(--accent); transform: rotate(45deg); }
 
 .hero-launch-point { left: 75%; bottom: 20%; }
+.hero-launch-point { z-index: 5; transform: translate3d(var(--rocks-x, 0px), var(--rocks-y, 0px), 0); }
 .hero-launch-point::before {
   content: '';
   position: absolute;
@@ -113,6 +152,7 @@
 }
 .hero-horizon-rule {
   position: absolute;
+  z-index: 5;
   left: 0;
   right: 0;
   bottom: 0;
@@ -120,13 +160,15 @@
 }
 
 .hero-content { text-shadow: 0 3px 30px rgba(0, 0, 0, .34); }
-.hero-name { text-shadow: 0 5px 36px rgba(0, 0, 0, .3); }
+.hero-name { font-family: 'Syne', sans-serif; font-weight: 800; text-shadow: 0 5px 36px rgba(0, 0, 0, .3); }
+.hero-tagline { font-family: 'Space Grotesk', sans-serif; font-weight: 400; }
+.hero-role-text, .hero-btn-primary, .hero-btn-secondary, .building-pill-label, .building-pill-name { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 .hero-role-cycler, .hero-building-pill { background: rgba(6, 13, 22, .78); backdrop-filter: blur(12px); }
 .hero-btn-secondary { background: rgba(6, 13, 22, .4); backdrop-filter: blur(8px); }
 .hero::after { bottom: 0; left: 0; width: 100%; height: 17%; transform: none; background: linear-gradient(transparent, rgba(5, 7, 12, .85)); }
 
 @media (max-width: 1100px) {
-  .hero-moon-scene { right: 10%; top: 14%; width: clamp(150px, 23vw, 240px); }
+  .hero-moon-scene { right: 10%; top: 14%; width: clamp(45px, 7vw, 72px); }
   .hero-moon-label { display: none; }
   .hero-launch-point { left: 78%; bottom: 16%; }
 }
@@ -134,13 +176,15 @@
 @media (max-width: 767px) {
   .hero { min-height: 100svh; padding-top: 6rem; }
   .hero-visual-container { inset: 0; width: 100%; height: 100%; right: auto; top: auto; opacity: 1; }
-  .hero-sky-photo { background-position: 53% bottom; }
-  .hero-sky-shade { background: linear-gradient(180deg, rgba(3, 7, 13, .3) 0%, rgba(3, 7, 13, .68) 35%, rgba(3, 7, 13, .76) 68%, rgba(3, 7, 13, .72) 100%); }
-  .hero-moon-scene { top: 10%; right: 9%; width: clamp(105px, 27vw, 160px); }
+  .hero-sky-photo { background-size: cover; background-position: center; mask-image: none; }
+  .hero-rocks-layer, .hero-rocks-moonlight { background-size: auto 64%; background-position: 70% bottom; }
+  .hero-sky-shade { background: linear-gradient(180deg, rgba(3, 7, 13, .18) 0%, rgba(3, 7, 13, .58) 35%, rgba(3, 7, 13, .64) 68%, rgba(3, 7, 13, .45) 100%); }
+  .hero-moon-scene { top: 10%; right: 9%; width: clamp(36px, 8vw, 48px); }
   .hero-launch-point { left: auto; right: 10%; bottom: 15%; font-size: .5rem; }
   .hero-content { padding-bottom: 7rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-sky-photo, .hero-moon-scene { transform: none; will-change: auto; }
+  .hero-sky-photo, .hero-rocks-layer, .hero-rocks-moonlight { transform: none; will-change: auto; }
+  .hero-moon-scene, .hero-launch-point { transform: none; will-change: auto; }
 }
