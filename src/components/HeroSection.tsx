@@ -41,16 +41,7 @@ export default function HeroSection() {
       <div className="container">
         <div className="hero-content">
 
-          {/* Earth — Current position indicator (§9 design-enhance) */}
-          <motion.div
-            className="hero-location"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.1 }}
-          >
-            <span className="hero-location-dot" />
-            <span>Current Position: Earth</span>
-          </motion.div>
+
 
           {/* Animated role cycling — top eyebrow */}
           <motion.div

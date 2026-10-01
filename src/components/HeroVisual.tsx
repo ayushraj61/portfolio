@@ -20,7 +20,7 @@ export default function HeroVisual() {
 
   return (
     <div className="hero-visual-container" aria-hidden="true">
-      <span className="hero-visual-index">FIG. 01 / THE STARTING POINT</span>
+
       <span className="hero-visual-orbit hero-visual-orbit-one" />
       <span className="hero-visual-orbit hero-visual-orbit-two" />
       <span className="hero-visual-orbit hero-visual-orbit-three" />
@@ -28,7 +28,7 @@ export default function HeroVisual() {
       <span className="hero-visual-axis hero-visual-axis-y" />
       <span className="hero-visual-planet"><canvas ref={globeRef} /><span /></span>
       <span className="hero-visual-tag hero-visual-tag-earth">EARTH <b>01 / ORIGIN</b></span>
-      <span className="hero-visual-tag hero-visual-tag-route">ROUTE <b>STILL BEING WRITTEN</b></span>
+
       <span className="hero-visual-coordinate">28° 36&apos; 46.0&quot; N<br />77° 12&apos; 32.0&quot; E</span>
     </div>
   );
