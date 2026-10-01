@@ -10,7 +10,7 @@ interface LaunchFlightProps {
 
 type RouteLabel = 'DEEP SPACE' | 'MILKY WAY' | 'SOLAR SYSTEM' | 'EARTH';
 
-const DURATION = 12000;
+const DURATION = 5040;
 const TAU = Math.PI * 2;
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const smooth = (from: number, to: number, value: number) => {
@@ -50,10 +50,10 @@ function drawStars(ctx: CanvasRenderingContext2D, width: number, height: number,
 }
 
 function drawGalaxy(ctx: CanvasRenderingContext2D, galaxy: HTMLImageElement | null, width: number, height: number, progress: number, lookX: number, lookY: number) {
-  const fade = (1 - smooth(.43, .55, progress)) * smooth(0, .08, progress);
+  const fade = (1 - smooth(.42, .50, progress)) * smooth(0, .08, progress);
   if (fade < .003 || !galaxy) return;
-  const grow = Math.pow(smooth(0, .63, progress), 1.75);
-  const size = Math.min(width, height) * (.35 + grow * 3.9);
+  const grow = Math.pow(smooth(0, .58, progress), 1.6);
+  const size = Math.min(width, height) * (.38 + grow * 1.65);
   const x = width * (.53 - progress * .045) + lookX * width * .035;
   const y = height * (.43 + progress * .025) + lookY * height * .035;
   ctx.save();
@@ -78,65 +78,50 @@ const solarBodies: SolarBody[] = [
 
 function drawPlanet(ctx: CanvasRenderingContext2D, body: SolarBody, x: number, y: number, radius: number) {
   if (radius < 1 || x + radius < -80 || x - radius > ctx.canvas.width || y + radius < -80 || y - radius > ctx.canvas.height) return;
-  ctx.save();
+
+  // Saturn back rings
   if (body.name === 'SATURN') {
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(-.26);
-    for (const [width, color] of [[radius * .31, 'rgba(190,166,125,.32)'], [radius * .14, 'rgba(226,207,162,.72)'], [radius * .055, 'rgba(116,104,84,.72)']] as const) {
-      ctx.beginPath();
-      ctx.ellipse(0, 0, radius * 1.82, radius * .58, 0, Math.PI, TAU);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      ctx.stroke();
-    }
+    ctx.beginPath();
+    ctx.ellipse(0, 0, radius * 1.82, radius * .58, 0, Math.PI, TAU);
+    ctx.strokeStyle = 'rgba(226,207,162,.5)';
+    ctx.lineWidth = radius * .2;
+    ctx.stroke();
     ctx.restore();
   }
+
+  // Draw Planet Body (fast solid fill for tiny dots, radial gradient when large enough)
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, TAU);
-  ctx.clip();
-  const light = ctx.createRadialGradient(x - radius * .38, y - radius * .34, radius * .04, x + radius * .18, y + radius * .1, radius * 1.4);
-  light.addColorStop(0, body.colors[0]);
-  light.addColorStop(.48, body.colors[1]);
-  light.addColorStop(1, body.colors[2]);
-  ctx.fillStyle = light;
-  ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
-  if (body.name === 'JUPITER' || body.name === 'SATURN') {
-    for (let band = -5; band <= 5; band++) {
-      const bandY = y + radius * (band * .19 + Math.sin(band * 2.1) * .025);
-      const bandHeight = radius * (.045 + ((band + 6) % 3) * .022);
-      ctx.beginPath();
-      ctx.moveTo(x - radius * 1.4, bandY);
-      ctx.bezierCurveTo(x - radius * .5, bandY - radius * .065, x + radius * .45, bandY + radius * .08, x + radius * 1.4, bandY);
-      ctx.lineWidth = bandHeight;
-      ctx.strokeStyle = band % 2 ? 'rgba(84,51,44,.36)' : 'rgba(255,242,213,.3)';
-      ctx.stroke();
-    }
-    if (body.name === 'JUPITER') {
-      ctx.beginPath();
-      ctx.ellipse(x + radius * .4, y + radius * .18, radius * .23, radius * .085, -.13, 0, TAU);
-      ctx.fillStyle = 'rgba(167,75,58,.72)';
-      ctx.fill();
-    }
+  if (radius < 2.5) {
+    ctx.fillStyle = body.colors[0];
+  } else {
+    const light = ctx.createRadialGradient(x - radius * .38, y - radius * .34, radius * .04, x + radius * .18, y + radius * .1, radius * 1.4);
+    light.addColorStop(0, body.colors[0]);
+    light.addColorStop(.48, body.colors[1]);
+    light.addColorStop(1, body.colors[2]);
+    ctx.fillStyle = light;
   }
-  ctx.restore();
+  ctx.fill();
+
+  // Saturn front rings
   if (body.name === 'SATURN') {
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(-.26);
-    for (const [width, color] of [[radius * .31, 'rgba(172,147,113,.38)'], [radius * .13, 'rgba(247,230,183,.83)'], [radius * .05, 'rgba(92,82,67,.7)']] as const) {
-      ctx.beginPath();
-      ctx.ellipse(0, 0, radius * 1.82, radius * .58, 0, 0, Math.PI);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      ctx.stroke();
-    }
+    ctx.beginPath();
+    ctx.ellipse(0, 0, radius * 1.82, radius * .58, 0, 0, Math.PI);
+    ctx.strokeStyle = 'rgba(247,230,183,.7)';
+    ctx.lineWidth = radius * .2;
+    ctx.stroke();
     ctx.restore();
   }
 }
 
 function solarFrame(width: number, height: number, progress: number, lookX: number, lookY: number) {
-  const approach = smooth(.43, .82, progress);
+  const approach = smooth(.46, .82, progress);
   const scale = Math.min(width, height) * (.075 + approach * 1.05);
   const x = width * (.57 - approach * .78) + lookX * width * .025;
   const y = height * (.45 + approach * .075) + lookY * height * .025;
@@ -144,7 +129,7 @@ function solarFrame(width: number, height: number, progress: number, lookX: numb
 }
 
 function drawSolarSystem(ctx: CanvasRenderingContext2D, width: number, height: number, progress: number, lookX: number, lookY: number) {
-  const visibility = smooth(.43, .52, progress) * (1 - smooth(.75, .85, progress));
+  const visibility = smooth(.46, .54, progress) * (1 - smooth(.75, .85, progress));
   if (visibility < .003) return;
   const { approach, scale, x, y } = solarFrame(width, height, progress, lookX, lookY);
   const sunRadius = Math.min(width, height) * (.018 + approach * .14);
@@ -159,16 +144,15 @@ function drawSolarSystem(ctx: CanvasRenderingContext2D, width: number, height: n
     ctx.lineWidth = Math.max(.6, 1.1 - approach * .35);
     ctx.stroke();
   }
-  for (let index = 0; index < 165; index++) {
-    const angle = index * 2.39996;
+  ctx.fillStyle = 'rgba(204,192,171,0.5)';
+  for (let index = 0; index < 65; index++) {
+    const angle = index * 5.4;
     const orbit = 1.56 + ((index * 37) % 29) / 190;
     const ax = x + Math.cos(angle) * scale * orbit;
     const ay = y + Math.sin(angle) * scale * orbit * .34;
     if (ax < 0 || ax > width || ay < 0 || ay > height) continue;
-    ctx.beginPath();
-    ctx.arc(ax, ay, Math.min(2.4, .35 + approach * 2.1 * ((index % 5) / 5 + .5)), 0, TAU);
-    ctx.fillStyle = `rgba(204,192,171,${.2 + (index % 4) * .1})`;
-    ctx.fill();
+    const size = Math.min(2.4, .35 + approach * 2.1);
+    ctx.fillRect(ax, ay, size, size);
   }
 
   const glow = ctx.createRadialGradient(x, y, sunRadius * .35, x, y, sunRadius * 4.8);
@@ -186,24 +170,8 @@ function drawSolarSystem(ctx: CanvasRenderingContext2D, width: number, height: n
   solarSurface.addColorStop(.82, '#ee8b25');
   solarSurface.addColorStop(1, '#a74317');
   ctx.fillStyle = solarSurface;
-  ctx.shadowColor = '#f5a94b';
-  ctx.shadowBlur = sunRadius * .55;
   ctx.fill();
-  ctx.shadowBlur = 0;
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(x, y, sunRadius * .96, 0, TAU);
-  ctx.clip();
-  for (let band = -4; band <= 4; band++) {
-    const lineY = y + band * sunRadius * .24;
-    ctx.beginPath();
-    ctx.moveTo(x - sunRadius, lineY + sunRadius * .08);
-    ctx.bezierCurveTo(x - sunRadius * .32, lineY - sunRadius * .16, x + sunRadius * .31, lineY + sunRadius * .14, x + sunRadius, lineY - sunRadius * .06);
-    ctx.strokeStyle = band % 2 ? 'rgba(255,250,204,.24)' : 'rgba(176,61,14,.18)';
-    ctx.lineWidth = Math.max(1, sunRadius * .045);
-    ctx.stroke();
-  }
-  ctx.restore();
+
   for (const body of solarBodies) {
     const angle = body.angle + approach * .07;
     const px = x + Math.cos(angle) * scale * body.orbit;
@@ -214,7 +182,7 @@ function drawSolarSystem(ctx: CanvasRenderingContext2D, width: number, height: n
 }
 
 function drawEarth(ctx: CanvasRenderingContext2D, earth: HTMLCanvasElement | null, width: number, height: number, progress: number, lookX: number, lookY: number) {
-  const visibility = smooth(.43, .52, progress);
+  const visibility = smooth(.46, .54, progress);
   if (visibility < .002) return;
   const { approach, scale, x: sunX, y: sunY } = solarFrame(width, height, progress, lookX, lookY);
   const orbitAngle = .15;
@@ -254,13 +222,17 @@ function drawEarth(ctx: CanvasRenderingContext2D, earth: HTMLCanvasElement | nul
   ctx.arc(x, y, radius + 1, 0, TAU);
   ctx.strokeStyle = 'rgba(135,208,255,.55)';
   ctx.lineWidth = Math.max(1, radius * .004);
-  ctx.shadowBlur = Math.min(32, radius * .08);
-  ctx.shadowColor = '#6bc9ff';
+  ctx.stroke();
+
+  // Add a fake glow stroke instead of expensive shadowBlur
+  ctx.beginPath();
+  ctx.arc(x, y, radius + 2, 0, TAU);
+  ctx.strokeStyle = 'rgba(107,201,255,.2)';
+  ctx.lineWidth = Math.max(2, radius * .015);
   ctx.stroke();
   if (width > 700 && progress < .78) {
-    const marker = smooth(.47, .53, progress) * (1 - smooth(.69, .78, progress));
+    const marker = smooth(.50, .56, progress) * (1 - smooth(.69, .78, progress));
     ctx.globalAlpha = marker * .82;
-    ctx.shadowBlur = 0;
     ctx.beginPath();
     ctx.moveTo(x + radius + 7, y - radius * .24);
     ctx.lineTo(x + radius + 20, y - radius * .24 - 11);
@@ -299,7 +271,7 @@ export default function LaunchFlight({ onComplete, onSkip }: LaunchFlightProps) 
     galaxyImage.onload = () => { galaxy = galaxyImage; };
     galaxyImage.src = '/flight/galaxy-v2.png';
     const rand = randomGenerator(15507);
-    const stars = Array.from({ length: width < 768 ? 280 : 530 }, () => ({
+    const stars = Array.from({ length: width < 768 ? 220 : 360 }, () => ({
       x: rand() * 2 - 1,
       y: rand() * 2 - 1,
       z: rand(),
@@ -312,7 +284,7 @@ export default function LaunchFlight({ onComplete, onSkip }: LaunchFlightProps) 
     const resize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       canvas.style.width = `${width}px`;
@@ -330,8 +302,6 @@ export default function LaunchFlight({ onComplete, onSkip }: LaunchFlightProps) 
       const progress = clamp((now - start) / DURATION);
       lookX += (targetX - lookX) * .035;
       lookY += (targetY - lookY) * .035;
-      ctx.fillStyle = '#02050b';
-      ctx.fillRect(0, 0, width, height);
       const backdrop = ctx.createRadialGradient(width * .5, height * .43, 0, width * .5, height * .43, Math.max(width, height) * .72);
       backdrop.addColorStop(0, progress < .6 ? '#101729' : '#0a1b31');
       backdrop.addColorStop(.55, '#070d1a');
@@ -344,7 +314,7 @@ export default function LaunchFlight({ onComplete, onSkip }: LaunchFlightProps) 
       drawSolarSystem(ctx, width, height, progress, lookX, lookY);
       drawEarth(ctx, earth, width, height, progress, lookX, lookY);
 
-      const routeNow: RouteLabel = progress < .09 ? 'DEEP SPACE' : progress < .49 ? 'MILKY WAY' : progress < .77 ? 'SOLAR SYSTEM' : 'EARTH';
+      const routeNow: RouteLabel = progress < .09 ? 'DEEP SPACE' : progress < .48 ? 'MILKY WAY' : progress < .77 ? 'SOLAR SYSTEM' : 'EARTH';
       if (routeNow !== lastRoute) {
         lastRoute = routeNow;
         setRoute(routeNow);
