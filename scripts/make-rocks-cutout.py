@@ -33,12 +33,27 @@ def make_cutout(source: Path, destination: Path, sky_destination: Path | None = 
     candidate = candidate.filter(ImageFilter.MinFilter(3))
     ImageDraw.floodfill(candidate, (width // 2, height - 1), 128, thresh=0)
 
-    # Only the foreground connected to the bottom edge survives. The narrow
-    # feather smooths cut pixels without leaving a visible sky-colored fringe.
-    alpha = candidate.point(lambda value: 255 if value == 128 else 0)
-    alpha = alpha.filter(ImageFilter.GaussianBlur(0.65))
+    # Pull the matte one pixel inside the rock. This drops the blue sky pixels
+    # that otherwise become a bright outline against the darker sky plate.
+    solid = candidate.point(lambda value: 255 if value == 128 else 0)
+    solid = solid.filter(ImageFilter.MinFilter(3))
+    alpha = solid.filter(ImageFilter.GaussianBlur(0.55))
     rocks = photo.convert("RGBA")
     rocks.putalpha(alpha)
+    rock_pixels = rocks.load()
+    solid_pixels = solid.load()
+    alpha_pixels = alpha.load()
+    for y in range(round(height * 0.55), height):
+        for x in range(width):
+            if 0 < alpha_pixels[x, y] < 255:
+                # Reuse nearby interior rock color at partially transparent
+                # pixels instead of blending a sky-blue source pixel into the edge.
+                for distance in range(1, 5):
+                    neighbor_y = min(height - 1, y + distance)
+                    if solid_pixels[x, neighbor_y] == 255:
+                        red, green, blue = pixels[x, neighbor_y]
+                        rock_pixels[x, y] = red, green, blue, alpha_pixels[x, y]
+                        break
     destination.parent.mkdir(parents=True, exist_ok=True)
     rocks.save(destination, optimize=True)
 
@@ -56,7 +71,7 @@ def make_cutout(source: Path, destination: Path, sky_destination: Path | None = 
                 height - 1,
             )
             sky_color = soft_pixels[x, max(0, ridge - 22)]
-            for y in range(ridge - 2, height):
+            for y in range(ridge - 4, height):
                 sky_pixels[x, y] = sky_color
         sky_destination.parent.mkdir(parents=True, exist_ok=True)
         sky_plate.save(sky_destination, quality=88, method=6)

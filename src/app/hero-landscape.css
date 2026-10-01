@@ -5,7 +5,7 @@
   isolation: isolate;
 }
 
-.hero .container { position: relative; z-index: 2; }
+.hero .container { position: relative; z-index: 2; transform: translateY(-4vh); }
 
 .hero-visual-container {
   position: absolute;
@@ -73,7 +73,7 @@
   background: url('/hero/rocks_silhouette.png') center bottom / 100% auto no-repeat;
   transform: translate3d(var(--rocks-x, 0px), var(--rocks-y, 0px), 0);
   will-change: transform;
-  filter: brightness(.62) contrast(1.28);
+  filter: brightness(.85) contrast(.9) saturate(.84);
   pointer-events: none;
 }
 
@@ -82,8 +82,9 @@
   inset: -24px;
   z-index: 4;
   background: url('/hero/rocks_silhouette.png') center bottom / 100% auto no-repeat;
-  mask-image: radial-gradient(ellipse 41% 43% at 83% 68%, #000 0%, rgba(0, 0, 0, .62) 48%, transparent 100%);
-  filter: brightness(1.9) contrast(.82) saturate(.45);
+  mask-image: radial-gradient(ellipse 36% 39% at 83% 69%, #000 0%, rgba(0, 0, 0, .52) 44%, transparent 100%);
+  filter: brightness(1.1) contrast(1.04) saturate(.8);
+  opacity: .22;
   transform: translate3d(var(--rocks-x, 0px), var(--rocks-y, 0px), 0);
   will-change: transform;
   pointer-events: none;
@@ -159,8 +160,8 @@
   border-bottom: 1px solid rgba(217, 185, 120, .42);
 }
 
-.hero-content { text-shadow: 0 3px 30px rgba(0, 0, 0, .34); }
-.hero-name { font-family: 'Syne', sans-serif; font-weight: 800; text-shadow: 0 5px 36px rgba(0, 0, 0, .3); }
+.hero-content { max-width: min(1200px, calc(100vw - 3rem)); text-shadow: 0 3px 30px rgba(0, 0, 0, .34); }
+.hero-name { font-family: 'Syne', sans-serif; font-size: clamp(4.5rem, 7.2vw, 8rem); font-weight: 800; white-space: nowrap; text-shadow: 0 5px 36px rgba(0, 0, 0, .3); }
 .hero-tagline { font-family: 'Space Grotesk', sans-serif; font-weight: 400; }
 .hero-role-text, .hero-btn-primary, .hero-btn-secondary, .building-pill-label, .building-pill-name { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 .hero-role-cycler, .hero-building-pill { background: rgba(6, 13, 22, .78); backdrop-filter: blur(12px); }
@@ -182,6 +183,8 @@
   .hero-moon-scene { top: 10%; right: 9%; width: clamp(36px, 8vw, 48px); }
   .hero-launch-point { left: auto; right: 10%; bottom: 15%; font-size: .5rem; }
   .hero-content { padding-bottom: 7rem; }
+  .hero-name { white-space: normal; font-size: clamp(3.8rem, 12vw, 6rem); }
+  .hero .container { transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
