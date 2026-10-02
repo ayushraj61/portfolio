@@ -32,12 +32,36 @@ export default function CustomCursor() {
     let velX = 0;
     let velY = 0;
 
+    const checkSunHover = (cx: number, cy: number) => {
+      if (!document.body.classList.contains('is-sun-mode')) {
+        if (document.body.classList.contains('cursor-over-sun')) {
+          document.body.classList.remove('cursor-over-sun');
+        }
+        return;
+      }
+
+      const sunEl = document.querySelector('.hero-sun');
+      if (sunEl) {
+        const rect = sunEl.getBoundingClientRect();
+        const sunCenterX = rect.left + rect.width / 2;
+        const sunCenterY = rect.top + rect.height / 2;
+        const radius = Math.max(rect.width, rect.height) / 2 + 20;
+        const dist = Math.hypot(cx - sunCenterX, cy - sunCenterY);
+        if (dist <= radius) {
+          document.body.classList.add('cursor-over-sun');
+          return;
+        }
+      }
+      document.body.classList.remove('cursor-over-sun');
+    };
+
     const onMouseMove = (e: MouseEvent) => {
       const dx = e.clientX - mouseX;
       const dy = e.clientY - mouseY;
 
       mouseX = e.clientX;
       mouseY = e.clientY;
+      checkSunHover(e.clientX, e.clientY);
 
       // Accumulate velocity with decay (exponential moving average)
       velX = velX * 0.6 + dx * 0.4;
@@ -53,6 +77,7 @@ export default function CustomCursor() {
     const onMouseLeave = () => {
       mouseX = -100;
       mouseY = -100;
+      document.body.classList.remove('cursor-over-sun');
     };
 
     // Single rAF loop — runs at 60fps, does all the work
@@ -80,7 +105,7 @@ export default function CustomCursor() {
     frameId = requestAnimationFrame(tick);
 
     return () => {
-      document.body.classList.remove('has-custom-cursor');
+      document.body.classList.remove('has-custom-cursor', 'cursor-over-sun');
       window.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseleave', onMouseLeave);
       cancelAnimationFrame(frameId);
@@ -97,9 +122,9 @@ export default function CustomCursor() {
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
+          className="custom-cursor-path"
           d="M12 2L4 20L12 16L20 20L12 2Z"
-          fill="white"
-          fillOpacity="0.9"
+          fill="currentColor"
         />
       </svg>
     </div>

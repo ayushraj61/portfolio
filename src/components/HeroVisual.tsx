@@ -52,6 +52,17 @@ export default function HeroVisual() {
   const [isDay, setIsDay] = useState(false);
 
   useEffect(() => {
+    if (isDay) {
+      document.body.classList.add('is-sun-mode');
+    } else {
+      document.body.classList.remove('is-sun-mode', 'cursor-over-sun');
+    }
+    return () => {
+      document.body.classList.remove('is-sun-mode', 'cursor-over-sun');
+    };
+  }, [isDay]);
+
+  useEffect(() => {
     const visual = visualRef.current;
     const canvas = canvasRef.current;
     const hero = visual?.closest('.hero');
@@ -190,8 +201,15 @@ export default function HeroVisual() {
           style={{ transform: 'rotate(-110deg)', transformOrigin: '50% 150%' }}
         >
           <div 
-            className="hero-moon-scene" 
+            id="hero-sun-target"
+            className="hero-moon-scene hero-sun-scene" 
             onClick={() => setIsDay(false)}
+            onPointerEnter={() => {
+              if (isDay) document.body.classList.add('cursor-over-sun');
+            }}
+            onPointerLeave={() => {
+              document.body.classList.remove('cursor-over-sun');
+            }}
             style={{ 
               pointerEvents: isDay ? 'auto' : 'none',
               cursor: 'pointer',
