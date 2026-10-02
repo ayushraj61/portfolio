@@ -148,44 +148,64 @@ export default function HeroVisual() {
     <div ref={visualRef} className={`hero-visual-container ${isDay ? 'day-mode' : ''}`} aria-hidden="true">
       <div className="hero-sky-photo sky-layer" />
       <div className="hero-sky-shade" />
-      <canvas ref={canvasRef} id="cosmos" className="hero-cosmos" />
-      <div 
-        className="hero-moon-scene" 
-        onClick={() => setIsDay(!isDay)}
-        style={{ cursor: 'pointer', pointerEvents: 'auto', zIndex: 50 }}
+      {/* ROTATING COSMOS */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        initial={false}
+        animate={{ rotate: isDay ? 110 : 0, opacity: isDay ? 0 : 1 }}
+        transition={{ duration: 3.5, ease: [0.4, 0, 0.2, 1] }}
+        style={{ transformOrigin: "50% 150%" }}
       >
-        <AnimatePresence mode="wait">
-          {!isDay ? (
-            <motion.div
-              key="moon"
-              initial={{ y: -100, opacity: 0, rotate: -45 }}
-              animate={{ y: 0, opacity: 1, rotate: 0 }}
-              exit={{ y: 150, opacity: 0, rotate: 45 }}
-              transition={{ duration: 1.2, ease: "easeInOut" }}
-              className="absolute inset-0 w-full h-full"
-            >
-              <span className="hero-moon-halo" />
-              <span className="hero-moon" />
-              <span className="hero-moon-orbit" />
-              <span className="hero-moon-label"><i /> THE MOON <b>BEYOND THE HORIZON</b></span>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="sun"
-              initial={{ y: 150, opacity: 0, rotate: -45 }}
-              animate={{ y: 0, opacity: 1, rotate: 0 }}
-              exit={{ y: -100, opacity: 0, rotate: 45 }}
-              transition={{ duration: 1.2, ease: "easeInOut" }}
-              className="absolute inset-0 w-full h-full"
-            >
-              <span className="hero-sun-halo" />
-              <span className="hero-sun" />
-              <span className="hero-sun-orbit" />
-              <span className="hero-sun-label"><i /> THE SUN <b>DAYLIGHT HORIZON</b></span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+        <canvas ref={canvasRef} id="cosmos" className="hero-cosmos" />
+      </motion.div>
+
+      {/* ROTATING CELESTIAL WHEEL (Moon & Sun) */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        initial={false}
+        animate={{ rotate: isDay ? 110 : 0 }}
+        transition={{ duration: 3.5, ease: [0.4, 0, 0.2, 1] }}
+        style={{ transformOrigin: "50% 150%", zIndex: 40 }}
+      >
+        {/* MOON */}
+        <div 
+          className="hero-moon-scene" 
+          onClick={() => setIsDay(true)}
+          style={{ 
+            pointerEvents: isDay ? 'none' : 'auto',
+            cursor: 'pointer',
+            opacity: isDay ? 0 : 1,
+            transition: 'opacity 1.5s ease-in-out'
+          }}
+        >
+          <span className="hero-moon-halo" />
+          <span className="hero-moon" />
+          <span className="hero-moon-orbit" />
+          <span className="hero-moon-label"><i /> THE MOON <b>BEYOND THE HORIZON</b></span>
+        </div>
+
+        {/* SUN */}
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{ transform: 'rotate(-110deg)', transformOrigin: '50% 150%' }}
+        >
+          <div 
+            className="hero-moon-scene" 
+            onClick={() => setIsDay(false)}
+            style={{ 
+              pointerEvents: isDay ? 'auto' : 'none',
+              cursor: 'pointer',
+              opacity: isDay ? 1 : 0,
+              transition: 'opacity 1.5s ease-in-out'
+            }}
+          >
+            <span className="hero-sun-halo" />
+            <span className="hero-sun" />
+            <span className="hero-sun-orbit" />
+            <span className="hero-sun-label"><i /> THE SUN <b>DAYLIGHT HORIZON</b></span>
+          </div>
+        </div>
+      </motion.div>
       <div className="hero-rocks-layer rocks-layer" />
       <div className="hero-rocks-moonlight" />
       <span className="hero-launch-point"><i /> LAUNCH POINT <b>01 / ORIGIN</b></span>
