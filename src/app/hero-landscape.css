@@ -161,7 +161,7 @@
 }
 
 .hero-content { max-width: min(900px, calc(100vw - 3rem)); text-shadow: 0 3px 30px rgba(0, 0, 0, .34); }
-.hero-name { font-family: 'Syne', sans-serif; font-size: clamp(3.4rem, 5vw, 5.5rem); font-weight: 800; white-space: nowrap; text-shadow: 0 5px 36px rgba(0, 0, 0, .3); }
+.hero-name { font-family: 'Syne', sans-serif; white-space: normal; text-shadow: 0 5px 36px rgba(0, 0, 0, .3); }
 .hero-tagline { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.05rem, 1.55vw, 1.2rem); max-width: 440px; font-weight: 400; }
 .hero-role-text, .hero-btn-primary, .hero-btn-secondary, .building-pill-label, .building-pill-name { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 .hero-role-cycler, .hero-building-pill { background: rgba(6, 13, 22, .78); backdrop-filter: blur(12px); }
@@ -187,7 +187,8 @@
   .hero-moon-scene { top: 10%; right: 9%; width: clamp(18px, 4vw, 24px); }
   .hero-launch-point { left: auto; right: 10%; bottom: 15%; font-size: .5rem; }
   .hero-content { padding-bottom: 7rem; }
-  .hero-name { white-space: normal; font-size: clamp(2.9rem, 9vw, 4.2rem); }
+  .hero-name { white-space: normal; }
+  .hero-name-text { font-size: clamp(1.8rem, 5.4vw, 2.5rem); }
   .hero .container { transform: none; }
 }
 

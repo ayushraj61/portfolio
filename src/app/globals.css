@@ -648,28 +648,29 @@ body.cursor-over-sun .custom-cursor path {
   min-width: 160px;
 }
 
-/* Name — the hero focal point with stacked greeting */
+/* Name — the hero focal point with stacked greeting (reduced 40% per user request) */
 .hero-name {
-  margin-bottom: 1.5rem;
-  letter-spacing: -0.04em;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.03em;
 }
 
 .hero-greeting {
   display: block;
   font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-size: clamp(0.75rem, 1.1vw, 0.95rem);
   font-weight: 600;
   letter-spacing: 0.08em;
   color: var(--accent);
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.35rem;
 }
 
 .hero-name-text {
   display: block;
-  font-size: clamp(3.2rem, 8vw, 6.4rem);
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2rem, 3.2vw, 3.3rem);
   font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
   color: var(--text-warm);
 }
 
