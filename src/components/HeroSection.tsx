@@ -18,14 +18,15 @@ export default function HeroSection() {
       <div className="container">
         <div className="hero-content">
 
-          {/* Name — big and bold */}
+          {/* Name & Greeting — stacked two-tier typography */}
           <motion.h1
             className="hero-name"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            Hi, I am Ayush
+            <span className="hero-greeting">Hi, I&apos;m</span>
+            <span className="hero-name-text">Ayush Raj</span>
           </motion.h1>
 
           {/* One-liner — short and punchy */}
