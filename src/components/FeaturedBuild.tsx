@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { products } from '@/data/products';
 import StatusBadge from './StatusBadge';
 import SectionWrapper from './SectionWrapper';
@@ -13,6 +13,30 @@ import SectionWrapper from './SectionWrapper';
 
 export default function FeaturedBuild() {
   const daknode = products.find((p) => p.id === 'daknode')!;
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { damping: 20, stiffness: 150 };
+  const rotateX = useSpring(useTransform(mouseY, [-100, 100], [5, -5]), springConfig);
+  const rotateY = useSpring(useTransform(mouseX, [-100, 100], [-5, 5]), springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const clientX = e.clientX - rect.left;
+    const clientY = e.clientY - rect.top;
+    const xPct = clientX / width - 0.5;
+    const yPct = clientY / height - 0.5;
+    mouseX.set(xPct * 200);
+    mouseY.set(yPct * 200);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
 
   return (
     <SectionWrapper className="section" id="building" isDestination={true} atmosphereColor="#d4a853">
@@ -55,6 +79,9 @@ export default function FeaturedBuild() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.8, delay: 0.3 }}
+          style={{ rotateX, rotateY, transformPerspective: 1200 }}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
         >
           {/* Active signal ring animation */}
           <div className="featured-signal-rings" aria-hidden="true">
