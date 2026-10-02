@@ -1,381 +1,612 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { getEarthTexture } from '@/lib/earthTexture';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 interface LaunchFlightProps {
   onComplete: () => void;
   onSkip: () => void;
+  onReset?: () => void;
 }
 
-type RouteLabel = 'DEEP SPACE' | 'MILKY WAY' | 'SOLAR SYSTEM' | 'EARTH';
-
-const DURATION = 5040;
-const TAU = Math.PI * 2;
-const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
-const smooth = (from: number, to: number, value: number) => {
-  const point = clamp((value - from) / (to - from));
-  return point * point * (3 - 2 * point);
-};
-
-function randomGenerator(seed: number) {
-  let value = seed >>> 0;
-  return () => {
-    value = (1664525 * value + 1013904223) >>> 0;
-    return value / 4294967296;
-  };
+interface MilestoneWaypoint {
+  idx: number;
+  x: number;
+  y: number;
+  stemDir: 'up' | 'down';
+  stemLength: number;
+  triggerProgress: number;
+  year: string;
+  yearColor?: string;
+  headline: string;
+  detail: string;
 }
 
-function drawStars(ctx: CanvasRenderingContext2D, width: number, height: number, progress: number, lookX: number, lookY: number, stars: { x: number; y: number; z: number; size: number; warm: boolean }[]) {
-  const reach = Math.min(width, height) * .6;
-  const centerX = width * .5 + lookX * width * .025;
-  const centerY = height * .47 + lookY * height * .025;
-  const distance = progress * 4.3;
-  const streak = 2 + smooth(0, .18, progress) * 9 + smooth(.37, .58, progress) * 11;
-  for (const star of stars) {
-    const depth = ((star.z - distance * (.55 + star.size * .12)) % 1 + 1) % 1;
-    const perspective = 1 / (.1 + depth * 1.35);
-    const x = centerX + star.x * reach * perspective;
-    const y = centerY + star.y * reach * perspective;
-    if (x < -20 || x > width + 20 || y < -20 || y > height + 20) continue;
-    const alpha = (.24 + (1 - depth) * .52) * (star.warm ? .9 : 1);
-    const tail = streak * (1 - depth) * Math.max(.4, star.size);
-    ctx.beginPath();
-    ctx.moveTo(x - (x - centerX) * tail / Math.max(20, reach), y - (y - centerY) * tail / Math.max(20, reach));
-    ctx.lineTo(x, y);
-    ctx.lineWidth = Math.min(2, .35 + star.size * perspective * .27);
-    ctx.strokeStyle = star.warm ? `rgba(244,215,165,${alpha})` : `rgba(205,225,255,${alpha})`;
-    ctx.stroke();
-  }
-}
+const WORLD_WIDTH = 2800;
+const SVG_HEIGHT = 850;
 
-function drawGalaxy(ctx: CanvasRenderingContext2D, galaxy: HTMLImageElement | null, width: number, height: number, progress: number, lookX: number, lookY: number) {
-  const fade = (1 - smooth(.42, .50, progress)) * smooth(0, .08, progress);
-  if (fade < .003 || !galaxy) return;
-  const grow = Math.pow(smooth(0, .58, progress), 1.6);
-  const size = Math.min(width, height) * (.38 + grow * 1.65);
-  const x = width * (.53 - progress * .045) + lookX * width * .035;
-  const y = height * (.43 + progress * .025) + lookY * height * .035;
-  ctx.save();
-  ctx.globalAlpha = fade;
-  ctx.translate(x, y);
-  ctx.rotate(progress * .38);
-  ctx.drawImage(galaxy, -size / 2, -size / 2, size, size);
-  ctx.restore();
-}
+const THREAD_SVG_D =
+  'M 0 430 C 60 410, 110 390, 180 390 C 280 390, 390 470, 500 470 C 610 470, 710 390, 820 390 C 930 390, 1030 470, 1140 470 C 1250 470, 1360 390, 1480 390 C 1600 390, 1700 470, 1820 470 C 1940 470, 2040 390, 2160 390 C 2280 390, 2380 470, 2500 470 C 2600 470, 2700 440, 2780 430';
 
-type SolarBody = { name: string; orbit: number; angle: number; radius: number; colors: [string, string, string] };
-
-const solarBodies: SolarBody[] = [
-  { name: 'NEPTUNE', orbit: 3.2, angle: -1.9, radius: .052, colors: ['#b6d9ff', '#2f66c1', '#10245a'] },
-  { name: 'URANUS', orbit: 2.85, angle: -.3, radius: .07, colors: ['#d7ffff', '#7fcdd4', '#235578'] },
-  { name: 'SATURN', orbit: 2.4, angle: -2.15, radius: .095, colors: ['#fff1bb', '#c8a66b', '#55412c'] },
-  { name: 'JUPITER', orbit: 1.98, angle: .32, radius: .145, colors: ['#f7e7c7', '#b7835d', '#49392e'] },
-  { name: 'MARS', orbit: 1.35, angle: -.88, radius: .035, colors: ['#ffbea0', '#ad4939', '#3f2026'] },
-  { name: 'VENUS', orbit: .78, angle: 2.22, radius: .04, colors: ['#f9e8c4', '#c8a674', '#514433'] },
-  { name: 'MERCURY', orbit: .52, angle: -.45, radius: .025, colors: ['#e5ddd0', '#8f8985', '#333b44'] },
+const WAYPOINTS: MilestoneWaypoint[] = [
+  {
+    idx: 0,
+    x: 180,
+    y: 390,
+    stemDir: 'up',
+    stemLength: 75,
+    triggerProgress: 0.06,
+    year: '2023 · YEAR 01',
+    headline: 'entered college & hacked early.',
+    detail:
+      'UIET Panjab University, Hoshiarpur. Studied Python, data structures, and core algorithms. Selected for Smart India Hackathon (SIH) in college and submitted initial prototype.',
+  },
+  {
+    idx: 1,
+    x: 500,
+    y: 470,
+    stemDir: 'down',
+    stemLength: 75,
+    triggerProgress: 0.18,
+    year: '2023–2024 · THE SPARK',
+    yearColor: '#38bdf8',
+    headline: 'discovered a passion for ai & ml.',
+    detail:
+      'Developed a deep interest in artificial intelligence and machine learning. Started self-studying neural architectures, deep learning fundamentals, and predictive modeling.',
+  },
+  {
+    idx: 2,
+    x: 820,
+    y: 390,
+    stemDir: 'up',
+    stemLength: 75,
+    triggerProgress: 0.3,
+    year: '2024 · YEAR 02',
+    yearColor: '#f59e0b',
+    headline: 'built for indian railways.',
+    detail:
+      'Python developer summer intern at RDSO (Ministry of Railways). Built custom automated Word document generator for standardized reports, accelerating generation by over 90%.',
+  },
+  {
+    idx: 3,
+    x: 1140,
+    y: 470,
+    stemDir: 'down',
+    stemLength: 75,
+    triggerProgress: 0.42,
+    year: '2024 · ARCHITECTURE',
+    yearColor: '#06b6d4',
+    headline: 'the backend revelation.',
+    detail:
+      'Realized that without robust backends and system design, intelligent AI systems cannot function in production. Shifted focus to distributed architectures, high-concurrency systems, and scalable APIs.',
+  },
+  {
+    idx: 4,
+    x: 1480,
+    y: 390,
+    stemDir: 'up',
+    stemLength: 75,
+    triggerProgress: 0.55,
+    year: '2025 · YEAR 03 (8–9 MOS)',
+    yearColor: '#38bdf8',
+    headline: 'scaled production ai at b3 solutions.',
+    detail:
+      '8–9 month AI developer internship in Chandigarh. Built production multi-stage OCR pipelines (90% accuracy) and Celery + Redis async workers cutting duplicate entries by 99%.',
+  },
+  {
+    idx: 5,
+    x: 1820,
+    y: 470,
+    stemDir: 'down',
+    stemLength: 75,
+    triggerProgress: 0.68,
+    year: '2025 · PRODUCT SUITE',
+    yearColor: '#a855f7',
+    headline: 'shipped outlay & consumer systems.',
+    detail:
+      'Engineered and shipped full-stack platforms: Outlay (distributed financial platform & tracking) and SplitMe (collaborative group expense engine) with real-time state synchronization.',
+  },
+  {
+    idx: 6,
+    x: 2160,
+    y: 390,
+    stemDir: 'up',
+    stemLength: 75,
+    triggerProgress: 0.81,
+    year: '2025–2026 · HYPERFLOW AUTOMATION',
+    yearColor: '#f43f5e',
+    headline: 'engineered hyperflow automation systems.',
+    detail:
+      'Set up and engineered Hyperflow automation systems — designing autonomous workflows to automate operational processes, business platforms, and distributed data pipelines.',
+  },
+  {
+    idx: 7,
+    x: 2500,
+    y: 470,
+    stemDir: 'down',
+    stemLength: 75,
+    triggerProgress: 0.93,
+    year: '2026 · PRESENT',
+    yearColor: '#10b981',
+    headline: 'founding engineer at daknode.',
+    detail:
+      'Architecting autonomous agent email infrastructure: programmatic email identities, headless inboxes, webhook event buses, and developer APIs for AI agents.',
+  },
 ];
 
-function drawPlanet(ctx: CanvasRenderingContext2D, body: SolarBody, x: number, y: number, radius: number) {
-  if (radius < 1 || x + radius < -80 || x - radius > ctx.canvas.width || y + radius < -80 || y - radius > ctx.canvas.height) return;
-
-  // Saturn back rings
-  if (body.name === 'SATURN') {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(-.26);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, radius * 1.82, radius * .58, 0, Math.PI, TAU);
-    ctx.strokeStyle = 'rgba(226,207,162,.5)';
-    ctx.lineWidth = radius * .2;
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  // Draw Planet Body (fast solid fill for tiny dots, radial gradient when large enough)
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, TAU);
-  if (radius < 2.5) {
-    ctx.fillStyle = body.colors[0];
-  } else {
-    const light = ctx.createRadialGradient(x - radius * .38, y - radius * .34, radius * .04, x + radius * .18, y + radius * .1, radius * 1.4);
-    light.addColorStop(0, body.colors[0]);
-    light.addColorStop(.48, body.colors[1]);
-    light.addColorStop(1, body.colors[2]);
-    ctx.fillStyle = light;
-  }
-  ctx.fill();
-
-  // Saturn front rings
-  if (body.name === 'SATURN') {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(-.26);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, radius * 1.82, radius * .58, 0, 0, Math.PI);
-    ctx.strokeStyle = 'rgba(247,230,183,.7)';
-    ctx.lineWidth = radius * .2;
-    ctx.stroke();
-    ctx.restore();
-  }
-}
-
-function solarFrame(width: number, height: number, progress: number, lookX: number, lookY: number) {
-  const approach = smooth(.46, .82, progress);
-  const scale = Math.min(width, height) * (.075 + approach * 1.05);
-  const x = width * (.57 - approach * .78) + lookX * width * .025;
-  const y = height * (.45 + approach * .075) + lookY * height * .025;
-  return { approach, scale, x, y };
-}
-
-function drawSolarSystem(ctx: CanvasRenderingContext2D, width: number, height: number, progress: number, lookX: number, lookY: number) {
-  const visibility = smooth(.46, .54, progress) * (1 - smooth(.75, .85, progress));
-  if (visibility < .003) return;
-  const { approach, scale, x, y } = solarFrame(width, height, progress, lookX, lookY);
-  const sunRadius = Math.min(width, height) * (.018 + approach * .14);
-  ctx.save();
-  ctx.globalAlpha = visibility;
-
-  // The orbital plane grows and slides past the cockpit as the camera moves forward.
-  for (const orbit of [.52, .78, 1.1, 1.35, 1.98, 2.4, 2.85, 3.2]) {
-    ctx.beginPath();
-    ctx.ellipse(x, y, scale * orbit, scale * orbit * .34, -.16, 0, TAU);
-    ctx.strokeStyle = `rgba(154,187,212,${.21 - approach * .1})`;
-    ctx.lineWidth = Math.max(.6, 1.1 - approach * .35);
-    ctx.stroke();
-  }
-  ctx.fillStyle = 'rgba(204,192,171,0.5)';
-  for (let index = 0; index < 65; index++) {
-    const angle = index * 5.4;
-    const orbit = 1.56 + ((index * 37) % 29) / 190;
-    const ax = x + Math.cos(angle) * scale * orbit;
-    const ay = y + Math.sin(angle) * scale * orbit * .34;
-    if (ax < 0 || ax > width || ay < 0 || ay > height) continue;
-    const size = Math.min(2.4, .35 + approach * 2.1);
-    ctx.fillRect(ax, ay, size, size);
-  }
-
-  const glow = ctx.createRadialGradient(x, y, sunRadius * .35, x, y, sunRadius * 4.8);
-  glow.addColorStop(0, 'rgba(255,239,173,.91)');
-  glow.addColorStop(.12, 'rgba(255,168,59,.56)');
-  glow.addColorStop(.38, 'rgba(194,92,29,.16)');
-  glow.addColorStop(1, 'rgba(194,92,29,0)');
-  ctx.fillStyle = glow;
-  ctx.fillRect(x - sunRadius * 5, y - sunRadius * 5, sunRadius * 10, sunRadius * 10);
-  ctx.beginPath();
-  ctx.arc(x, y, sunRadius, 0, TAU);
-  const solarSurface = ctx.createRadialGradient(x - sunRadius * .28, y - sunRadius * .3, sunRadius * .05, x, y, sunRadius);
-  solarSurface.addColorStop(0, '#fff7cf');
-  solarSurface.addColorStop(.46, '#ffd768');
-  solarSurface.addColorStop(.82, '#ee8b25');
-  solarSurface.addColorStop(1, '#a74317');
-  ctx.fillStyle = solarSurface;
-  ctx.fill();
-
-  for (const body of solarBodies) {
-    const angle = body.angle + approach * .07;
-    const px = x + Math.cos(angle) * scale * body.orbit;
-    const py = y + Math.sin(angle) * scale * body.orbit * .34;
-    drawPlanet(ctx, body, px, py, Math.max(1, scale * body.radius));
-  }
-  ctx.restore();
-}
-
-function drawEarth(ctx: CanvasRenderingContext2D, earth: HTMLCanvasElement | null, width: number, height: number, progress: number, lookX: number, lookY: number) {
-  const visibility = smooth(.46, .54, progress);
-  if (visibility < .002) return;
-  const { approach, scale, x: sunX, y: sunY } = solarFrame(width, height, progress, lookX, lookY);
-  const orbitAngle = .15;
-  const orbitRadius = scale * 1.1;
-  const orbitMinorRadius = orbitRadius * .34;
-  const orbitX = sunX + orbitRadius * Math.cos(orbitAngle) * Math.cos(-.16) - orbitMinorRadius * Math.sin(orbitAngle) * Math.sin(-.16);
-  const orbitY = sunY + orbitRadius * Math.cos(orbitAngle) * Math.sin(-.16) + orbitMinorRadius * Math.sin(orbitAngle) * Math.cos(-.16);
-  const approachBlend = smooth(.65, .85, progress);
-  const targetX = width * .5 + lookX * width * .018;
-  const targetY = height * .485 + lookY * height * .018;
-  const x = orbitX * (1 - approachBlend) + targetX * approachBlend;
-  const y = orbitY * (1 - approachBlend) + targetY * approachBlend;
-  const zoom = Math.pow(clamp((progress - .64) / .36), 2.4);
-  const radius = Math.min(width, height) * (.007 + approach * .048 + zoom * .88);
-  ctx.save();
-  ctx.globalAlpha = visibility;
-  const halo = ctx.createRadialGradient(x, y, radius * .72, x, y, radius * 1.45);
-  halo.addColorStop(0, 'rgba(69,142,218,0)');
-  halo.addColorStop(.57, 'rgba(70,149,230,.18)');
-  halo.addColorStop(.7, 'rgba(101,186,255,.11)');
-  halo.addColorStop(1, 'rgba(83,154,226,0)');
-  ctx.fillStyle = halo;
-  ctx.fillRect(x - radius * 1.5, y - radius * 1.5, radius * 3, radius * 3);
-  if (earth) {
-    ctx.drawImage(earth, x - radius, y - radius, radius * 2, radius * 2);
-  } else {
-    const fallback = ctx.createRadialGradient(x - radius * .3, y - radius * .35, 0, x, y, radius);
-    fallback.addColorStop(0, '#9ed3e8');
-    fallback.addColorStop(.45, '#316f9c');
-    fallback.addColorStop(1, '#081b3a');
-    ctx.fillStyle = fallback;
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, TAU);
-    ctx.fill();
-  }
-  ctx.beginPath();
-  ctx.arc(x, y, radius + 1, 0, TAU);
-  ctx.strokeStyle = 'rgba(135,208,255,.55)';
-  ctx.lineWidth = Math.max(1, radius * .004);
-  ctx.stroke();
-
-  // Add a fake glow stroke instead of expensive shadowBlur
-  ctx.beginPath();
-  ctx.arc(x, y, radius + 2, 0, TAU);
-  ctx.strokeStyle = 'rgba(107,201,255,.2)';
-  ctx.lineWidth = Math.max(2, radius * .015);
-  ctx.stroke();
-  if (width > 700 && progress < .78) {
-    const marker = smooth(.50, .56, progress) * (1 - smooth(.69, .78, progress));
-    ctx.globalAlpha = marker * .82;
-    ctx.beginPath();
-    ctx.moveTo(x + radius + 7, y - radius * .24);
-    ctx.lineTo(x + radius + 20, y - radius * .24 - 11);
-    ctx.lineTo(x + radius + 52, y - radius * .24 - 11);
-    ctx.strokeStyle = 'rgba(156,216,249,.72)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.fillStyle = '#bedcf0';
-    ctx.font = '600 10px "JetBrains Mono", monospace';
-    ctx.fillText('EARTH / TARGET', x + radius + 56, y - radius * .24 - 7);
-  }
-  ctx.restore();
-}
-
-export default function LaunchFlight({ onComplete, onSkip }: LaunchFlightProps) {
+export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlightProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
-  const [route, setRoute] = useState<RouteLabel>('DEEP SPACE');
+  const worldTrackRef = useRef<HTMLDivElement>(null);
+  const pathMainRef = useRef<SVGPathElement>(null);
+  const pathGlowRef = useRef<SVGPathElement>(null);
+  const pathShadowRef = useRef<SVGPathElement>(null);
+  const stemsGroupRef = useRef<SVGGElement>(null);
+  const waypointsGroupRef = useRef<SVGGElement>(null);
+  const navigatorRef = useRef<HTMLDivElement>(null);
+  const flashFlareRef = useRef<HTMLDivElement>(null);
+  const hintRef = useRef<HTMLDivElement>(null);
+
   const completeRef = useRef(onComplete);
-  useEffect(() => { completeRef.current = onComplete; }, [onComplete]);
+  const skipRef = useRef(onSkip);
+  const resetRef = useRef(onReset);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d', { alpha: false });
-    if (!canvas || !ctx) return;
-    let frameId = 0;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    let lookX = 0;
-    let lookY = 0;
-    let targetX = 0;
-    let targetY = 0;
-    let earth: HTMLCanvasElement | null = null;
-    let galaxy: HTMLImageElement | null = null;
-    const galaxyImage = new Image();
-    galaxyImage.onload = () => { galaxy = galaxyImage; };
-    galaxyImage.src = '/flight/galaxy-v2.png';
-    const rand = randomGenerator(15507);
-    const stars = Array.from({ length: width < 768 ? 220 : 360 }, () => ({
-      x: rand() * 2 - 1,
-      y: rand() * 2 - 1,
-      z: rand(),
-      size: .5 + rand() * 1.7,
-      warm: rand() > .92,
-    }));
-    let active = true;
-    getEarthTexture().then((texture) => { if (active) earth = texture; }).catch(() => { });
+    completeRef.current = onComplete;
+  }, [onComplete]);
+  useEffect(() => {
+    skipRef.current = onSkip;
+  }, [onSkip]);
+  useEffect(() => {
+    resetRef.current = onReset;
+  }, [onReset]);
 
-    const resize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    const pointer = (event: PointerEvent) => {
-      targetX = (event.clientX / width - .5) * 2;
-      targetY = (event.clientY / height - .5) * 2;
-    };
-    resize();
-    const start = performance.now();
-    let lastRoute: RouteLabel = 'DEEP SPACE';
-    const draw = (now: number) => {
-      const progress = clamp((now - start) / DURATION);
-      lookX += (targetX - lookX) * .035;
-      lookY += (targetY - lookY) * .035;
-      const backdrop = ctx.createRadialGradient(width * .5, height * .43, 0, width * .5, height * .43, Math.max(width, height) * .72);
-      backdrop.addColorStop(0, progress < .6 ? '#101729' : '#0a1b31');
-      backdrop.addColorStop(.55, '#070d1a');
-      backdrop.addColorStop(1, '#02050b');
-      ctx.fillStyle = backdrop;
-      ctx.fillRect(0, 0, width, height);
+  const isTransitioningRef = useRef(false);
+  const targetProgressRef = useRef(0);
+  const currentProgressRef = useRef(0);
+  const animFrameRef = useRef(0);
 
-      drawGalaxy(ctx, galaxy, width, height, progress, lookX, lookY);
-      drawStars(ctx, width, height, progress, lookX, lookY, stars);
-      drawSolarSystem(ctx, width, height, progress, lookX, lookY);
-      drawEarth(ctx, earth, width, height, progress, lookX, lookY);
+  // Position cards with safe vertical clearance
+  const positionMilestoneCards = useCallback(() => {
+    const scaleY = window.innerHeight / SVG_HEIGHT;
+    const cardWidth = window.innerWidth < 768 ? 275 : 320;
 
-      const routeNow: RouteLabel = progress < .09 ? 'DEEP SPACE' : progress < .48 ? 'MILKY WAY' : progress < .77 ? 'SOLAR SYSTEM' : 'EARTH';
-      if (routeNow !== lastRoute) {
-        lastRoute = routeNow;
-        setRoute(routeNow);
+    WAYPOINTS.forEach((m) => {
+      const card = document.getElementById(`milestone-card-${m.idx}`);
+      if (!card) return;
+
+      const cardLeft = m.x - cardWidth / 2;
+      card.style.left = `${cardLeft}px`;
+      card.style.width = `${cardWidth}px`;
+      card.style.transform = 'none';
+
+      if (m.stemDir === 'up') {
+        const termDotScreenY = (m.y - m.stemLength) * scaleY;
+        card.style.bottom = `${window.innerHeight - termDotScreenY + 16}px`;
+        card.style.top = 'auto';
+      } else {
+        const termDotScreenY = (m.y + m.stemLength) * scaleY;
+        card.style.top = `${termDotScreenY + 16}px`;
+        card.style.bottom = 'auto';
       }
-      if (progressRef.current) progressRef.current.style.transform = `scaleX(${progress})`;
-      if (progress >= 1) {
-        completeRef.current();
-        return;
-      }
-      frameId = requestAnimationFrame(draw);
-    };
-    frameId = requestAnimationFrame(draw);
-    window.addEventListener('resize', resize);
-    window.addEventListener('pointermove', pointer, { passive: true });
-    return () => {
-      cancelAnimationFrame(frameId);
-      galaxyImage.onload = null;
-      active = false;
-      window.removeEventListener('resize', resize);
-      window.removeEventListener('pointermove', pointer);
-    };
+    });
   }, []);
 
+  // Climax trigger into portfolio hero
+  const triggerArrivalTransition = useCallback(() => {
+    if (isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
+    cancelAnimationFrame(animFrameRef.current);
+
+    if (flashFlareRef.current) {
+      flashFlareRef.current.style.opacity = '0.95';
+    }
+
+    setTimeout(() => {
+      completeRef.current();
+    }, 280);
+  }, []);
+
+  const handleSkip = useCallback(() => {
+    if (isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
+    cancelAnimationFrame(animFrameRef.current);
+
+    if (flashFlareRef.current) {
+      flashFlareRef.current.style.opacity = '0.95';
+    }
+
+    setTimeout(() => {
+      skipRef.current();
+    }, 200);
+  }, []);
+
+  const handleReset = useCallback(() => {
+    cancelAnimationFrame(animFrameRef.current);
+    if (resetRef.current) {
+      resetRef.current();
+    } else {
+      targetProgressRef.current = 0;
+      currentProgressRef.current = 0;
+      isTransitioningRef.current = false;
+      if (flashFlareRef.current) flashFlareRef.current.style.opacity = '0';
+      if (worldTrackRef.current) worldTrackRef.current.style.transform = 'translateX(0px)';
+    }
+  }, []);
+
+  // Update visual elements according to progress
+  const updateMilestonePresence = useCallback((m: MilestoneWaypoint, progress: number) => {
+    const stem = document.getElementById(`stem-line-${m.idx}`);
+    const cdot = document.getElementById(`center-dot-${m.idx}`);
+    const tdot = document.getElementById(`term-dot-${m.idx}`);
+    const card = document.getElementById(`milestone-card-${m.idx}`);
+
+    const appearThreshold = m.triggerProgress - 0.035;
+    const isReached = progress >= appearThreshold;
+
+    if (!isReached) {
+      if (stem) {
+        stem.setAttribute('y2', stem.getAttribute('y1') || `${m.y}`);
+        stem.classList.remove('active');
+      }
+      if (cdot) cdot.setAttribute('opacity', '0');
+      if (tdot) tdot.setAttribute('opacity', '0');
+      if (card) card.classList.remove('visible', 'is-active');
+      return;
+    }
+
+    const growthRatio = Math.min(1, Math.max(0, (progress - appearThreshold) / 0.035));
+    const targetY = m.stemDir === 'up' ? m.y - m.stemLength : m.y + m.stemLength;
+    const currentY = m.y + (targetY - m.y) * growthRatio;
+
+    if (stem) {
+      stem.setAttribute('y2', `${currentY}`);
+      if (growthRatio >= 0.95) stem.classList.add('active');
+      else stem.classList.remove('active');
+    }
+
+    if (cdot) cdot.setAttribute('opacity', growthRatio > 0.1 ? '1' : '0');
+    if (tdot) tdot.setAttribute('opacity', growthRatio >= 0.95 ? '1' : '0');
+
+    if (card) {
+      if (growthRatio >= 0.4) {
+        card.classList.add('visible');
+      } else {
+        card.classList.remove('visible');
+      }
+
+      const isNear = Math.abs(progress - m.triggerProgress) < 0.065;
+      if (isNear) {
+        card.classList.add('is-active');
+      } else {
+        card.classList.remove('is-active');
+      }
+    }
+  }, []);
+
+  const updateVisualization = useCallback(
+    (progress: number) => {
+      const pathMain = pathMainRef.current;
+      const pathGlow = pathGlowRef.current;
+      const pathShadow = pathShadowRef.current;
+      const navigatorEl = navigatorRef.current;
+      const worldTrack = worldTrackRef.current;
+
+      if (!pathMain || !navigatorEl || !worldTrack) return;
+
+      const clampedProgress = Math.max(0, Math.min(1, progress));
+      const pathLength = pathMain.getTotalLength();
+      const currentDist = pathLength * clampedProgress;
+      const offset = pathLength * (1 - clampedProgress);
+
+      pathMain.style.strokeDashoffset = `${offset}`;
+      if (pathGlow) pathGlow.style.strokeDashoffset = `${offset}`;
+      if (pathShadow) pathShadow.style.strokeDashoffset = `${offset}`;
+
+      const pt = pathMain.getPointAtLength(currentDist);
+      const scaleY = window.innerHeight / SVG_HEIGHT;
+
+      navigatorEl.style.left = `${pt.x}px`;
+      navigatorEl.style.top = `${pt.y * scaleY}px`;
+
+      // Fill window first, then horizontal scroll
+      const fillThreshold = window.innerWidth * 0.68;
+      let targetCamX = 0;
+
+      if (pt.x > fillThreshold) {
+        targetCamX = -(pt.x - fillThreshold);
+        const minCamX = -(WORLD_WIDTH - window.innerWidth);
+        targetCamX = Math.max(minCamX, Math.min(0, targetCamX));
+      }
+
+      worldTrack.style.transform = `translateX(${targetCamX}px)`;
+
+      WAYPOINTS.forEach((m) => {
+        updateMilestonePresence(m, clampedProgress);
+      });
+    },
+    [updateMilestonePresence]
+  );
+
+  // Main physics loop
+  useEffect(() => {
+    let running = true;
+
+    const renderLoop = () => {
+      if (!running || isTransitioningRef.current) return;
+
+      const diff = targetProgressRef.current - currentProgressRef.current;
+      if (Math.abs(diff) > 0.0001) {
+        currentProgressRef.current += diff * 0.12;
+      } else {
+        currentProgressRef.current = targetProgressRef.current;
+      }
+
+      updateVisualization(currentProgressRef.current);
+      animFrameRef.current = requestAnimationFrame(renderLoop);
+    };
+
+    animFrameRef.current = requestAnimationFrame(renderLoop);
+
+    return () => {
+      running = false;
+      cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [updateVisualization]);
+
+  // SVG Initialization & Stars canvas
+  useEffect(() => {
+    // 1. Ambient Stars
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        let starFrame = 0;
+        let w = (canvas.width = window.innerWidth);
+        let h = (canvas.height = window.innerHeight);
+
+        const stars = Array.from({ length: 180 }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.3 + 0.3,
+          alpha: Math.random() * 0.7 + 0.2,
+          speed: Math.random() * 0.02 + 0.005,
+        }));
+
+        const drawStars = () => {
+          ctx.fillStyle = '#050811';
+          ctx.fillRect(0, 0, w, h);
+          for (const s of stars) {
+            s.alpha += Math.sin(Date.now() * s.speed) * 0.008;
+            ctx.fillStyle = `rgba(215, 229, 250, ${Math.max(0.12, Math.min(0.85, s.alpha))})`;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          starFrame = requestAnimationFrame(drawStars);
+        };
+        drawStars();
+
+        const handleResize = () => {
+          w = canvas.width = window.innerWidth;
+          h = canvas.height = window.innerHeight;
+          positionMilestoneCards();
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+          cancelAnimationFrame(starFrame);
+          window.removeEventListener('resize', handleResize);
+        };
+      }
+    }
+  }, [positionMilestoneCards]);
+
+  // Set up SVG path strokes & dynamic elements
+  useEffect(() => {
+    const pathMain = pathMainRef.current;
+    const pathGlow = pathGlowRef.current;
+    const pathShadow = pathShadowRef.current;
+    const stemsGroup = stemsGroupRef.current;
+    const waypointsGroup = waypointsGroupRef.current;
+
+    if (!pathMain || !pathGlow || !pathShadow || !stemsGroup || !waypointsGroup) return;
+
+    pathMain.setAttribute('d', THREAD_SVG_D);
+    pathGlow.setAttribute('d', THREAD_SVG_D);
+    pathShadow.setAttribute('d', THREAD_SVG_D);
+
+    const pathLength = pathMain.getTotalLength();
+    pathMain.style.strokeDasharray = `${pathLength}`;
+    pathMain.style.strokeDashoffset = `${pathLength}`;
+    pathGlow.style.strokeDasharray = `${pathLength}`;
+    pathGlow.style.strokeDashoffset = `${pathLength}`;
+    pathShadow.style.strokeDasharray = `${pathLength}`;
+    pathShadow.style.strokeDashoffset = `${pathLength}`;
+
+    stemsGroup.innerHTML = '';
+    waypointsGroup.innerHTML = '';
+
+    WAYPOINTS.forEach((m) => {
+      const targetY = m.stemDir === 'up' ? m.y - m.stemLength : m.y + m.stemLength;
+
+      const stemLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      stemLine.setAttribute('x1', `${m.x}`);
+      stemLine.setAttribute('y1', `${m.y}`);
+      stemLine.setAttribute('x2', `${m.x}`);
+      stemLine.setAttribute('y2', `${m.y}`);
+      stemLine.setAttribute('id', `stem-line-${m.idx}`);
+      stemLine.setAttribute('class', 'stem-line');
+      stemsGroup.appendChild(stemLine);
+
+      const centerDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      centerDot.setAttribute('cx', `${m.x}`);
+      centerDot.setAttribute('cy', `${m.y}`);
+      centerDot.setAttribute('r', '5');
+      centerDot.setAttribute('id', `center-dot-${m.idx}`);
+      centerDot.setAttribute('class', 'waypoint-origin-dot');
+      centerDot.setAttribute('opacity', '0');
+      waypointsGroup.appendChild(centerDot);
+
+      const termDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      termDot.setAttribute('cx', `${m.x}`);
+      termDot.setAttribute('cy', `${targetY}`);
+      termDot.setAttribute('r', '4');
+      termDot.setAttribute('id', `term-dot-${m.idx}`);
+      termDot.setAttribute('class', 'waypoint-terminal-dot');
+      termDot.setAttribute('opacity', '0');
+      waypointsGroup.appendChild(termDot);
+    });
+
+    positionMilestoneCards();
+  }, [positionMilestoneCards]);
+
+  // Interactive Wheel, Touch, and Keyboard Listeners
+  useEffect(() => {
+    const hideHint = () => {
+      if (hintRef.current) hintRef.current.style.opacity = '0.15';
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      if (isTransitioningRef.current) return;
+      hideHint();
+
+      const delta = e.deltaY;
+      const factor = e.deltaMode === 1 ? 0.022 : 0.00065;
+      targetProgressRef.current = Math.max(0, Math.min(1.02, targetProgressRef.current + delta * factor));
+
+      if (targetProgressRef.current >= 0.999) {
+        triggerArrivalTransition();
+      }
+    };
+
+    let touchStartY = 0;
+    let touchStartX = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+      touchStartX = e.touches[0].clientX;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isTransitioningRef.current) return;
+      const touchY = e.touches[0].clientY;
+      const touchX = e.touches[0].clientX;
+      const delta = touchStartY - touchY + (touchStartX - touchX);
+      touchStartY = touchY;
+      touchStartX = touchX;
+
+      hideHint();
+      targetProgressRef.current = Math.max(0, Math.min(1.02, targetProgressRef.current + delta * 0.0018));
+
+      if (targetProgressRef.current >= 0.999) {
+        triggerArrivalTransition();
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'r' || e.key === 'R') handleReset();
+      if (e.key === 'Escape') handleSkip();
+
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'PageDown') {
+        e.preventDefault();
+        hideHint();
+        targetProgressRef.current = Math.min(1.0, targetProgressRef.current + 0.05);
+        if (targetProgressRef.current >= 0.999) triggerArrivalTransition();
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        hideHint();
+        targetProgressRef.current = Math.max(0, targetProgressRef.current - 0.05);
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [triggerArrivalTransition, handleReset, handleSkip]);
+
   return (
-    <div className="pov-flight">
-      <canvas ref={canvasRef} className="pov-flight-canvas" aria-hidden="true" />
-      <div className="pov-flight-vignette" aria-hidden="true" />
-      <div className="pov-flight-canopy" aria-hidden="true">
-        <svg viewBox="0 0 1440 900" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="canopy-metal" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#243140" /><stop offset=".46" stopColor="#090f19" /><stop offset="1" stopColor="#020408" /></linearGradient>
-            <linearGradient id="console-metal" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#111d2b" /><stop offset="1" stopColor="#020407" /></linearGradient>
-          </defs>
-          <path d="M0 0H1440V92Q1070 44 720 55Q370 44 0 92Z" fill="url(#canopy-metal)" stroke="#344556" strokeOpacity=".42" strokeWidth="2" />
-          <path d="M0 0V900H126L184 778Q65 440 108 92Z" fill="url(#canopy-metal)" stroke="#62788c" strokeOpacity=".28" strokeWidth="2" />
-          <path d="M1440 0V900H1314L1256 778Q1375 440 1332 92Z" fill="url(#canopy-metal)" stroke="#62788c" strokeOpacity=".28" strokeWidth="2" />
-          <path d="M0 761Q230 742 411 804L505 849H935L1029 804Q1210 742 1440 761V900H0Z" fill="url(#console-metal)" stroke="#526a80" strokeOpacity=".5" strokeWidth="2" />
-          <path d="M126 900 183 778 270 803 236 900M1314 900 1257 778 1170 803 1204 900" fill="#111b27" stroke="#466077" strokeOpacity=".46" />
-          <path d="M505 849H935L900 900H540Z" fill="#090f19" stroke="#68859b" strokeOpacity=".42" />
-          <path d="M550 856H890M584 871H856" stroke="#a6c7d5" strokeOpacity=".22" />
-          <path d="M113 94Q720 14 1327 94" fill="none" stroke="#8ba4b8" strokeOpacity=".28" strokeWidth="2" />
-          <path d="M151 99Q110 480 191 750M1289 99Q1330 480 1249 750" fill="none" stroke="#65819a" strokeOpacity=".2" strokeWidth="2" />
+    <div className="living-thread-stage">
+      <canvas ref={canvasRef} className="thread-ambient-canvas" />
+
+      {/* Topline Status Header */}
+      <div className="thread-topline">
+        <div>
+          <h2 className="thread-header-title">the trajectory of an engineer.</h2>
+          <p className="thread-header-sub">CHRONOLOGICAL CHAPTERS · 2023 ➔ 2026</p>
+        </div>
+        <div className="thread-topline-actions">
+          <div className="thread-scroll-indicator">
+            <span>Scroll to Explore ↓</span>
+          </div>
+          <button
+            type="button"
+            className="thread-skip-btn"
+            onClick={handleSkip}
+            aria-label="Skip to portfolio"
+          >
+            Skip ↗
+          </button>
+        </div>
+      </div>
+
+      {/* 2800px Horizontal World Track */}
+      <div ref={worldTrackRef} className="thread-world-track">
+        <svg
+          className="thread-svg-layer"
+          viewBox={`0 0 ${WORLD_WIDTH} ${SVG_HEIGHT}`}
+          preserveAspectRatio="none"
+        >
+          <path ref={pathShadowRef} className="thread-path-shadow" d="" />
+          <path ref={pathGlowRef} className="thread-path-glow" d="" />
+          <path ref={pathMainRef} className="thread-path-main" d="" />
+          <g ref={stemsGroupRef} id="stems-group" />
+          <g ref={waypointsGroupRef} id="waypoints-group" />
         </svg>
+
+        {/* Traveling Navigator Dot */}
+        <div ref={navigatorRef} className="thread-navigator">
+          <div className="nav-oval-head" />
+        </div>
+
+        {/* 8 Milestone DOM Cards */}
+        <div className="milestones-layer">
+          {WAYPOINTS.map((m) => (
+            <div
+              key={m.idx}
+              id={`milestone-card-${m.idx}`}
+              className={`milestone-block ${m.stemDir === 'up' ? 'stem-up' : 'stem-down'}`}
+            >
+              <div
+                className="milestone-year"
+                style={m.yearColor ? { color: m.yearColor } : undefined}
+              >
+                <span className="milestone-year-dot" />
+                {m.year}
+              </div>
+              <h3 className="milestone-headline">{m.headline}</h3>
+              <p className="milestone-detail">{m.detail}</p>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="pov-flight-topline">
-        <div className="pov-flight-brand"><span className="pov-flight-brand-mark">◇</span><span>AYUSH RAJ <small>/ EXPEDITION 01</small></span></div>
-        <button type="button" className="pov-flight-skip" onClick={onSkip}>Skip flight <span aria-hidden="true">↗</span></button>
+
+      {/* Floating Scroll Helper */}
+      <div ref={hintRef} className="floating-scroll-hint">
+        <div className="scroll-mouse-icon">
+          <div className="scroll-mouse-wheel" />
+        </div>
+        <span>Scroll mouse wheel or trackpad to explore · You&apos;re in control</span>
       </div>
-      <div className="pov-flight-reticle" aria-hidden="true"><span /><i /></div>
-      <div className="pov-flight-readout" aria-live="polite" aria-atomic="true">
-        <span className="pov-flight-readout-kicker">FORWARD VIEW / CONTINUOUS FLIGHT</span>
-        <strong>{route}</strong>
-        <span className="pov-flight-readout-detail">{route === 'DEEP SPACE' ? 'SETTING COURSE' : route === 'MILKY WAY' ? 'ENTERING THE GALAXY' : route === 'SOLAR SYSTEM' ? 'THREADING THE ORBITS' : 'FINAL APPROACH'}</span>
-      </div>
-      <div className="pov-flight-right-readout" aria-hidden="true"><span>01 / 01</span><i />VISUAL ROUTE<br />AUTOPILOT ENGAGED</div>
-      <div className="pov-flight-progress-track" aria-label="Flight progress"><div ref={progressRef} /></div>
-      <div className="pov-flight-console" aria-hidden="true">
-        <div className="pov-flight-console-left"><span className="pov-flight-console-lights"><i /><i /><i /></span><span>FLIGHT SYSTEMS<br />NOMINAL</span></div>
-        <div className="pov-flight-console-center"><span>◇</span><span>AYUSH&apos;S UNIVERSE</span></div>
-        <div className="pov-flight-console-right">DEEP SPACE <i /> MILKY WAY <i /> SOLAR SYSTEM <i /> EARTH</div>
-      </div>
+
+      {/* Flash Flare Transition Climax */}
+      <div ref={flashFlareRef} className="flash-flare" />
     </div>
   );
 }

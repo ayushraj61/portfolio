@@ -1,67 +1,439 @@
-/* Continuous first-person flight; the earlier scene version is in .revert/launch-v2. */
-.launch-idle { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-.launch-screen-in-flight { background: #02050b; }
-.pov-flight { position: absolute; inset: 0; z-index: 3; overflow: hidden; color: #e9f3fb; background: #02050b; isolation: isolate; }
-.pov-flight-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.pov-flight-vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 43%, transparent 27%, rgba(1,4,9,.2) 67%, rgba(1,4,9,.76) 100%); }
-.pov-flight-canopy { position: absolute; inset: 0; z-index: 4; pointer-events: none; filter: drop-shadow(0 0 18px rgba(0,0,0,.8)); }
-.pov-flight-canopy svg { display: block; width: 100%; height: 100%; }
-.pov-flight-topline { position: absolute; z-index: 7; top: clamp(1.5rem, 4.5vh, 3.5rem); left: clamp(1.75rem, 6.5vw, 7rem); right: clamp(1.75rem, 6.5vw, 7rem); display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.pov-flight-brand { display: flex; align-items: center; gap: .7rem; color: #e5eff7; font: 700 .64rem 'JetBrains Mono', monospace; letter-spacing: .17em; white-space: nowrap; text-shadow: 0 1px 12px #000; }
-.pov-flight-brand-mark { color: #e4c17a; font-size: 1.3rem; line-height: .6; text-shadow: 0 0 15px rgba(228,193,122,.62); }
-.pov-flight-brand small { font: 500 .61rem 'JetBrains Mono', monospace; color: #8b9eae; }
-.pov-flight-skip { border: 1px solid rgba(181,204,223,.28); padding: .8rem 1rem; color: #d9e5ec; background: rgba(6,13,23,.64); font: 600 .58rem 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; backdrop-filter: blur(12px); transition: border-color .2s, background .2s; }
-.pov-flight-skip:hover, .pov-flight-skip:focus-visible { border-color: #d9b978; background: rgba(217,185,120,.14); }
-.pov-flight-skip span { color: #d9b978; margin-left: .6rem; }
-.pov-flight-reticle { position: absolute; z-index: 3; left: 50%; top: 47%; width: 58px; height: 58px; transform: translate(-50%,-50%); border: 1px solid rgba(178,221,249,.24); border-radius: 50%; pointer-events: none; box-shadow: 0 0 20px rgba(98,160,210,.07), inset 0 0 18px rgba(98,160,210,.04); }
-.pov-flight-reticle::before, .pov-flight-reticle::after { content: ''; position: absolute; background: rgba(186,223,243,.45); }
-.pov-flight-reticle::before { width: 1px; height: 10px; top: -16px; left: calc(50% - .5px); box-shadow: 0 79px rgba(186,223,243,.45); }
-.pov-flight-reticle::after { height: 1px; width: 10px; left: -16px; top: calc(50% - .5px); box-shadow: 79px 0 rgba(186,223,243,.45); }
-.pov-flight-reticle span { position: absolute; inset: 25%; border: 1px solid rgba(189,224,244,.16); border-radius: 50%; }
-.pov-flight-reticle i { position: absolute; width: 3px; height: 3px; top: calc(50% - 1.5px); left: calc(50% - 1.5px); border-radius: 50%; background: #d9b978; box-shadow: 0 0 7px #d9b978; }
-.pov-flight-readout { position: absolute; z-index: 5; left: clamp(2rem, 8vw, 9rem); bottom: clamp(9.5rem, 19vh, 14rem); display: flex; flex-direction: column; align-items: flex-start; max-width: 44vw; text-shadow: 0 2px 15px #02050b, 0 4px 32px #02050b; }
-.pov-flight-readout-kicker, .pov-flight-readout-detail, .pov-flight-right-readout { font: 600 .58rem 'JetBrains Mono', monospace; letter-spacing: .17em; color: #9bb6c9; }
-.pov-flight-readout-kicker { color: #d9b978; }
-.pov-flight-readout strong { margin: .55rem 0 .28rem; font: 700 clamp(1.9rem, 4.5vw, 4.2rem)/1 'Inter', sans-serif; letter-spacing: -.055em; white-space: nowrap; }
-.pov-flight-readout-detail { color: #c4d4df; }
-.pov-flight-right-readout { position: absolute; z-index: 5; right: clamp(2rem, 8vw, 9rem); bottom: clamp(10rem, 19vh, 14.5rem); color: #a9becc; text-align: right; line-height: 1.9; text-shadow: 0 2px 14px #02050b; }
-.pov-flight-right-readout span { color: #d9b978; }
-.pov-flight-right-readout i { display: inline-block; margin: 0 .8rem; width: 30px; height: 1px; vertical-align: middle; background: rgba(217,185,120,.55); }
-.pov-flight-progress-track { position: absolute; z-index: 6; left: clamp(2rem, 8vw, 9rem); right: clamp(2rem, 8vw, 9rem); bottom: clamp(7.2rem, 14.6vh, 10.5rem); height: 2px; overflow: hidden; background: rgba(172,205,226,.25); }
-.pov-flight-progress-track > div { width: 100%; height: 100%; background: linear-gradient(90deg, #7ca9c9, #e7c883); transform: scaleX(0); transform-origin: left center; box-shadow: 0 0 12px rgba(222,193,128,.8); }
-.pov-flight-console { position: absolute; z-index: 6; left: clamp(2rem, 8vw, 9rem); right: clamp(2rem, 8vw, 9rem); bottom: clamp(1.25rem, 4vh, 2.5rem); display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; color: #9fb6c6; font: 600 .53rem/1.7 'JetBrains Mono', monospace; letter-spacing: .13em; text-shadow: 0 1px 10px #000; pointer-events: none; }
-.pov-flight-console-left { display: flex; align-items: center; gap: .8rem; }
-.pov-flight-console-lights { display: flex; gap: 3px; }
-.pov-flight-console-lights i { width: 3px; height: 10px; background: #d9b978; box-shadow: 0 0 7px rgba(217,185,120,.55); }
-.pov-flight-console-lights i:nth-child(2) { opacity: .6; }
-.pov-flight-console-lights i:nth-child(3) { opacity: .27; }
-.pov-flight-console-center { display: flex; flex-direction: column; align-items: center; color: #d7e3ea; }
-.pov-flight-console-center span:first-child { font-size: 1.65rem; line-height: 1; color: #d9b978; text-shadow: 0 0 16px rgba(217,185,120,.45); }
-.pov-flight-console-right { white-space: nowrap; }
-.pov-flight-console-right i { display: inline-block; width: 9px; height: 1px; background: #d9b978; vertical-align: middle; margin: 0 .3rem; }
-@media (max-width: 767px) {
-  .pov-flight-topline { top: 1.5rem; left: 1.4rem; right: 1.4rem; }
-  .pov-flight-brand { font-size: .54rem; }
-  .pov-flight-brand small { display: none; }
-  .pov-flight-skip { padding: .62rem .7rem; font-size: .48rem; }
-  .pov-flight-canopy svg { width: 132%; margin-left: -16%; }
-  .pov-flight-readout { left: 1.55rem; right: 1.55rem; max-width: none; bottom: 18%; }
-  .pov-flight-readout strong { font-size: clamp(2rem, 9vw, 3.5rem); }
-  .pov-flight-readout-kicker, .pov-flight-readout-detail { font-size: .49rem; }
-  .pov-flight-right-readout { display: none; }
-  .pov-flight-progress-track { left: 1.55rem; right: 1.55rem; bottom: 13%; }
-  .pov-flight-console { left: 1.5rem; right: 1.5rem; bottom: 3%; }
-  .pov-flight-console-right { display: none; }
-  .pov-flight-console-center { align-items: flex-end; font-size: .45rem; }
-  .pov-flight-reticle { width: 44px; height: 44px; }
-  .pov-flight-reticle::before { box-shadow: 0 65px rgba(186,223,243,.45); }
-  .pov-flight-reticle::after { box-shadow: 65px 0 rgba(186,223,243,.45); }
+/* ==========================================================================
+   LIVING JOURNEY THREAD (OPTION 2A: EDITORIAL MONOLINE)
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap');
+
+:root {
+  --ljt-bg-dark: #050811;
+  --ljt-gold: #d4a853;
+  --ljt-gold-glow: rgba(212, 168, 83, 0.45);
+  --ljt-cyan: #38bdf8;
+  --ljt-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ljt-font-mono: 'JetBrains Mono', monospace;
+  --ljt-font-serif: 'Newsreader', Georgia, serif;
 }
-@media (max-height: 680px) and (min-width: 768px) {
-  .pov-flight-readout, .pov-flight-right-readout { bottom: 20%; }
-  .pov-flight-progress-track { bottom: 14%; }
-  .pov-flight-console { bottom: 3%; }
+
+/* Base Stage */
+.living-thread-stage {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--ljt-bg-dark);
+  color: #f1f5f9;
+  font-family: var(--ljt-font-sans);
+  z-index: 10000;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
 }
-@media (prefers-reduced-motion: reduce) {
-  .pov-flight * { transition: none !important; animation: none !important; }
+
+/* Ambient Canvas */
+.thread-ambient-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   TOPLINE HEADER
+   ========================================================================== */
+.thread-topline {
+  position: absolute;
+  top: 3.6rem;
+  left: 3.5rem;
+  right: 3.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  z-index: 90;
+  pointer-events: none;
+}
+
+.thread-header-title {
+  font-family: var(--ljt-font-serif);
+  font-size: 1.75rem;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.015em;
+  color: #f8fafc;
+  margin-bottom: 0.2rem;
+}
+
+.thread-header-sub {
+  font-family: var(--ljt-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ljt-gold);
+}
+
+.thread-topline-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  pointer-events: auto;
+}
+
+.thread-scroll-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--ljt-font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.35rem 0.8rem;
+  border-radius: 9999px;
+  animation: floatPrompt 2.4s ease-in-out infinite;
+  transition: opacity 0.4s;
+}
+
+.thread-skip-btn {
+  font-family: var(--ljt-font-mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.35rem 0.8rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.thread-skip-btn:hover {
+  color: #ffffff;
+  border-color: rgba(212, 168, 83, 0.45);
+  background: rgba(212, 168, 83, 0.12);
+  box-shadow: 0 0 14px rgba(212, 168, 83, 0.2);
+}
+
+@keyframes floatPrompt {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* ==========================================================================
+   PANORAMIC WORLD TRACK (CAMERA PANS ONLY AFTER WINDOW IS FILLED)
+   ========================================================================== */
+.thread-world-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2800px;
+  height: 100vh;
+  will-change: transform;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* SVG Spline & Stems Layer */
+.thread-svg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2800px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 12;
+}
+
+.thread-path-shadow {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.85);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.thread-path-glow {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
+.thread-path-main {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+/* Vertical Stems */
+.stem-line {
+  stroke: rgba(255, 255, 255, 0.26);
+  stroke-width: 1.4;
+  stroke-dasharray: 2.5 3.5;
+  transition: stroke 0.35s;
+}
+
+.stem-line.active {
+  stroke: var(--ljt-gold);
+  stroke-width: 1.6;
+  filter: drop-shadow(0 0 6px var(--ljt-gold));
+}
+
+/* Waypoint Dots */
+.waypoint-origin-dot {
+  fill: #ffffff;
+  stroke: var(--ljt-bg-dark);
+  stroke-width: 2.2;
+  filter: drop-shadow(0 0 6px #ffffff);
+  transition: opacity 0.3s ease;
+}
+
+.waypoint-terminal-dot {
+  fill: var(--ljt-gold);
+  filter: drop-shadow(0 0 8px var(--ljt-gold));
+  transition: opacity 0.3s ease;
+}
+
+/* Traveling Navigator Dot */
+.thread-navigator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 70;
+  will-change: left, top;
+}
+
+.nav-oval-head {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 14px #ffffff, 0 0 28px var(--ljt-gold);
+  position: relative;
+}
+
+.nav-oval-head::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ljt-gold);
+  animation: navPulse 1.8s ease-out infinite;
+}
+
+@keyframes navPulse {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* ==========================================================================
+   MILESTONE CARDS (PERFECT SAFE VERTICAL BOUNDS — ZERO OVERLAP)
+   ========================================================================== */
+.milestones-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2800px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 55;
+}
+
+.milestone-block {
+  position: absolute;
+  width: 320px;
+  opacity: 0;
+  pointer-events: auto;
+  padding: 1.25rem 1.4rem;
+  background: rgba(10, 16, 28, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.65);
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
+}
+
+.milestone-block.stem-up {
+  transform: translateY(12px);
+}
+
+.milestone-block.stem-up.visible {
+  opacity: 0.88;
+  transform: translateY(0);
+}
+
+.milestone-block.stem-up.is-active {
+  opacity: 1;
+  transform: translateY(0) scale(1.02);
+  border-color: rgba(212, 168, 83, 0.45);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 168, 83, 0.18);
+}
+
+.milestone-block.stem-down {
+  transform: translateY(-12px);
+}
+
+.milestone-block.stem-down.visible {
+  opacity: 0.88;
+  transform: translateY(0);
+}
+
+.milestone-block.stem-down.is-active {
+  opacity: 1;
+  transform: translateY(0) scale(1.02);
+  border-color: rgba(212, 168, 83, 0.45);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 168, 83, 0.18);
+}
+
+.milestone-year {
+  font-family: var(--ljt-font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--ljt-gold);
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-transform: uppercase;
+}
+
+.milestone-year-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.milestone-headline {
+  font-family: var(--ljt-font-serif);
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.22;
+  color: #ffffff;
+  margin-bottom: 0.45rem;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.milestone-block.is-active .milestone-headline {
+  color: #ffffff;
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.45);
+}
+
+.milestone-detail {
+  font-family: var(--ljt-font-sans);
+  font-size: 0.8rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  transition: color 0.3s;
+}
+
+.milestone-block.is-active .milestone-detail {
+  color: #e2e8f0;
+}
+
+/* ==========================================================================
+   FLOATING SCROLL HELPER
+   ========================================================================== */
+.floating-scroll-hint {
+  position: absolute;
+  bottom: 2.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 80;
+  font-family: var(--ljt-font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  color: #94a3b8;
+  background: rgba(10, 16, 28, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.scroll-mouse-icon {
+  width: 10px;
+  height: 15px;
+  border: 1.2px solid #cbd5e1;
+  border-radius: 5px;
+  position: relative;
+}
+
+.scroll-mouse-wheel {
+  width: 2px;
+  height: 4px;
+  background: var(--ljt-gold);
+  border-radius: 1px;
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: mouseWheelMove 1.5s infinite;
+}
+
+@keyframes mouseWheelMove {
+  0% { top: 2px; opacity: 1; }
+  100% { top: 8px; opacity: 0; }
+}
+
+/* ==========================================================================
+   FLASH FLARE TRANSITION CLIMAX
+   ========================================================================== */
+.flash-flare {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #ffffff 0%, rgba(212, 168, 83, 0.6) 40%, transparent 80%);
+  z-index: 10001;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease-out;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+@media (max-width: 768px) {
+  .thread-topline {
+    top: 3.8rem;
+    left: 1.5rem;
+    right: 1.5rem;
+  }
+  .thread-header-title {
+    font-size: 1.35rem;
+  }
+  .thread-scroll-indicator {
+    display: none;
+  }
+  .milestone-block {
+    width: 275px;
+    padding: 1rem 1.15rem;
+  }
+  .milestone-headline {
+    font-size: 1.05rem;
+  }
+  .milestone-detail {
+    font-size: 0.74rem;
+  }
+  .floating-scroll-hint {
+    bottom: 1.2rem;
+    font-size: 0.58rem;
+    padding: 0.35rem 0.75rem;
+  }
 }

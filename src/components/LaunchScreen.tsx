@@ -166,7 +166,16 @@ export default function LaunchScreen({ onLaunch, onSkip }: LaunchScreenProps) {
           </motion.div>
         )}
       </AnimatePresence>
-      {inFlight && <LaunchFlight onComplete={finishJourney} onSkip={finishJourney} />}
+      {inFlight && (
+        <LaunchFlight
+          onComplete={finishJourney}
+          onSkip={finishJourney}
+          onReset={() => {
+            setPhase('idle');
+            phaseRef.current = 'idle';
+          }}
+        />
+      )}
     </motion.div>
   );
 }
