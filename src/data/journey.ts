@@ -4,7 +4,7 @@ export const journeyStops = [
   { id: 'building', label: 'DakNode Station', heading: "What I'm building now", shortLabel: 'Current build' },
   { id: 'work', label: 'Product Station', heading: "Things I've built", shortLabel: 'Projects' },
   { id: 'tech-depth', label: 'Tech Station', heading: 'What I work with', shortLabel: 'Tools' },
-  { id: 'how-i-build', label: 'Method Station', heading: 'How I build', shortLabel: 'Approach' },
+  { id: 'experience', label: 'Mission Log', heading: "Where I've worked", shortLabel: 'Experience' },
   { id: 'journey', label: 'Horizon Station', heading: 'From writing code to building systems', shortLabel: 'Journey' },
   { id: 'contact', label: 'The Unknown', heading: 'Build something useful', shortLabel: 'Contact' },
 ] as const;

@@ -279,7 +279,7 @@ export default function LaunchFlight({ onComplete, onSkip }: LaunchFlightProps) 
       warm: rand() > .92,
     }));
     let active = true;
-    getEarthTexture().then((texture) => { if (active) earth = texture; }).catch(() => {});
+    getEarthTexture().then((texture) => { if (active) earth = texture; }).catch(() => { });
 
     const resize = () => {
       width = window.innerWidth;

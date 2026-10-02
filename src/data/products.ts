@@ -212,37 +212,72 @@ export const techStack: TechGroup[] = [
 ];
 
 // ========================================
-// HOW I BUILD — Principles
+// EXPERIENCE — Mission Log
 // ========================================
 
-export interface Principle {
-  number: string;
-  title: string;
-  description: string;
+export interface ExperienceBullet {
+  text: string;
+  highlight?: string;
 }
 
-export const principles: Principle[] = [
+export interface ExperienceRole {
+  number: string;
+  company: string;
+  role: string;
+  duration: string;
+  location: string;
+  tags: string[];
+  bullets: ExperienceBullet[];
+}
+
+export const experienceData: ExperienceRole[] = [
   {
     number: '01',
-    title: 'Start with the problem',
-    description: 'Technology is useful when it removes meaningful friction.',
+    company: 'b3 Solutions Pvt Ltd',
+    role: 'AI Developer Intern',
+    duration: 'Sep 2025 – Apr 2026',
+    location: 'Chandigarh, India',
+    tags: ['FastAPI', 'Celery', 'React', 'PostgreSQL', 'Redis', 'MinIO', 'Docker', 'GCP'],
+    bullets: [
+      {
+        text: 'Built a document automation platform processing thousands of invoices/month — full backend with FastAPI, Celery, React, and PostgreSQL.',
+      },
+      {
+        text: 'Designed a multi-stage OCR pipeline (PyMuPDF → pdfplumber → Tesseract) with per-supplier Strategy-pattern parsers.',
+        highlight: '90% extraction accuracy',
+      },
+      {
+        text: 'Built async processing with Celery + Redis for classification and duplicate detection.',
+        highlight: 'Cut duplicates by 99%',
+      },
+      {
+        text: 'Replaced third-party cloud storage with self-hosted MinIO (S3-compatible).',
+        highlight: 'Saved $300/month',
+      },
+      {
+        text: 'Deployed the containerized stack on a GCP Compute Engine VM using Docker Compose with Nginx reverse proxy for production.',
+      },
+    ],
   },
   {
     number: '02',
-    title: 'Build the smallest useful system',
-    description:
-      'I prefer shipping a working version and learning from reality instead of designing everything upfront.',
-  },
-  {
-    number: '03',
-    title: 'Production matters',
-    description:
-      'APIs, databases, failures, deployment, observability, security, and edge cases matter just as much as the demo.',
-  },
-  {
-    number: '04',
-    title: 'Users change the roadmap',
-    description: 'The product should evolve according to what people actually need and use.',
+    company: 'RDSO, Indian Railway',
+    role: 'Python Developer Intern',
+    duration: 'Jun 2025 – Jul 2025',
+    location: 'Lucknow, India',
+    tags: ['Python', 'Django', 'PostgreSQL', 'Automation'],
+    bullets: [
+      {
+        text: 'Developed a custom automated Word document generator for standardized railway reports.',
+        highlight: '90%+ faster report generation',
+      },
+      {
+        text: 'Implemented dynamic table formatting with styling, zebra-striping, and template rendering for customizable reports.',
+      },
+      {
+        text: 'Gained hands-on experience in backend development with Django and web application design with PostgreSQL integration.',
+      },
+    ],
   },
 ];
 

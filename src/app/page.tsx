@@ -20,7 +20,7 @@ import SpaceTransition from '@/components/SpaceTransition';
 import FeaturedBuild from '@/components/FeaturedBuild';
 import ProductGrid from '@/components/ProductGrid';
 import BuilderPath from '@/components/BuilderPath';
-import HowIBuild from '@/components/HowIBuild';
+import ExperienceSection from '@/components/ExperienceSection';
 import TechDepth from '@/components/TechDepth';
 import AboutSection from '@/components/AboutSection';
 import ContactSection from '@/components/ContactSection';
@@ -99,9 +99,9 @@ export default function Home() {
           <SpaceTransition nextDestination="AI & Systems" />
           <TechDepth />
 
-          {/* ===== DESTINATION 5: Building Approach ===== */}
-          <SpaceTransition nextDestination="How I Build" />
-          <HowIBuild />
+          {/* ===== DESTINATION 5: Mission Log ===== */}
+          <SpaceTransition nextDestination="Mission Log" />
+          <ExperienceSection />
 
           {/* ===== DESTINATION 6: Engineering Path ===== */}
           <SpaceTransition nextDestination="Engineering Path" />
