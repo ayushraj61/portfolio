@@ -31,7 +31,7 @@ export const products: Product[] = [
     expandedDescription:
       'Building infrastructure that gives AI agents persistent email identities, inboxes, programmatic communication, events, and controlled access to email workflows. A developer-first API for agent communication.',
     whatItDoes: 'Designed to give autonomous agents a programmatic inbox and outbox with webhook events.',
-    technology: ['Next.js', 'PostgreSQL', 'SMTP/IMAP integrations', 'Redis'],
+    technology: ['Next.js', 'PostgreSQL', 'Redis'],
     status: 'building',
     url: 'https://daknode.com',
     tags: ['AI Agents', 'Email Infrastructure', 'APIs', 'Webhooks', 'Developer Platform'],
