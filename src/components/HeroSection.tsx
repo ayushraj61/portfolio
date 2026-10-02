@@ -1,34 +1,15 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import HeroVisual from './HeroVisual';
 
 // ========================================
 // HERO SECTION — Redesigned for impact
 // Less text, more visual, eye-catching
 // Inspired by: Vercel, Linear, Stripe heroes
-// Short punchy statement + animated role cycling
 // ========================================
 
-const roles = [
-  'Software Engineer',
-  'AI Builder',
-  'Product Builder',
-  'Backend Architect',
-];
-
 export default function HeroSection() {
-  const [roleIndex, setRoleIndex] = useState(0);
-
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const interval = setInterval(() => {
-      setRoleIndex((prev) => (prev + 1) % roles.length);
-    }, 2800);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <section className="hero" id="hero">
       {/* A view from the ground after the arrival flight. */}
@@ -37,30 +18,6 @@ export default function HeroSection() {
       <div className="container">
         <div className="hero-content">
 
-
-
-          {/* Animated role cycling — top eyebrow */}
-          <motion.div
-            className="hero-role-cycler"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <span className="hero-role-dot" />
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={roleIndex}
-                className="hero-role-text"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.4 }}
-              >
-                {roles[roleIndex]}
-              </motion.span>
-            </AnimatePresence>
-          </motion.div>
-
           {/* Name — big and bold */}
           <motion.h1
             className="hero-name"
@@ -68,7 +25,7 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            Ayush Raj
+            Hi, I am Ayush
           </motion.h1>
 
           {/* One-liner — short and punchy */}
