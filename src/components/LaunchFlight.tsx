@@ -142,6 +142,7 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
   const stemsGroupRef = useRef<SVGGElement>(null);
   const waypointsGroupRef = useRef<SVGGElement>(null);
   const navigatorRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const flashFlareRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
 
@@ -190,19 +191,22 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
     });
   }, []);
 
-  // Climax trigger into portfolio hero
+  // Climax trigger into portfolio hero (silky smooth cinematic dissolve)
   const triggerArrivalTransition = useCallback(() => {
     if (isTransitioningRef.current) return;
     isTransitioningRef.current = true;
     cancelAnimationFrame(animFrameRef.current);
 
+    if (stageRef.current) {
+      stageRef.current.classList.add('stage-arriving');
+    }
     if (flashFlareRef.current) {
-      flashFlareRef.current.style.opacity = '0.95';
+      flashFlareRef.current.style.opacity = '0.6';
     }
 
     setTimeout(() => {
       completeRef.current();
-    }, 280);
+    }, 750);
   }, []);
 
   const handleSkip = useCallback(() => {
@@ -210,17 +214,20 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
     isTransitioningRef.current = true;
     cancelAnimationFrame(animFrameRef.current);
 
-    if (flashFlareRef.current) {
-      flashFlareRef.current.style.opacity = '0.95';
+    if (stageRef.current) {
+      stageRef.current.classList.add('stage-arriving');
     }
 
     setTimeout(() => {
       skipRef.current();
-    }, 200);
+    }, 450);
   }, []);
 
   const handleReset = useCallback(() => {
     cancelAnimationFrame(animFrameRef.current);
+    if (stageRef.current) {
+      stageRef.current.classList.remove('stage-arriving');
+    }
     if (resetRef.current) {
       resetRef.current();
     } else {
@@ -532,7 +539,7 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
   }, [triggerArrivalTransition, handleReset, handleSkip]);
 
   return (
-    <div className="living-thread-stage">
+    <div ref={stageRef} className="living-thread-stage">
       <canvas ref={canvasRef} className="thread-ambient-canvas" />
 
       {/* Topline Status Header */}

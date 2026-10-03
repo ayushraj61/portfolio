@@ -91,8 +91,10 @@ export default function LaunchScreen({ onLaunch, onSkip }: LaunchScreenProps) {
   const finishJourney = () => {
     if (completedRef.current) return;
     completedRef.current = true;
-    setPhase('done');
     onLaunch();
+    setTimeout(() => {
+      setPhase('done');
+    }, 850);
   };
 
   const handleLaunch = () => {
