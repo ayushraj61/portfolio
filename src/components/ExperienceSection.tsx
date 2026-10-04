@@ -50,12 +50,43 @@ export default function ExperienceSection() {
       }
     };
 
+    // Mobile touch swipe between experience stations
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffX = touchStartX - touchEndX;
+      const diffY = touchStartY - touchEndY;
+
+      if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX > 0 && currentIndex === 0) {
+          switchSystem(1);
+        } else if (diffX < 0 && currentIndex === 1) {
+          switchSystem(0);
+        }
+      }
+    };
+
     window.addEventListener('wheel', handleWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleWheel);
+    section.addEventListener('touchstart', handleTouchStart, { passive: true });
+    section.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      section.removeEventListener('touchstart', handleTouchStart);
+      section.removeEventListener('touchend', handleTouchEnd);
+    };
   }, [currentIndex, isAnimating]);
 
   return (
-    <SectionWrapper className="relative w-full h-[100vh] min-h-[800px] overflow-hidden" id="experience" atmosphereColor="#3b82f6">
+    <SectionWrapper className="relative w-full h-[100vh] min-h-[680px] md:min-h-[800px] overflow-hidden" id="experience" atmosphereColor="#3b82f6">
       <div ref={sectionRef} className="relative w-full h-full">
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
         
@@ -505,6 +536,100 @@ export default function ExperienceSection() {
         }
         .mission-tab:hover { color: #fff; background: rgba(255,255,255,0.05); }
         .mission-tab.active { background: rgba(255,255,255,0.1); color: #fff; box-shadow: inset 0 1px 1px rgba(255,255,255,0.1); }
+
+        @media (max-width: 900px) {
+          .dashboard-container {
+            flex-direction: column;
+            padding-top: 110px;
+            padding-bottom: 84px;
+            overflow: hidden;
+          }
+          .stage {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.22;
+            z-index: 1;
+            overflow: hidden;
+          }
+          .system-view {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.55);
+          }
+          .log-panel {
+            width: 100%;
+            max-width: 100%;
+            margin-left: 0;
+            padding: 0 1.25rem;
+            z-index: 20;
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+          }
+          .log-content {
+            position: relative;
+            top: auto;
+            left: auto;
+            right: auto;
+            transform: none;
+            width: 100%;
+            max-width: 100%;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+          }
+          .log-content.active {
+            display: block;
+            opacity: 1;
+            transform: none;
+          }
+          .log-header {
+            margin-bottom: 16px;
+          }
+          .log-date {
+            font-size: 11px;
+            margin-bottom: 6px;
+          }
+          .log-title {
+            font-size: 24px;
+            margin-bottom: 4px;
+          }
+          .log-role {
+            font-size: 14px;
+            margin-bottom: 0;
+          }
+          .log-bullets {
+            gap: 12px;
+          }
+          .bullet {
+            font-size: 12.5px;
+            line-height: 1.5;
+            padding-left: 16px;
+          }
+          .bullet::before {
+            top: 6px;
+          }
+          .mission-control {
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
+            width: auto;
+            gap: 6px;
+            padding: 5px 8px;
+            touch-action: manipulation;
+          }
+          .mission-tab {
+            padding: 7px 18px;
+            font-size: 12px;
+          }
+          .scroll-hint {
+            display: none !important; /* Eliminate overlap with mission-control tabs on phone viewports */
+          }
+        }
       `}} />
       </div>
     </SectionWrapper>

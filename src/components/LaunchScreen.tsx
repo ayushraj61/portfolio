@@ -94,7 +94,7 @@ export default function LaunchScreen({ onLaunch, onSkip }: LaunchScreenProps) {
     onLaunch();
     setTimeout(() => {
       setPhase('done');
-    }, 850);
+    }, 1350);
   };
 
   const handleLaunch = () => {

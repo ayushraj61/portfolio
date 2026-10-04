@@ -33,9 +33,9 @@ export default function Home() {
 
   const handleLaunch = () => {
     setHasLaunched(true);
-    requestAnimationFrame(() => scrollToStop('hero'));
-    // Small delay before removing the launch screen DOM
-    setTimeout(() => setShowLaunch(false), 800);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    // Small delay before removing the launch screen DOM (after aperture dissolves)
+    setTimeout(() => setShowLaunch(false), 1300);
   };
 
   const handleSkip = (destination: string) => {
@@ -53,14 +53,14 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Main portfolio — rendered underneath, becomes visible after launch */}
-      <motion.div
+      {/* Main portfolio — rendered underneath, revealed directly through opening 3D aperture */}
+      <div
         aria-hidden={!hasLaunched}
         inert={!hasLaunched}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: hasLaunched ? 1 : 0 }}
-        transition={{ duration: 1.2, delay: 0.2 }}
-        style={{ pointerEvents: hasLaunched ? 'auto' : 'none' }}
+        style={{
+          opacity: 1,
+          pointerEvents: hasLaunched ? 'auto' : 'none',
+        }}
       >
         {/* Fixed space background — animated starfield with scroll-driven journey */}
         <SpaceCanvas />
@@ -116,7 +116,7 @@ export default function Home() {
 
         {/* Footer */}
         <Footer />
-      </motion.div>
+      </div>
     </>
   );
 }

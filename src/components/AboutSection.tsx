@@ -38,14 +38,24 @@ export default function AboutSection() {
     }, 800);
   };
 
-  // Close on ESC
+  // Close on ESC and lock body scroll when expanded
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeResume();
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+
+    if (isExpanded) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [isExpanded]);
 
   return (
     <section className="section" id="about" aria-label="About Ayush Raj">

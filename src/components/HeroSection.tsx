@@ -21,9 +21,9 @@ export default function HeroSection() {
           {/* Name & Greeting — stacked two-tier typography */}
           <motion.h1
             className="hero-name"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <span className="hero-greeting">Hi, I&apos;m</span>
             <span className="hero-name-text">Ayush Raj</span>
@@ -32,9 +32,9 @@ export default function HeroSection() {
           {/* One-liner — short and punchy */}
           <motion.p
             className="hero-tagline"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
+            transition={{ duration: 0.6, delay: 0.05 }}
           >
             I build products where{' '}
             <span className="hero-tagline-accent">AI meets real-world problems.</span>
@@ -43,9 +43,9 @@ export default function HeroSection() {
           {/* CTAs — clean and spaced */}
           <motion.div
             className="hero-actions"
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 1.0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
             <a
               href="#work"
@@ -78,7 +78,7 @@ export default function HeroSection() {
             className="hero-building-pill"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 1.3 }}
+            transition={{ duration: 0.5, delay: 0.15 }}
             whileHover={{ scale: 1.02 }}
           >
             <span className="building-pill-dot" />
@@ -95,7 +95,7 @@ export default function HeroSection() {
         className="scroll-indicator"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 2 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
       >
         <span className="scroll-indicator-text">Scroll to travel</span>
         <span className="scroll-indicator-line" />

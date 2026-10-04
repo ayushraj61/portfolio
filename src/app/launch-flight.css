@@ -417,46 +417,221 @@
 }
 
 /* ==========================================================================
-   ATMOSPHERIC GOLDEN BLOOM (SOFT AMBIENT ARRIVAL AURA)
+   ANAMORPHIC KINETIC 3D APERTURE ORIGAMI TRANSITION (OPTION 5)
    ========================================================================== */
-.flash-flare {
+.aperture-shutter-matrix {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at 80% 50%, rgba(212, 168, 83, 0.18) 0%, rgba(56, 189, 248, 0.08) 40%, transparent 75%);
-  z-index: 10001;
-  opacity: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
   pointer-events: none;
-  transition: opacity 0.6s ease-out;
+  z-index: 10005;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s;
+}
+
+.living-thread-stage.aperture-animating .aperture-shutter-matrix {
+  opacity: 1;
+  visibility: visible;
+}
+
+.aperture-blade {
+  flex: 1;
+  height: 100vh;
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.4s ease;
+}
+
+.aperture-blade.blade-even {
+  transform-origin: bottom center;
+}
+
+/* Phase 1: Shutters SLAM SHUT over screen */
+.living-thread-stage.aperture-shut .aperture-blade {
+  transform: scaleY(1);
+}
+
+/* Phase 2: Shutters PIVOT OPEN in 3D origami sequence */
+.living-thread-stage.aperture-opened .aperture-blade.blade-odd {
+  transform: rotateY(86deg) translateZ(-160px) translateY(-50px);
+  opacity: 0;
+  transition: transform 0.95s cubic-bezier(0.19, 1, 0.22, 1),
+              opacity 0.85s ease;
+}
+
+.living-thread-stage.aperture-opened .aperture-blade.blade-even {
+  transform: rotateY(-86deg) translateZ(-280px) translateY(50px);
+  opacity: 0;
+  transition: transform 0.95s cubic-bezier(0.19, 1, 0.22, 1),
+              opacity 0.85s ease;
+}
+
+.blade-inner {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #070e1c 0%, #03060d 50%, #081122 100%);
+  border-left: 1px solid rgba(212, 168, 83, 0.35);
+  border-right: 1px solid rgba(56, 189, 248, 0.25);
+  box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.2rem 0.6rem;
+  overflow: hidden;
+}
+
+.blade-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 5px, rgba(56, 189, 248, 0.04) 5px, rgba(56, 189, 248, 0.04) 10px);
+  pointer-events: none;
+}
+
+.blade-hud-tag {
+  font-family: var(--ljt-font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.18em;
+  color: rgba(212, 168, 83, 0.8);
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-shadow: 0 0 8px rgba(212, 168, 83, 0.5);
+}
+
+.blade-center-glyph {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ljt-font-mono);
+  font-size: 0.72rem;
+  color: #38bdf8;
+  text-shadow: 0 0 10px #38bdf8;
+}
+
+.blade-seam-laser {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, #38bdf8 30%, #d4a853 70%, transparent);
+  box-shadow: 0 0 14px #38bdf8, 0 0 28px var(--ljt-gold);
+}
+
+/* Traveling Conduit Dot */
+.conduit-dot-traveler {
+  position: fixed;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 20px #ffffff, 0 0 40px var(--ljt-gold);
+  z-index: 10010;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* Stage depth during aperture opening */
+.living-thread-stage.aperture-shut,
+.living-thread-stage.aperture-opened {
+  background: transparent !important;
+}
+
+.living-thread-stage.aperture-shut .thread-ambient-canvas,
+.living-thread-stage.aperture-opened .thread-ambient-canvas,
+.living-thread-stage.aperture-shut .thread-world-track,
+.living-thread-stage.aperture-opened .thread-world-track {
+  opacity: 0 !important;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.living-thread-stage.aperture-opened {
+  transform: scale(0.92) translateZ(-350px);
+  opacity: 0;
+  transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.9s ease;
+}
+
+.living-thread-stage.aperture-opened .thread-topline,
+.living-thread-stage.aperture-opened .floating-scroll-hint {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.scroll-hint-mobile {
+  display: none;
+}
+.scroll-hint-desktop {
+  display: inline;
 }
 
 /* ==========================================================================
-   RESPONSIVE DESIGN
+   RESPONSIVE DESIGN (PERFECT MOBILE CLEARANCE)
    ========================================================================== */
 @media (max-width: 768px) {
   .thread-topline {
-    top: 3.8rem;
-    left: 1.5rem;
-    right: 1.5rem;
+    top: 1.25rem;
+    left: 1.15rem;
+    right: 1.15rem;
   }
   .thread-header-title {
-    font-size: 1.35rem;
+    font-size: 1.2rem;
+    margin-bottom: 0.15rem;
+  }
+  .thread-header-sub {
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
   }
   .thread-scroll-indicator {
     display: none;
   }
+  .thread-skip-btn {
+    font-size: 0.62rem;
+    padding: 0.32rem 0.7rem;
+  }
   .milestone-block {
-    width: 275px;
-    padding: 1rem 1.15rem;
+    width: 260px;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+  }
+  .milestone-year {
+    font-size: 0.58rem;
+    margin-bottom: 0.25rem;
   }
   .milestone-headline {
-    font-size: 1.05rem;
+    font-size: 1.02rem;
+    line-height: 1.22;
+    margin-bottom: 0.35rem;
   }
   .milestone-detail {
-    font-size: 0.74rem;
+    font-size: 0.72rem;
+    line-height: 1.42;
   }
   .floating-scroll-hint {
-    bottom: 1.2rem;
+    bottom: 1.1rem;
     font-size: 0.58rem;
-    padding: 0.35rem 0.75rem;
+    padding: 0.35rem 0.85rem;
+  }
+  .scroll-mouse-icon {
+    display: none;
+  }
+  .scroll-hint-desktop {
+    display: none;
+  }
+  .scroll-hint-mobile {
+    display: inline;
+    letter-spacing: 0.08em;
   }
 }

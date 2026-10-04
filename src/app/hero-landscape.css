@@ -313,6 +313,23 @@
   .hero-sun-label { display: none; }
 }
 
+@media (max-width: 768px) {
+  .hero .container {
+    transform: none !important;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .hero-moon-scene {
+    top: 12%;
+    right: 8%;
+  }
+  .hero-sky-photo,
+  .hero-rocks-layer,
+  .hero-rocks-moonlight {
+    background-size: cover;
+  }
+}
+
 @keyframes bird-flap {
   0% { transform: scaleY(1); }
   50% { transform: scaleY(0.3); }

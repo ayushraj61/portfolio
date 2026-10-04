@@ -143,7 +143,8 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
   const waypointsGroupRef = useRef<SVGGElement>(null);
   const navigatorRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const flashFlareRef = useRef<HTMLDivElement>(null);
+  const apertureMatrixRef = useRef<HTMLDivElement>(null);
+  const travelingDotRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
 
   const completeRef = useRef(onComplete);
@@ -167,8 +168,10 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
 
   // Position cards with safe vertical clearance
   const positionMilestoneCards = useCallback(() => {
+    const isMobile = window.innerWidth < 768;
     const scaleY = window.innerHeight / SVG_HEIGHT;
-    const cardWidth = window.innerWidth < 768 ? 275 : 320;
+    const cardWidth = isMobile ? Math.min(265, window.innerWidth - 36) : 320;
+    const stemLen = isMobile ? 44 : 75;
 
     WAYPOINTS.forEach((m) => {
       const card = document.getElementById(`milestone-card-${m.idx}`);
@@ -180,33 +183,84 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
       card.style.transform = 'none';
 
       if (m.stemDir === 'up') {
-        const termDotScreenY = (m.y - m.stemLength) * scaleY;
-        card.style.bottom = `${window.innerHeight - termDotScreenY + 16}px`;
+        const termDotScreenY = (m.y - stemLen) * scaleY;
+        const bottomGap = isMobile ? 12 : 16;
+        card.style.bottom = `${window.innerHeight - termDotScreenY + bottomGap}px`;
         card.style.top = 'auto';
       } else {
-        const termDotScreenY = (m.y + m.stemLength) * scaleY;
-        card.style.top = `${termDotScreenY + 16}px`;
+        const termDotScreenY = (m.y + stemLen) * scaleY;
+        const topGap = isMobile ? 12 : 16;
+        card.style.top = `${termDotScreenY + topGap}px`;
         card.style.bottom = 'auto';
       }
     });
   }, []);
 
-  // Climax trigger into portfolio hero (silky smooth cinematic dissolve)
+  // Anamorphic Kinetic 3D Aperture Origami Transition (Option 5)
   const triggerArrivalTransition = useCallback(() => {
     if (isTransitioningRef.current) return;
     isTransitioningRef.current = true;
     cancelAnimationFrame(animFrameRef.current);
 
-    if (stageRef.current) {
-      stageRef.current.classList.add('stage-arriving');
-    }
-    if (flashFlareRef.current) {
-      flashFlareRef.current.style.opacity = '0.6';
+    const navRect = navigatorRef.current?.getBoundingClientRect();
+    const dotCenterX = navRect ? navRect.left + navRect.width / 2 : window.innerWidth * 0.75;
+    const dotCenterY = navRect ? navRect.top + navRect.height / 2 : window.innerHeight * 0.55;
+
+    // 1. Prepare flying energy orb at current navigator position
+    if (travelingDotRef.current) {
+      travelingDotRef.current.style.left = `${dotCenterX - 8}px`;
+      travelingDotRef.current.style.top = `${dotCenterY - 8}px`;
+      travelingDotRef.current.style.opacity = '1';
+      travelingDotRef.current.style.transform = 'scale(1.4)';
+      travelingDotRef.current.style.boxShadow = '0 0 30px #38bdf8, 0 0 60px var(--ljt-gold)';
     }
 
+    // Hide navigator dot on thread
+    if (navigatorRef.current) {
+      navigatorRef.current.style.opacity = '0';
+    }
+
+    // 2. Activate Aperture Matrix
+    if (stageRef.current) {
+      stageRef.current.classList.add('aperture-animating');
+    }
+
+    // 3. Shutters SLAM SHUT over screen (0ms - 400ms)
     setTimeout(() => {
+      if (stageRef.current) {
+        stageRef.current.classList.add('aperture-shut');
+      }
+      // Notify parent while shutters are shut so the real homepage is ready behind the blades
       completeRef.current();
-    }, 750);
+    }, 60);
+
+    // 4. Shutters PIVOT OPEN in 3D origami sequence (400ms - 1300ms)
+    setTimeout(() => {
+      if (stageRef.current) {
+        stageRef.current.classList.add('aperture-opened');
+      }
+
+      // Concurrently launch dot towards real homepage origin beacon
+      if (travelingDotRef.current) {
+        const beaconElem = document.querySelector('.hero-launch-point') || document.querySelector('.hero-actions');
+        let destX = window.innerWidth * 0.5;
+        let destY = window.innerHeight * 0.5;
+        if (beaconElem) {
+          const rect = beaconElem.getBoundingClientRect();
+          destX = rect.left + rect.width / 2;
+          destY = rect.top + rect.height / 2;
+        }
+        travelingDotRef.current.style.transition = 'transform 1.1s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease';
+        travelingDotRef.current.style.transform = `translate(${destX - dotCenterX}px, ${destY - dotCenterY}px) scale(0.9)`;
+      }
+
+      // Fade out energy orb upon docking
+      setTimeout(() => {
+        if (travelingDotRef.current) {
+          travelingDotRef.current.style.opacity = '0';
+        }
+      }, 950);
+    }, 420);
   }, []);
 
   const handleSkip = useCallback(() => {
@@ -215,18 +269,28 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
     cancelAnimationFrame(animFrameRef.current);
 
     if (stageRef.current) {
-      stageRef.current.classList.add('stage-arriving');
+      stageRef.current.classList.add('aperture-animating', 'aperture-shut');
     }
 
     setTimeout(() => {
+      if (stageRef.current) {
+        stageRef.current.classList.add('aperture-opened');
+      }
       skipRef.current();
-    }, 450);
+    }, 350);
   }, []);
 
   const handleReset = useCallback(() => {
     cancelAnimationFrame(animFrameRef.current);
     if (stageRef.current) {
-      stageRef.current.classList.remove('stage-arriving');
+      stageRef.current.classList.remove('aperture-animating', 'aperture-shut', 'aperture-opened', 'stage-arriving');
+    }
+    if (travelingDotRef.current) {
+      travelingDotRef.current.style.opacity = '0';
+      travelingDotRef.current.style.transform = 'none';
+    }
+    if (navigatorRef.current) {
+      navigatorRef.current.style.opacity = '1';
     }
     if (resetRef.current) {
       resetRef.current();
@@ -234,7 +298,6 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
       targetProgressRef.current = 0;
       currentProgressRef.current = 0;
       isTransitioningRef.current = false;
-      if (flashFlareRef.current) flashFlareRef.current.style.opacity = '0';
       if (worldTrackRef.current) worldTrackRef.current.style.transform = 'translateX(0px)';
     }
   }, []);
@@ -261,7 +324,9 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
     }
 
     const growthRatio = Math.min(1, Math.max(0, (progress - appearThreshold) / 0.035));
-    const targetY = m.stemDir === 'up' ? m.y - m.stemLength : m.y + m.stemLength;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const stemLen = isMobile ? 44 : m.stemLength;
+    const targetY = m.stemDir === 'up' ? m.y - stemLen : m.y + stemLen;
     const currentY = m.y + (targetY - m.y) * growthRatio;
 
     if (stem) {
@@ -432,8 +497,11 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
     stemsGroup.innerHTML = '';
     waypointsGroup.innerHTML = '';
 
+    const isMobile = window.innerWidth < 768;
+    const stemLen = isMobile ? 44 : 75;
+
     WAYPOINTS.forEach((m) => {
-      const targetY = m.stemDir === 'up' ? m.y - m.stemLength : m.y + m.stemLength;
+      const targetY = m.stemDir === 'up' ? m.y - stemLen : m.y + stemLen;
 
       const stemLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       stemLine.setAttribute('x1', `${m.x}`);
@@ -468,11 +536,18 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
 
   // Interactive Wheel, Touch, and Keyboard Listeners
   useEffect(() => {
+    // Lock document scroll position strictly to top during flight
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
     const hideHint = () => {
       if (hintRef.current) hintRef.current.style.opacity = '0.15';
     };
 
     const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
       if (isTransitioningRef.current) return;
       hideHint();
 
@@ -494,6 +569,8 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
       if (isTransitioningRef.current) return;
       const touchY = e.touches[0].clientY;
       const touchX = e.touches[0].clientX;
@@ -525,12 +602,13 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
       }
     };
 
-    window.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('wheel', handleWheel, { passive: false });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      document.body.style.overflow = originalOverflow;
       window.removeEventListener('wheel', handleWheel);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
@@ -609,11 +687,29 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
         <div className="scroll-mouse-icon">
           <div className="scroll-mouse-wheel" />
         </div>
-        <span>Scroll mouse wheel or trackpad to explore · You&apos;re in control</span>
+        <span className="scroll-hint-desktop">Scroll mouse wheel or trackpad to explore · You&apos;re in control</span>
+        <span className="scroll-hint-mobile">Swipe to travel through trajectory</span>
       </div>
 
-      {/* Flash Flare Transition Climax */}
-      <div ref={flashFlareRef} className="flash-flare" />
+      {/* 8-Blade Anamorphic Kinetic 3D Aperture Matrix */}
+      <div className="aperture-shutter-matrix" ref={apertureMatrixRef}>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div
+            key={i}
+            className={`aperture-blade ${i % 2 === 0 ? 'blade-even' : 'blade-odd'}`}
+            style={{ transitionDelay: `${i * 45}ms` }}
+          >
+            <div className="blade-inner">
+              <span className="blade-hud-tag">SEC-0{i + 1} // {((i + 1) * 12.5).toFixed(1)}%</span>
+              <div className="blade-center-glyph">{['◈', 'Ψ', 'λ', 'Δ', 'Ξ', 'Ω', '✦', '0x'][i]} 0{i + 1}</div>
+              <div className="blade-seam-laser" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Traveling Conduit Energy Orb */}
+      <div ref={travelingDotRef} className="conduit-dot-traveler" />
     </div>
   );
 }

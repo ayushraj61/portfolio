@@ -16,6 +16,14 @@
   background: #050508;
 }
 
+.launch-screen.launch-screen-in-flight {
+  background: transparent !important;
+}
+
+.launch-screen.launch-screen-in-flight .launch-canvas {
+  display: none !important;
+}
+
 .launch-canvas {
   position: absolute;
   inset: 0;
