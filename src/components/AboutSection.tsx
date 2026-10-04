@@ -38,24 +38,14 @@ export default function AboutSection() {
     }, 800);
   };
 
-  // Close on ESC and lock body scroll when expanded
+  // Close on ESC
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeResume();
     };
     window.addEventListener('keydown', handleKeyDown);
-
-    if (isExpanded) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
-    };
-  }, [isExpanded]);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <section className="section" id="about" aria-label="About Ayush Raj">
@@ -119,7 +109,7 @@ export default function AboutSection() {
             </div>
           </motion.div>
 
-          <div className="about-resume-content">
+          <div className={`about-resume-content ${isExpanded ? 'is-expanded' : ''}`}>
             <div 
               className={`resume-wrapper ${isExpanded ? 'expanded' : ''} ${isDecrypting ? 'decrypting' : ''}`}
               onClick={expandResume}

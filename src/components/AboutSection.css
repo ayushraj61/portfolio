@@ -1,5 +1,10 @@
 /* AboutSection.css */
 
+#about {
+  position: relative;
+  z-index: 10;
+}
+
 .about-layout-wrapper {
   display: flex;
   align-items: center;
@@ -174,21 +179,22 @@
 .resume-wrapper.decrypting .lock-icon { border-color: #fff !important; }
 .resume-wrapper.decrypting .lock-icon::after { background: #fff !important; transform: translateY(-4px) !important; }
 
-/* EXPANDED STATE (TRUE VIEWPORT-FIXED MODAL) */
+/* EXPANDED STATE (DESKTOP) */
 .resume-wrapper.expanded {
-  position: fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  right: auto !important;
-  bottom: auto !important;
-  width: min(90vw, 600px) !important;
-  height: min(84vh, 850px) !important;
-  max-width: 90vw !important;
-  max-height: 84vh !important;
-  transform: translate(-50%, -50%) rotate(0) scale(1) !important;
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  width: min(63.6vh, 600px);
+  height: min(90vh, 850px);
+  transform: translate(50%, -50%) rotate(0) scale(1) !important;
   animation: none !important;
-  z-index: 99999 !important;
+  z-index: 9999;
   cursor: default;
+}
+
+.about-resume-content.is-expanded {
+  min-height: min(92vh, 880px);
+  margin-bottom: 3rem;
 }
 
 .resume-wrapper.expanded .resume-card {
@@ -212,23 +218,21 @@
   background: #ffffff;
 }
 
-/* Modal Overlay (Fixed Viewport Blur Backdrop) */
+/* Modal Overlay Backdrop — subtle dimming that never blocks page scrolling */
 .modal-overlay {
-  position: fixed !important;
-  inset: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  background: rgba(3, 7, 18, 0.92) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  z-index: 99998 !important;
+  position: absolute;
+  inset: -100px;
+  background: rgba(3, 7, 18, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 80;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s ease;
 }
 .modal-overlay.active {
   opacity: 1;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 /* Close Button */
@@ -301,10 +305,18 @@
     min-height: auto;
     height: auto;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 1.5rem 0;
     width: 100%;
+    position: relative;
+    transition: min-height 0.5s ease, margin 0.5s ease;
+  }
+  .about-resume-content.is-expanded {
+    min-height: min(132vw, 620px);
+    margin-bottom: 4rem; /* Crucial: pushes Destination 02 well below the expanded resume! */
+    padding-top: 3.5rem; /* Room for [ ESC ] CLOSE button */
   }
   .resume-wrapper {
     position: relative;
@@ -314,6 +326,7 @@
     width: min(72vw, 250px);
     height: min(100vw, 350px);
     transform: translateY(0) rotateX(10deg) rotateY(-12deg) translateZ(0);
+    transition: width 0.7s cubic-bezier(0.19, 1, 0.22, 1), height 0.7s cubic-bezier(0.19, 1, 0.22, 1), transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
   }
   .resume-wrapper:hover {
     transform: translateY(-6px) rotateX(6deg) rotateY(-6deg) scale(1.02);
@@ -322,8 +335,27 @@
     0%, 100% { transform: translateY(0) rotateX(10deg) rotateY(-12deg); }
     50% { transform: translateY(-12px) rotateX(12deg) rotateY(-8deg); }
   }
+
+  /* ON MOBILE: Keep expanded resume in normal document flow so Destination 02 is pushed BELOW it */
+  .resume-wrapper.expanded {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    width: min(92vw, 440px) !important;
+    height: min(130vw, 610px) !important;
+    max-width: 92vw !important;
+    max-height: 85vh !important;
+    margin: 0 auto !important;
+    z-index: 50 !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+  }
+
   .close-btn {
     top: -2.8rem;
+    right: 0;
     padding: 0.45rem 1rem;
     font-size: 0.68rem;
   }
