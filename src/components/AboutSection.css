@@ -155,11 +155,14 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   opacity: 0;
   transform: scale(0.95);
   transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   pointer-events: none;
+  filter: none !important;
+  -webkit-filter: none !important;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 /* DECRYPTING STATE */
@@ -203,6 +206,9 @@
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba(212, 168, 83, 0.2);
   border-radius: 8px;
   overflow: hidden;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
 }
 
 .resume-wrapper.expanded .abstract-content {
@@ -216,16 +222,19 @@
   pointer-events: auto;
   object-fit: contain;
   background: #ffffff;
+  filter: none !important;
+  -webkit-filter: none !important;
+  image-rendering: -webkit-optimize-contrast;
 }
 
-/* Modal Overlay Backdrop — subtle dimming that never blocks page scrolling */
+/* Modal Overlay Backdrop — subtle dimming behind the card that never blocks page scrolling */
 .modal-overlay {
   position: absolute;
   inset: -100px;
   background: rgba(3, 7, 18, 0.7);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  z-index: 80;
+  z-index: 10; /* Strictly behind the card so it never blurs the resume text */
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s ease;
@@ -337,6 +346,10 @@
   }
 
   /* ON MOBILE: Keep expanded resume in normal document flow so Destination 02 is pushed BELOW it */
+  .modal-overlay {
+    display: none !important;
+  }
+
   .resume-wrapper.expanded {
     position: relative !important;
     top: auto !important;
@@ -349,8 +362,14 @@
     max-width: 92vw !important;
     max-height: 85vh !important;
     margin: 0 auto !important;
-    z-index: 50 !important;
+    z-index: 100 !important;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+  }
+
+  .resume-wrapper.expanded .resume-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
   }
 
   .close-btn {

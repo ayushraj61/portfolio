@@ -110,6 +110,8 @@ export default function AboutSection() {
           </motion.div>
 
           <div className={`about-resume-content ${isExpanded ? 'is-expanded' : ''}`}>
+            <div className={`modal-overlay ${isExpanded ? 'active' : ''}`} onClick={closeResume}></div>
+
             <div 
               className={`resume-wrapper ${isExpanded ? 'expanded' : ''} ${isDecrypting ? 'decrypting' : ''}`}
               onClick={expandResume}
@@ -155,8 +157,6 @@ export default function AboutSection() {
                 [ ESC ] CLOSE
               </button>
             </div>
-
-            <div className={`modal-overlay ${isExpanded ? 'active' : ''}`} onClick={closeResume}></div>
           </div>
         </div>
       </div>
