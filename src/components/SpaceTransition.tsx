@@ -43,6 +43,8 @@ export default function SpaceTransition({ nextDestination, showNav = true }: Spa
         justifyContent: 'center',
         overflow: 'hidden',
         minHeight: '120px',
+        pointerEvents: 'none',
+        touchAction: 'pan-y',
       }}
       aria-hidden="true"
     >

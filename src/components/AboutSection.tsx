@@ -153,10 +153,22 @@ export default function AboutSection() {
               <button 
                 className={`close-btn ${isExpanded ? 'active' : ''}`} 
                 onClick={(e) => { e.stopPropagation(); closeResume(); }}
+                aria-label="Close expanded resume"
               >
                 [ ESC ] CLOSE
               </button>
             </div>
+
+            {/* Bottom Close Button for mobile — easy to tap after scrolling down the resume */}
+            {isExpanded && (
+              <button 
+                className="close-btn-bottom" 
+                onClick={(e) => { e.stopPropagation(); closeResume(); }}
+                aria-label="Close expanded resume"
+              >
+                ✕ CLOSE RESUME
+              </button>
+            )}
           </div>
         </div>
       </div>
