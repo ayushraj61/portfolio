@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 interface LaunchFlightProps {
   onComplete: () => void;
@@ -700,7 +700,7 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
             style={{ transitionDelay: `${i * 45}ms` }}
           >
             <div className="blade-inner">
-              <span className="blade-hud-tag">SEC-0{i + 1} // {((i + 1) * 12.5).toFixed(1)}%</span>
+              <span className="blade-hud-tag">SEC-0{i + 1} {'//'} {((i + 1) * 12.5).toFixed(1)}%</span>
               <div className="blade-center-glyph">{['◈', 'Ψ', 'λ', 'Δ', 'Ξ', 'Ω', '✦', '0x'][i]} 0{i + 1}</div>
               <div className="blade-seam-laser" />
             </div>

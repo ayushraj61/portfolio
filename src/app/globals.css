@@ -300,51 +300,11 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
 }
 
-/* ========================================
-   CUSTOM CURSOR
-   ======================================== */
-
-body.has-custom-cursor,
-body.has-custom-cursor * {
-  cursor: none !important;
-}
-
-.custom-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 99999;
-  will-change: transform;
-  /* offset so the tip of the arrow is at the mouse point */
-  margin-left: -9px;
-  margin-top: -9px;
-  color: #ffffff;
-  transition: color 0.18s cubic-bezier(0.16, 1, 0.3, 1), filter 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.custom-cursor svg {
-  display: block;
-  overflow: visible;
-}
-
-.custom-cursor path {
-  fill: currentColor;
-  stroke: rgba(0, 0, 0, 0.35);
-  stroke-width: 0.6px;
-  transition: fill 0.18s ease, stroke 0.18s ease, stroke-width 0.18s ease;
-}
-
-/* When cursor hovers over the intense white Sun in Sun/Day mode */
-body.cursor-over-sun .custom-cursor {
-  color: #060912;
-  filter: drop-shadow(0 0 6px rgba(255, 69, 0, 0.95)) drop-shadow(0 0 16px rgba(255, 140, 0, 0.85));
-}
-
-body.cursor-over-sun .custom-cursor path {
-  fill: #060912;
-  stroke: #ff4500;
-  stroke-width: 1.6px;
+/* The spaceship is drawn by the browser cursor, so it tracks the pointer
+   even while the animated sky is using the main thread. */
+@media (pointer: fine) {
+  html, body { cursor: url('/cursor-ship.svg') 12 2, auto; }
+  body.cursor-over-sun { cursor: url('/cursor-ship-sun.svg') 12 2, auto; }
 }
 
 /* ========================================

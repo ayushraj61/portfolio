@@ -3,6 +3,7 @@ import './globals.css';
 import './experience.css';
 import './launch-flight.css';
 import './hero-landscape.css';
+import './sky-atlas.css';
 
 // ========================================
 // ROOT LAYOUT — SEO, Fonts, Meta
@@ -46,8 +47,6 @@ export const metadata: Metadata = {
   },
 };
 
-import CustomCursor from '@/components/CustomCursor';
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -62,7 +61,6 @@ export default function RootLayout({
       </head>
       <body>
         <a href="#main" className="skip-to-content">Skip to content</a>
-        <CustomCursor />
         {children}
       </body>
     </html>

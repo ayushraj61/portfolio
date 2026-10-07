@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import HeroVisual from './HeroVisual';
+import SkyAtlas from './SkyAtlas';
 
 // ========================================
 // HERO SECTION — Redesigned for impact
@@ -14,6 +15,7 @@ export default function HeroSection() {
     <section className="hero" id="hero">
       {/* A view from the ground after the arrival flight. */}
       <HeroVisual />
+      <SkyAtlas />
 
       <div className="container">
         <div className="hero-content">

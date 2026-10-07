@@ -1,7 +1,7 @@
 /* Earth is the viewpoint here: the supplied night-sky photograph is the scene. */
 .hero {
   min-height: min(900px, 100svh);
-  background: #08121d;
+  background: #030710;
   isolation: isolate;
 }
 
@@ -20,7 +20,7 @@
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
-  background: #040b15;
+  background: #02050b;
 }
 
 .hero-sky-photo {
@@ -31,7 +31,7 @@
   background-size: 100% auto;
   background-position: center bottom;
   mask-image: linear-gradient(to bottom, transparent 0%, #000 24%);
-  filter: brightness(.56) contrast(1.2) saturate(.82);
+  filter: brightness(.74) contrast(1.14) saturate(.88);
   transform: translate3d(var(--sky-x, 0px), var(--sky-y, 0px), 0);
   will-change: transform;
 }
@@ -41,9 +41,9 @@
   inset: 0;
   z-index: 1;
   background:
-    radial-gradient(ellipse 38% 50% at 83% 72%, rgba(117, 153, 188, .08), transparent 74%),
-    linear-gradient(90deg, rgba(2, 6, 12, .7) 0%, rgba(2, 7, 14, .54) 38%, rgba(3, 8, 17, .2) 72%, rgba(3, 7, 13, .34) 100%),
-    linear-gradient(180deg, rgba(2, 6, 12, .22), transparent 32%, rgba(2, 5, 9, .08) 66%, rgba(3, 6, 11, .42) 100%);
+    radial-gradient(ellipse 38% 50% at 83% 72%, rgba(117, 153, 188, .06), transparent 74%),
+    linear-gradient(90deg, rgba(2, 6, 12, .76) 0%, rgba(2, 7, 14, .62) 38%, rgba(3, 8, 17, .32) 72%, rgba(3, 7, 13, .45) 100%),
+    linear-gradient(180deg, rgba(2, 5, 11, .38) 0%, rgba(2, 6, 12, .18) 32%, rgba(2, 5, 9, .2) 66%, rgba(3, 6, 11, .55) 100%);
 }
 
 .hero-cosmos {
@@ -183,7 +183,7 @@
   .hero-visual-container { inset: 0; width: 100%; height: 100%; right: auto; top: auto; opacity: 1; }
   .hero-sky-photo { background-size: cover; background-position: center; mask-image: none; }
   .hero-rocks-layer, .hero-rocks-moonlight { background-size: auto 64%; background-position: 70% bottom; }
-  .hero-sky-shade { background: linear-gradient(180deg, rgba(3, 7, 13, .18) 0%, rgba(3, 7, 13, .58) 35%, rgba(3, 7, 13, .64) 68%, rgba(3, 7, 13, .45) 100%); }
+  .hero-sky-shade { background: linear-gradient(180deg, rgba(2, 5, 11, .38) 0%, rgba(2, 6, 12, .68) 35%, rgba(2, 6, 12, .74) 68%, rgba(2, 5, 10, .58) 100%); }
   .hero-moon-scene { top: 10%; right: 9%; width: clamp(18px, 4vw, 24px); }
   .hero-launch-point { left: auto; right: 10%; bottom: 15%; font-size: .5rem; }
   .hero-content { padding-bottom: 7rem; }
@@ -202,7 +202,7 @@
    ========================================= */
 
 .hero-cosmos { transition: opacity 1.2s ease; }
-.hero-sky-photo { filter: brightness(1) contrast(1) sepia(0) hue-rotate(0deg); transition: filter 3s ease-in-out; }
+.hero-sky-photo { filter: brightness(0.74) contrast(1.14) saturate(0.88) sepia(0) hue-rotate(0deg); transition: filter 3s ease-in-out; }
 .hero-rocks-layer { filter: brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg); transition: filter 3s ease-in-out; }
 .hero-rocks-moonlight { transition: all 3s ease-in-out; }
 
