@@ -39,7 +39,7 @@ const universes: UniverseConfig[] = [
     accentGlow: 'rgba(229, 185, 103, 0.45)',
     section: 'building',
     status: 'BROADCASTING TELEMETRY',
-    skyDesktop: { x: 52, y: 30 },
+    skyDesktop: { x: 49, y: 31 },
     skyMobile: { x: 26, y: 16 },
   },
   {
@@ -55,7 +55,7 @@ const universes: UniverseConfig[] = [
     accentGlow: 'rgba(96, 165, 250, 0.45)',
     section: 'work',
     status: '5 ORBITS ACTIVE',
-    skyDesktop: { x: 75, y: 26 },
+    skyDesktop: { x: 72, y: 24 },
     skyMobile: { x: 74, y: 16 },
   },
   {
@@ -71,7 +71,7 @@ const universes: UniverseConfig[] = [
     accentGlow: 'rgba(52, 211, 153, 0.45)',
     section: 'tech-depth',
     status: 'SYSTEM HEALTH 100%',
-    skyDesktop: { x: 57, y: 50 },
+    skyDesktop: { x: 53, y: 51 },
     skyMobile: { x: 30, y: 26 },
   },
   {
@@ -87,7 +87,7 @@ const universes: UniverseConfig[] = [
     accentGlow: 'rgba(192, 132, 252, 0.45)',
     section: 'experience',
     status: 'ARCHIVE VERIFIED',
-    skyDesktop: { x: 80, y: 46 },
+    skyDesktop: { x: 76, y: 46 },
     skyMobile: { x: 76, y: 26 },
   },
 ];
@@ -439,47 +439,43 @@ export default function SkyAtlas() {
     <>
       {/* =========================================================================
           THE IN-SKY UNIVERSE CONSTELLATION
-          Naturally blends into the starry sky plate with zero harsh boxes.
-          Reveals high-tech holographic HUD on hover.
+          Pure astrophotography precision: real optical stars, diffraction spikes,
+          precision hairline reticles, and architectural astronomical labels.
          ========================================================================= */}
       <div className="sky-atlas" aria-label="Explore my work through the night sky">
-        {/* Subtle Constellation Lines Connecting the 4 Universes */}
+        {/* Subtle, delicate constellation lines connecting the stars */}
         <svg className="sky-atlas-lines-svg" aria-hidden="true" preserveAspectRatio="none">
           <defs>
             <linearGradient id="constellationGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#e5b967" stopOpacity="0.4" />
-              <stop offset="50%" stopColor="#60a5fa" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#c084fc" stopOpacity="0.4" />
+              <stop offset="0%" stopColor="#e5b967" stopOpacity="0.25" />
+              <stop offset="50%" stopColor="#60a5fa" stopOpacity="0.2" />
+              <stop offset="100%" stopColor="#c084fc" stopOpacity="0.25" />
             </linearGradient>
-            <filter id="lineGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="2" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
           </defs>
 
-          {/* Desktop connecting lines */}
+          {/* Desktop connecting lines — delicate hairlines */}
           <g className="desktop-constellation-lines">
-            <line x1="52%" y1="30%" x2="75%" y2="26%" stroke="url(#constellationGrad)" strokeWidth="1" strokeDasharray="3,4" />
-            <line x1="52%" y1="30%" x2="57%" y2="50%" stroke="url(#constellationGrad)" strokeWidth="1" strokeDasharray="3,4" />
-            <line x1="75%" y1="26%" x2="80%" y2="46%" stroke="url(#constellationGrad)" strokeWidth="1" strokeDasharray="3,4" />
-            <line x1="57%" y1="50%" x2="80%" y2="46%" stroke="url(#constellationGrad)" strokeWidth="1" strokeDasharray="3,4" />
+            <line x1="49%" y1="31%" x2="72%" y2="24%" stroke="url(#constellationGrad)" strokeWidth="0.75" strokeDasharray="2,5" />
+            <line x1="49%" y1="31%" x2="53%" y2="51%" stroke="url(#constellationGrad)" strokeWidth="0.75" strokeDasharray="2,5" />
+            <line x1="72%" y1="24%" x2="76%" y2="46%" stroke="url(#constellationGrad)" strokeWidth="0.75" strokeDasharray="2,5" />
+            <line x1="53%" y1="51%" x2="76%" y2="46%" stroke="url(#constellationGrad)" strokeWidth="0.75" strokeDasharray="2,5" />
 
             {/* Traveling photon pulses along lines */}
-            <circle cx="63.5%" cy="28%" r="1.5" fill="#e5b967" className="constellation-pulse-photon photon-1" />
-            <circle cx="54.5%" cy="40%" r="1.5" fill="#34d399" className="constellation-pulse-photon photon-2" />
-            <circle cx="77.5%" cy="36%" r="1.5" fill="#60a5fa" className="constellation-pulse-photon photon-3" />
-            <circle cx="68.5%" cy="48%" r="1.5" fill="#c084fc" className="constellation-pulse-photon photon-4" />
+            <circle cx="60.5%" cy="27.5%" r="1" fill="#e5b967" className="constellation-pulse-photon photon-1" />
+            <circle cx="51%" cy="41%" r="1" fill="#34d399" className="constellation-pulse-photon photon-2" />
+            <circle cx="74%" cy="35%" r="1" fill="#60a5fa" className="constellation-pulse-photon photon-3" />
+            <circle cx="64.5%" cy="48.5%" r="1" fill="#c084fc" className="constellation-pulse-photon photon-4" />
           </g>
         </svg>
 
-        {/* Constellation Discovery Hint (clean, elegant, unobtrusive) */}
-        <div className="sky-atlas-hint" aria-hidden="true">
-          <span className="hint-diamond">✦</span>
-          <span className="hint-text">BUILDER&apos;S CONSTELLATION</span>
-          <span className="hint-sub">· 4 Interactive Universes in the Sky</span>
+        {/* Observatory Sky Chart Legend (Matches THE MOON & LAUNCH POINT DNA) */}
+        <div className="sky-atlas-legend" aria-hidden="true">
+          <i className="legend-diamond" />
+          <span className="legend-title">CELESTIAL ATLAS // 4 DESTINATIONS</span>
+          <b className="legend-sub">INTERACTIVE SECTORS IN THE SKY</b>
         </div>
 
-        {/* The 4 Celestial Universe Entities */}
+        {/* The 4 Celestial Universe Stars */}
         <div className="sky-atlas-constellations">
           {universes.map((item) => {
             const isHovered = hovered === item.id;
@@ -505,32 +501,36 @@ export default function SkyAtlas() {
                 onBlur={() => setHovered(null)}
                 aria-label={`Enter ${item.name} Universe`}
               >
-                {/* Visual Celestial Entity in the Sky */}
-                <span className="universe-body" aria-hidden="true">
-                  {/* Subtle target reticle that lights up */}
-                  <span className="universe-reticle" />
+                {/* Visual Celestial Entity — Real Astrophotography Star */}
+                <span className="celestial-star" aria-hidden="true">
+                  {/* Soft atmospheric corona glow */}
+                  <span className="star-corona" />
 
-                  {/* Accretion disk / energy haze */}
-                  <span className="universe-haze" />
-
-                  {/* Orbit rings */}
-                  <span className="universe-orbit-ring ring-1" />
-                  <span className="universe-orbit-ring ring-2" />
-
-                  {/* Pulsing Core Star */}
-                  <span className="universe-core-star">
-                    <span className="core-spikes" />
-                    <span className="core-point" />
+                  {/* Precision optical guide reticle (hairline astronomical viewfinder) */}
+                  <span className="star-reticle">
+                    <span className="reticle-ring" />
+                    <span className="reticle-tick tick-n" />
+                    <span className="reticle-tick tick-s" />
+                    <span className="reticle-tick tick-e" />
+                    <span className="reticle-tick tick-w" />
                   </span>
 
-                  {/* Orbiting celestial satellites */}
-                  <span className="universe-satellite sat-1" />
-                  <span className="universe-satellite sat-2" />
+                  {/* Optical diffraction spikes (telescope cross rays) */}
+                  <span className="diffraction-spikes">
+                    <span className="diffraction-ray ray-h" />
+                    <span className="diffraction-ray ray-v" />
+                    <span className="diffraction-ray ray-diag-1" />
+                    <span className="diffraction-ray ray-diag-2" />
+                  </span>
 
-                  {/* Identifier badge always visible in sky (small, elegant starlight tag) */}
-                  <span className="universe-star-tag">
-                    <span className="star-tag-index">{item.number}</span>
-                    <span className="star-tag-label">{item.shortName}</span>
+                  {/* Brilliant white-hot star pinpoint */}
+                  <span className="star-core" />
+
+                  {/* Astrometric Annotation Label (Exact same DNA as THE MOON & LAUNCH POINT) */}
+                  <span className="star-astro-label">
+                    <i className="astro-diamond" />
+                    <span className="astro-code">{item.number} // {item.shortName.toUpperCase()}</span>
+                    <b className="astro-sub">{item.classification.split('·')[0].trim()}</b>
                   </span>
                 </span>
 

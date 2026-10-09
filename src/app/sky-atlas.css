@@ -1,8 +1,7 @@
 /* =========================================================================
    SKY ATLAS — COSMIC UNIVERSE SHOWCASE
-   Naturally embedded into the starry sky plate.
-   Hover reveals holographic astronomical HUD.
-   Click triggers hyper-warp universe expansion.
+   Pure Astrophotography Realism & Precision Star Chart Architecture.
+   Integrated seamlessly into the photographic night sky plate.
    ========================================================================= */
 
 .sky-atlas {
@@ -16,6 +15,7 @@
 
 /* =========================================================================
    CONSTELLATION CONNECTING LINES (SVG)
+   Delicate 0.75px astronomical hairlines connecting the 4 sectors
    ========================================================================= */
 
 .sky-atlas-lines-svg {
@@ -28,83 +28,94 @@
 }
 
 .sky-atlas-lines-svg line {
-  transition: stroke 0.4s ease, stroke-width 0.4s ease, opacity 0.4s ease;
+  transition: stroke 0.4s ease, opacity 0.4s ease;
 }
 
-/* Photon pulses traveling along constellation lines */
+/* Faint traveling photon pulses along constellation lines */
 @keyframes photon-travel-1 {
-  0% { cx: 52%; cy: 30%; opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { cx: 75%; cy: 26%; opacity: 0; }
+  0% { cx: 49%; cy: 31%; opacity: 0; }
+  25% { opacity: 0.6; }
+  75% { opacity: 0.6; }
+  100% { cx: 72%; cy: 24%; opacity: 0; }
 }
 
 @keyframes photon-travel-2 {
-  0% { cx: 52%; cy: 30%; opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { cx: 57%; cy: 50%; opacity: 0; }
+  0% { cx: 49%; cy: 31%; opacity: 0; }
+  25% { opacity: 0.6; }
+  75% { opacity: 0.6; }
+  100% { cx: 53%; cy: 51%; opacity: 0; }
 }
 
 @keyframes photon-travel-3 {
-  0% { cx: 75%; cy: 26%; opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { cx: 80%; cy: 46%; opacity: 0; }
+  0% { cx: 72%; cy: 24%; opacity: 0; }
+  25% { opacity: 0.6; }
+  75% { opacity: 0.6; }
+  100% { cx: 76%; cy: 46%; opacity: 0; }
 }
 
 @keyframes photon-travel-4 {
-  0% { cx: 57%; cy: 50%; opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { cx: 80%; cy: 46%; opacity: 0; }
+  0% { cx: 53%; cy: 51%; opacity: 0; }
+  25% { opacity: 0.6; }
+  75% { opacity: 0.6; }
+  100% { cx: 76%; cy: 46%; opacity: 0; }
 }
 
-.constellation-pulse-photon.photon-1 { animation: photon-travel-1 4.5s ease-in-out infinite; }
-.constellation-pulse-photon.photon-2 { animation: photon-travel-2 5.2s ease-in-out 1.2s infinite; }
-.constellation-pulse-photon.photon-3 { animation: photon-travel-3 4.8s ease-in-out 0.6s infinite; }
-.constellation-pulse-photon.photon-4 { animation: photon-travel-4 5.5s ease-in-out 2.1s infinite; }
+.constellation-pulse-photon.photon-1 { animation: photon-travel-1 5s ease-in-out infinite; }
+.constellation-pulse-photon.photon-2 { animation: photon-travel-2 5.6s ease-in-out 1.2s infinite; }
+.constellation-pulse-photon.photon-3 { animation: photon-travel-3 5.2s ease-in-out 0.6s infinite; }
+.constellation-pulse-photon.photon-4 { animation: photon-travel-4 5.8s ease-in-out 2.1s infinite; }
 
-/* Discovery Hint in Sky */
-.sky-atlas-hint {
+/* =========================================================================
+   OBSERVATORY SKY CHART LEGEND
+   Identical DNA to .hero-moon-label and .hero-launch-point
+   ========================================================================= */
+
+.sky-atlas-legend {
   position: absolute;
-  top: 22%;
-  left: 52%;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: rgba(220, 235, 250, 0.75);
-  font-size: 0.58rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  text-shadow: 0 2px 14px #020712, 0 0 25px rgba(2, 7, 18, 0.9);
+  top: 15%;
+  left: 49%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid rgba(217, 185, 120, 0.65);
+  color: #e4c587;
+  font: 600 0.54rem/1.4 'JetBrains Mono', monospace;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+  text-shadow: 0 2px 8px #06101a;
   pointer-events: none;
-  opacity: 0.85;
-  transition: opacity 0.4s ease;
+  opacity: 0.78;
+  transition: opacity 0.3s ease;
 }
 
-.hint-diamond {
-  color: #dfb66f;
-  font-size: 0.75rem;
-  animation: diamond-shimmer 3s ease-in-out infinite;
+.sky-atlas-legend .legend-title {
+  color: #e4c587;
+  font-weight: 600;
 }
 
-.hint-sub {
-  color: rgba(180, 205, 230, 0.45);
+.sky-atlas-legend .legend-sub {
+  color: #b8c6d4;
   font-weight: 400;
-  font-size: 0.54rem;
-  letter-spacing: 0.1em;
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
 }
 
-@keyframes diamond-shimmer {
-  0%, 100% { opacity: 0.5; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.15); filter: drop-shadow(0 0 6px #dfb66f); }
+.sky-atlas-legend .legend-diamond {
+  position: absolute;
+  left: -3px;
+  top: -3px;
+  width: 5px;
+  height: 5px;
+  background: #e4c587;
+  transform: rotate(45deg);
+  box-shadow: 0 0 6px rgba(228, 197, 135, 0.6);
 }
 
 /* =========================================================================
-   CELESTIAL UNIVERSE ENTITIES (IN THE SKY)
-   Natural, organic, glowing cosmic wonders resting seamlessly in the sky!
+   CELESTIAL UNIVERSE STARS (IN THE SKY)
+   Astrophotography precision: real optical stars, diffraction spikes,
+   delicate telescope reticles, and architectural astronomical labels.
    ========================================================================= */
 
 .sky-atlas-constellations {
@@ -128,224 +139,293 @@
   cursor: pointer;
   pointer-events: auto;
   z-index: 2;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
 }
 
 .sky-atlas-universe:focus-visible {
   outline: 1px dashed var(--atlas-accent);
-  outline-offset: 14px;
+  outline-offset: 12px;
 }
 
-/* The visual celestial entity */
-.universe-body {
+/* The celestial star container */
+.celestial-star {
   position: relative;
-  display: block;
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
   pointer-events: none;
 }
 
-/* Reticle targeting crosshair (appears on hover) */
-.universe-reticle {
+/* 1. Soft atmospheric corona glow */
+.star-corona {
   position: absolute;
   inset: -12px;
   border-radius: 50%;
-  border: 1px dashed color-mix(in srgb, var(--atlas-accent) 25%, transparent);
-  opacity: 0;
-  transform: scale(0.7) rotate(0deg);
-  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  background: radial-gradient(circle at center, var(--atlas-glow) 0%, transparent 68%);
+  opacity: 0.42;
+  filter: blur(5px);
+  animation: star-corona-breathe 4.5s ease-in-out infinite;
+  transition: all 0.4s ease;
   pointer-events: none;
 }
 
-.sky-atlas-universe:hover .universe-reticle,
-.sky-atlas-universe:focus-visible .universe-reticle {
-  opacity: 1;
-  transform: scale(1.15) rotate(90deg);
-  border-color: color-mix(in srgb, var(--atlas-accent) 65%, transparent);
-}
-
-/* Nebular haze */
-.universe-haze {
-  position: absolute;
-  inset: -10px;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, var(--atlas-glow) 0%, color-mix(in srgb, var(--atlas-accent) 15%, transparent) 45%, transparent 72%);
-  filter: blur(8px);
-  opacity: 0.65;
-  transition: all 0.5s ease;
-  animation: universe-breathe 4s ease-in-out infinite;
-}
-
-.sky-atlas-universe:hover .universe-haze {
-  opacity: 1;
+.sky-atlas-universe:hover .star-corona,
+.sky-atlas-universe:focus-visible .star-corona {
+  opacity: 0.85;
   inset: -18px;
-  filter: blur(12px);
+  filter: blur(7px);
 }
 
-/* Orbital Rings */
-.universe-orbit-ring {
+@keyframes star-corona-breathe {
+  0%, 100% { transform: scale(0.95); opacity: 0.38; }
+  50% { transform: scale(1.12); opacity: 0.52; }
+}
+
+/* 2. Precision optical guide reticle (hairline astronomical viewfinder) */
+.star-reticle {
   position: absolute;
-  border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--atlas-accent) 35%, transparent);
-  pointer-events: none;
-  transition: all 0.5s ease;
-}
-
-.universe-orbit-ring.ring-1 {
-  inset: 6px;
-  transform: rotate(-25deg) scaleY(0.48);
-}
-
-.universe-orbit-ring.ring-2 {
-  inset: 13px;
-  transform: rotate(45deg) scaleY(0.42);
-  border-color: color-mix(in srgb, var(--atlas-accent) 22%, transparent);
-  opacity: 0.7;
-}
-
-.sky-atlas-universe:hover .universe-orbit-ring.ring-1 {
-  transform: rotate(15deg) scaleY(0.55);
-  border-color: var(--atlas-accent);
-}
-
-/* Pulsing Core Star */
-.universe-core-star {
-  position: absolute;
-  inset: 19px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 45% 45%, #ffffff 0%, var(--atlas-accent) 45%, color-mix(in srgb, var(--atlas-accent) 35%, transparent) 75%);
-  box-shadow: 0 0 16px 4px var(--atlas-glow), 0 0 4px #ffffff;
-  z-index: 2;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-}
-
-.sky-atlas-universe:hover .universe-core-star {
-  transform: scale(1.25);
-  box-shadow: 0 0 25px 8px var(--atlas-glow), 0 0 8px #ffffff;
-}
-
-/* Diffraction spikes on core star */
-.core-spikes {
-  position: absolute;
-  inset: -6px;
-  pointer-events: none;
-}
-
-.core-spikes::before,
-.core-spikes::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  background: linear-gradient(90deg, transparent, #ffffff, transparent);
-  opacity: 0.8;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-
-.core-spikes::before {
-  width: 22px;
-  height: 1px;
-}
-
-.core-spikes::after {
-  width: 1px;
-  height: 22px;
-}
-
-/* Satellites */
-.universe-satellite {
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 0 6px var(--atlas-accent);
-  z-index: 3;
-}
-
-.universe-satellite.sat-1 {
-  top: 8px;
-  right: 12px;
-  animation: sat-orbit-1 6s linear infinite;
-}
-
-.universe-satellite.sat-2 {
-  bottom: 10px;
-  left: 14px;
-  width: 2px;
-  height: 2px;
-  animation: sat-orbit-2 4.5s linear infinite reverse;
-}
-
-@keyframes sat-orbit-1 {
-  0% { transform: rotate(0deg) translateX(16px) rotate(0deg); }
-  100% { transform: rotate(360deg) translateX(16px) rotate(-360deg); }
-}
-
-@keyframes sat-orbit-2 {
-  0% { transform: rotate(0deg) translateX(12px) rotate(0deg); }
-  100% { transform: rotate(360deg) translateX(12px) rotate(-360deg); }
-}
-
-/* Delicate Identifier Tag (Visible in Sky) */
-.universe-star-tag {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 50%;
-  transform: translateX(-50%);
-  display: inline-flex;
+  inset: 0;
+  display: flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.2rem 0.45rem;
-  border-radius: 999px;
-  background: rgba(3, 8, 16, 0.65);
-  border: 1px solid color-mix(in srgb, var(--atlas-accent) 24%, transparent);
-  backdrop-filter: blur(6px);
-  color: #e4edf6;
-  font-size: 0.52rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  text-shadow: 0 1px 8px #000;
-  opacity: 0.82;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.reticle-ring {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 0.75px solid rgba(255, 255, 255, 0.16);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sky-atlas-universe:hover .reticle-ring,
+.sky-atlas-universe:focus-visible .reticle-ring {
+  width: 26px;
+  height: 26px;
+  border-color: color-mix(in srgb, var(--atlas-accent) 75%, transparent);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--atlas-accent) 35%, transparent);
+}
+
+/* Micro cardinal ticks (N, S, E, W) */
+.reticle-tick {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
 }
 
-.star-tag-index {
-  color: var(--atlas-accent);
-  font-weight: 700;
+.reticle-tick.tick-n {
+  top: 1px;
+  left: 50%;
+  width: 1px;
+  height: 3px;
+  transform: translateX(-50%);
 }
 
-.sky-atlas-universe:hover .universe-star-tag {
+.reticle-tick.tick-s {
+  bottom: 1px;
+  left: 50%;
+  width: 1px;
+  height: 3px;
+  transform: translateX(-50%);
+}
+
+.reticle-tick.tick-w {
+  left: 1px;
+  top: 50%;
+  width: 3px;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.reticle-tick.tick-e {
+  right: 1px;
+  top: 50%;
+  width: 3px;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.sky-atlas-universe:hover .reticle-tick,
+.sky-atlas-universe:focus-visible .reticle-tick {
+  background: var(--atlas-accent);
+}
+
+/* 3. Optical diffraction spikes (telescope cross rays) */
+.diffraction-spikes {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.diffraction-ray {
+  position: absolute;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.diffraction-ray.ray-h {
+  width: 22px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.9) 50%, transparent 100%);
+}
+
+.diffraction-ray.ray-v {
+  width: 1px;
+  height: 22px;
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.9) 50%, transparent 100%);
+}
+
+.diffraction-ray.ray-diag-1 {
+  width: 13px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
+  transform: rotate(45deg);
   opacity: 0;
-  transform: translateX(-50%) translateY(4px);
 }
 
-@keyframes universe-breathe {
-  0%, 100% { transform: scale(1); opacity: 0.65; }
-  50% { transform: scale(1.14); opacity: 0.9; }
+.diffraction-ray.ray-diag-2 {
+  width: 13px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
+  transform: rotate(-45deg);
+  opacity: 0;
+}
+
+.sky-atlas-universe:hover .diffraction-ray.ray-h,
+.sky-atlas-universe:focus-visible .diffraction-ray.ray-h {
+  width: 32px;
+  background: linear-gradient(90deg, transparent 0%, #ffffff 50%, transparent 100%);
+  filter: drop-shadow(0 0 4px var(--atlas-accent));
+}
+
+.sky-atlas-universe:hover .diffraction-ray.ray-v,
+.sky-atlas-universe:focus-visible .diffraction-ray.ray-v {
+  height: 32px;
+  background: linear-gradient(180deg, transparent 0%, #ffffff 50%, transparent 100%);
+  filter: drop-shadow(0 0 4px var(--atlas-accent));
+}
+
+.sky-atlas-universe:hover .diffraction-ray.ray-diag-1,
+.sky-atlas-universe:hover .diffraction-ray.ray-diag-2,
+.sky-atlas-universe:focus-visible .diffraction-ray.ray-diag-1,
+.sky-atlas-universe:focus-visible .diffraction-ray.ray-diag-2 {
+  opacity: 0.75;
+}
+
+/* 4. Brilliant white-hot star pinpoint */
+.star-core {
+  position: absolute;
+  width: 4.5px;
+  height: 4.5px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 4px 1px #ffffff, 0 0 10px 2px var(--atlas-glow);
+  z-index: 2;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sky-atlas-universe:hover .star-core,
+.sky-atlas-universe:focus-visible .star-core {
+  transform: scale(1.35);
+  box-shadow: 0 0 6px 2px #ffffff, 0 0 16px 4px var(--atlas-glow);
+}
+
+/* 5. Astrometric Annotation Label (Exact same DNA as THE MOON & LAUNCH POINT) */
+.star-astro-label {
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.16rem;
+  padding-left: 0.65rem;
+  border-left: 1px solid color-mix(in srgb, var(--atlas-accent) 60%, transparent);
+  font: 600 0.54rem/1.35 'JetBrains Mono', monospace;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+  text-shadow: 0 2px 10px #030712;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.85;
+}
+
+.star-astro-label .astro-code {
+  color: #edf2f7;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.star-astro-label .astro-sub {
+  color: rgba(184, 198, 212, 0.55);
+  font-weight: 400;
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
+  transition: color 0.3s ease;
+}
+
+.star-astro-label .astro-diamond {
+  position: absolute;
+  left: -3px;
+  top: -3px;
+  width: 5px;
+  height: 5px;
+  background: var(--atlas-accent);
+  transform: rotate(45deg);
+  box-shadow: 0 0 6px var(--atlas-accent);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sky-atlas-universe:hover .star-astro-label,
+.sky-atlas-universe:focus-visible .star-astro-label {
+  opacity: 1;
+  border-left-color: var(--atlas-accent);
+  transform: translateY(-50%) translateX(2px);
+}
+
+.sky-atlas-universe:hover .star-astro-label .astro-code,
+.sky-atlas-universe:focus-visible .star-astro-label .astro-code {
+  color: #ffffff;
+  text-shadow: 0 0 10px var(--atlas-accent);
+}
+
+.sky-atlas-universe:hover .star-astro-label .astro-sub,
+.sky-atlas-universe:focus-visible .star-astro-label .astro-sub {
+  color: var(--atlas-accent);
+}
+
+.sky-atlas-universe:hover .star-astro-label .astro-diamond,
+.sky-atlas-universe:focus-visible .star-astro-label .astro-diamond {
+  transform: rotate(225deg) scale(1.25);
+  box-shadow: 0 0 10px 2px var(--atlas-accent);
 }
 
 /* =========================================================================
    HOLOGRAPHIC HUD TOOLTIP — REVEALED ON HOVER
-   "after hovering name should show"
+   Floats smoothly above the star without ever colliding with the label
    ========================================================================= */
 
 .universe-hud-tooltip {
   position: absolute;
-  top: calc(100% + 14px);
+  bottom: calc(100% + 14px);
   left: 50%;
   transform: translateX(-50%) translateY(8px) scale(0.95);
   width: 250px;
   padding: 0.95rem 1.05rem;
   border-radius: 6px;
-  background: rgba(3, 8, 17, 0.88);
+  background: rgba(3, 8, 17, 0.92);
   border: 1px solid color-mix(in srgb, var(--atlas-accent) 55%, transparent);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.85), 0 0 25px color-mix(in srgb, var(--atlas-accent) 22%, transparent);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 25px color-mix(in srgb, var(--atlas-accent) 22%, transparent);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   color: #e7eff6;
@@ -1512,7 +1592,7 @@
     display: none;
   }
 
-  .sky-atlas-hint {
+  .sky-atlas-legend {
     display: none;
   }
 
@@ -1520,8 +1600,18 @@
     display: none; /* Tooltip doesn't hover well on mobile; tap opens portal directly */
   }
 
+  .star-astro-label .astro-sub {
+    display: none;
+  }
+
+  .star-astro-label {
+    padding-left: 0.45rem;
+    font-size: 0.46rem;
+    left: calc(100% + 8px);
+  }
+
   .sky-atlas-universe {
-    transform: translate(-50%, -50%) scale(0.9);
+    transform: translate(-50%, -50%) scale(0.85);
   }
 
   /* Show floating mobile dock pill */
