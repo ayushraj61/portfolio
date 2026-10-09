@@ -468,14 +468,7 @@ export default function SkyAtlas() {
           </g>
         </svg>
 
-        {/* Observatory Sky Chart Legend (Matches THE MOON & LAUNCH POINT DNA) */}
-        <div className="sky-atlas-legend" aria-hidden="true">
-          <i className="legend-diamond" />
-          <span className="legend-title">CELESTIAL ATLAS // 4 DESTINATIONS</span>
-          <b className="legend-sub">INTERACTIVE SECTORS IN THE SKY</b>
-        </div>
-
-        {/* The 4 Celestial Universe Stars */}
+        {/* The 4 Celestial Deep-Sky Universes — Zero resting text, pure cosmic wonders */}
         <div className="sky-atlas-constellations">
           {universes.map((item) => {
             const isHovered = hovered === item.id;
@@ -501,40 +494,30 @@ export default function SkyAtlas() {
                 onBlur={() => setHovered(null)}
                 aria-label={`Enter ${item.name} Universe`}
               >
-                {/* Visual Celestial Entity — Real Astrophotography Star */}
-                <span className="celestial-star" aria-hidden="true">
-                  {/* Soft atmospheric corona glow */}
-                  <span className="star-corona" />
+                {/* Visual Celestial Universe in the Sky (Luminous Deep-Sky Cosmic Wonder) */}
+                <span className="universe-celestial-body" aria-hidden="true">
+                  {/* Outer Cosmic Nebula Gas Cloud (mix-blend-mode: screen, seamlessly merges into the sky photo) */}
+                  <span className="cosmic-nebula-haze" />
 
-                  {/* Precision optical guide reticle (hairline astronomical viewfinder) */}
-                  <span className="star-reticle">
-                    <span className="reticle-ring" />
-                    <span className="reticle-tick tick-n" />
-                    <span className="reticle-tick tick-s" />
-                    <span className="reticle-tick tick-e" />
-                    <span className="reticle-tick tick-w" />
+                  {/* Interstellar Accretion Dust / Spiral Disc */}
+                  <span className="cosmic-accretion-ring" />
+
+                  {/* Embedded Star Cluster Points */}
+                  <span className="cluster-star star-1" />
+                  <span className="cluster-star star-2" />
+                  <span className="cluster-star star-3" />
+
+                  {/* Stellar Core / Galactic Nucleus */}
+                  <span className="galactic-nucleus">
+                    <span className="nucleus-glow" />
+                    <span className="nucleus-point" />
                   </span>
 
-                  {/* Optical diffraction spikes (telescope cross rays) */}
-                  <span className="diffraction-spikes">
-                    <span className="diffraction-ray ray-h" />
-                    <span className="diffraction-ray ray-v" />
-                    <span className="diffraction-ray ray-diag-1" />
-                    <span className="diffraction-ray ray-diag-2" />
-                  </span>
-
-                  {/* Brilliant white-hot star pinpoint */}
-                  <span className="star-core" />
-
-                  {/* Astrometric Annotation Label (Exact same DNA as THE MOON & LAUNCH POINT) */}
-                  <span className="star-astro-label">
-                    <i className="astro-diamond" />
-                    <span className="astro-code">{item.number} // {item.shortName.toUpperCase()}</span>
-                    <b className="astro-sub">{item.classification.split('·')[0].trim()}</b>
-                  </span>
+                  {/* Subtle Starlight Flare */}
+                  <span className="stellar-flare" />
                 </span>
 
-                {/* HOLOGRAPHIC HUD TOOLTIP — Revealed on Hover / Focus */}
+                {/* HOLOGRAPHIC HUD TOOLTIP — Revealed STRICTLY on Hover / Focus */}
                 <span className="universe-hud-tooltip">
                   <span className="hud-corner top-left" />
                   <span className="hud-corner top-right" />
@@ -616,15 +599,17 @@ export default function SkyAtlas() {
                     ? { opacity: 0 }
                     : {
                         clipPath: `circle(0px at ${clipOrigin})`,
-                        filter: 'brightness(2.5) contrast(1.4)',
+                        opacity: 0.7,
+                        scale: 0.96,
                       }
                 }
                 animate={
                   reducedMotion
                     ? { opacity: 1 }
                     : {
-                        clipPath: `circle(160vmax at ${clipOrigin})`,
-                        filter: 'brightness(1) contrast(1)',
+                        clipPath: `circle(150vmax at ${clipOrigin})`,
+                        opacity: 1,
+                        scale: 1,
                       }
                 }
                 exit={
@@ -632,11 +617,12 @@ export default function SkyAtlas() {
                     ? { opacity: 0 }
                     : {
                         clipPath: `circle(0px at ${clipOrigin})`,
-                        filter: 'brightness(1.8)',
+                        opacity: 0,
+                        scale: 0.96,
                       }
                 }
                 transition={{
-                  duration: reducedMotion ? 0.2 : 0.7,
+                  duration: reducedMotion ? 0.2 : 0.52,
                   ease: [0.16, 1, 0.3, 1],
                 }}
               >
@@ -655,9 +641,9 @@ export default function SkyAtlas() {
                     <div className="portal-header-left">
                       <span className="portal-brand-symbol">✧</span>
                       <div className="portal-brand-text">
-                        <span className="brand-title">AYUSH RAJ // SKY OBSERVATORY</span>
+                        <span className="brand-title">UNIVERSE {destination.number} OF 04 // {destination.name.toUpperCase()}</span>
                         <span className="brand-sub">
-                          UNIVERSE {destination.number} OF 04 · {destination.coordinates}
+                          {destination.classification} · {destination.coordinates}
                         </span>
                       </div>
                     </div>
