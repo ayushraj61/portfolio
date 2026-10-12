@@ -29,7 +29,7 @@ const universes: UniverseConfig[] = [
   {
     id: 'building',
     number: '01',
-    name: 'DakNode Station',
+    name: 'DakNode',
     shortName: 'DakNode',
     classification: 'ACTIVE PULSAR · PROTOCOL STATION',
     coordinates: 'RA 14h 29m // DEC +62°',
@@ -225,7 +225,7 @@ function NodeSvgIcon({ type }: { type: ArchNode['type'] }) {
 
 function DestinationContent({ id }: { id: DestinationId }) {
   const [activeNode, setActiveNode] = useState<string | null>('core');
-  const [dakView, setDakView] = useState<'cli' | 'website' | 'topology'>('cli');
+  const [dakView, setDakView] = useState<'cli' | 'website' | 'topology'>('website');
   const [cliCopied, setCliCopied] = useState(false);
 
   if (id === 'building') {
@@ -233,12 +233,6 @@ function DestinationContent({ id }: { id: DestinationId }) {
     return (
       <div className="sky-atlas-feature sky-atlas-feature-building">
         <div className="sky-atlas-feature-copy">
-          <div className="sky-atlas-telemetry-badge">
-            <span className="telemetry-pulse" />
-            <span>ACTIVE STATION TELEMETRY // DAKNODE PROTOCOL v0.4</span>
-          </div>
-
-          <h3 className="universe-hero-title">{daknode.name}</h3>
           <p className="universe-hero-desc">{daknode.expandedDescription}</p>
 
           <div className="sky-atlas-feature-specs">
@@ -419,27 +413,20 @@ function DestinationContent({ id }: { id: DestinationId }) {
               </div>
 
               <div className="browser-viewport">
-                <img
-                  src="/daknode-preview.png"
-                  alt="DakNode Platform - Give every AI agent a real inbox"
-                  className="browser-screenshot-img"
-                  loading="eager"
-                />
-                <div className="browser-hover-overlay">
-                  <div className="overlay-badge">
-                    <span className="overlay-kicker">DAKNODE.COM PRODUCTION DECK</span>
-                    <h4 className="overlay-title">Give every AI agent a real inbox</h4>
-                    <p className="overlay-desc">Persistent email identities, OAuth, SPF/DKIM verification, and real-time webhook routing.</p>
-                  </div>
-                  <a
-                    href="https://daknode.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="overlay-action-btn"
-                  >
-                    Visit Live Platform ↗
-                  </a>
-                </div>
+                <a
+                  href="https://daknode.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="browser-viewport-link"
+                  title="Open daknode.com in new tab"
+                >
+                  <img
+                    src="/daknode-preview.png"
+                    alt="DakNode Platform - Give every AI agent a real inbox"
+                    className="browser-screenshot-img"
+                    loading="eager"
+                  />
+                </a>
               </div>
             </div>
           )}
@@ -939,7 +926,6 @@ export default function SkyAtlas() {
                         <div className="heading-orb-pulse-ring ring-outer" />
                         <div className="heading-orb-pulse-ring ring-mid" />
                         <div className="sky-atlas-heading-orb" />
-                        <span className="orb-coordinates">{destination.coordinates}</span>
                       </div>
                     </div>
 
