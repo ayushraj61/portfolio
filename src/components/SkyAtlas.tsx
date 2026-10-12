@@ -97,26 +97,136 @@ const selectedProducts = products.filter((product) =>
 );
 
 // Interactive DakNode architecture node
+// Interactive DakNode architecture node
 interface ArchNode {
   id: string;
   label: string;
+  category: string;
   role: string;
+  protocol: string;
+  latency: string;
   x: number;
   y: number;
   type: 'agent' | 'core' | 'queue' | 'delivery' | 'security';
 }
 
 const dakNodeGraph: ArchNode[] = [
-  { id: 'agent', label: 'Autonomous AI Agent', role: 'Inbound / Outbound Requester', x: 15, y: 32, type: 'agent' },
-  { id: 'auth', label: 'Zero-Trust Gate', role: 'Token Verification & Sandboxing', x: 38, y: 32, type: 'security' },
-  { id: 'core', label: 'DakNode Engine', role: 'Core Event Broker & Routing', x: 55, y: 50, type: 'core' },
-  { id: 'queue', label: 'Redis Event Queue', role: 'Sub-15ms Async Pipeline', x: 72, y: 32, type: 'queue' },
-  { id: 'inbox', label: 'Agent Inboxes', role: 'Persistent Email Identities', x: 88, y: 50, type: 'delivery' },
-  { id: 'webhook', label: 'Realtime Webhooks', role: 'Bidirectional Event Stream', x: 72, y: 68, type: 'delivery' },
+  {
+    id: 'agent',
+    label: 'Autonomous AI Agents',
+    category: 'INGRESS / CLIENTS',
+    role: 'Autonomous inbound and outbound agent workloads issuing secure protocol requests.',
+    protocol: 'gRPC / HTTPS',
+    latency: '3.2 ms',
+    x: 22,
+    y: 30,
+    type: 'agent',
+  },
+  {
+    id: 'auth',
+    label: 'Zero-Trust Gate',
+    category: 'SECURITY SANDBOX',
+    role: 'Cryptographic token validation, permission isolation, and ephemeral agent credentials.',
+    protocol: 'mTLS · Ed25519',
+    latency: '1.8 ms',
+    x: 22,
+    y: 72,
+    type: 'security',
+  },
+  {
+    id: 'core',
+    label: 'DakNode Engine',
+    category: 'CENTRAL BROKER',
+    role: 'Core distributed event orchestrator, routing engine, and persistent state management kernel.',
+    protocol: 'Internal Bus',
+    latency: '0.9 ms',
+    x: 50,
+    y: 51,
+    type: 'core',
+  },
+  {
+    id: 'queue',
+    label: 'Redis Event Queue',
+    category: 'ASYNC STREAM BUS',
+    role: 'In-memory asynchronous message queue executing reliable sub-15ms guaranteed delivery.',
+    protocol: 'Redis Streams',
+    latency: '4.1 ms',
+    x: 78,
+    y: 26,
+    type: 'queue',
+  },
+  {
+    id: 'inbox',
+    label: 'Agent Inboxes',
+    category: 'PERSISTENT IDENTITIES',
+    role: 'Dedicated SPF, DKIM, DMARC programmatic mailbox identities for autonomous AI agents.',
+    protocol: 'OAuth2 · SMTP',
+    latency: '11.5 ms',
+    x: 78,
+    y: 51,
+    type: 'delivery',
+  },
+  {
+    id: 'webhook',
+    label: 'Realtime Webhooks',
+    category: 'PUSH DISPATCH',
+    role: 'High-throughput outbound webhook dispatch delivering events instantly to external systems.',
+    protocol: 'HTTP/2 Push',
+    latency: '8.4 ms',
+    x: 78,
+    y: 76,
+    type: 'delivery',
+  },
 ];
+
+function NodeSvgIcon({ type }: { type: ArchNode['type'] }) {
+  switch (type) {
+    case 'agent':
+      return (
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="3" />
+          <circle cx="8.5" cy="10" r="1.5" />
+          <circle cx="15.5" cy="10" r="1.5" />
+          <path d="M9 15h6" />
+          <path d="M12 2v2" />
+        </svg>
+      );
+    case 'security':
+      return (
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <circle cx="12" cy="11" r="1.5" />
+          <path d="M12 12.5v2.5" />
+        </svg>
+      );
+    case 'core':
+      return (
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+      );
+    case 'queue':
+      return (
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+          <polyline points="16 3 20 6 16 9" />
+          <polyline points="8 15 4 18 8 21" />
+        </svg>
+      );
+    case 'delivery':
+      return (
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect width="20" height="16" x="2" y="4" rx="2" />
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        </svg>
+      );
+  }
+}
 
 function DestinationContent({ id }: { id: DestinationId }) {
   const [activeNode, setActiveNode] = useState<string | null>('core');
+  const [dakView, setDakView] = useState<'cli' | 'website' | 'topology'>('cli');
+  const [cliCopied, setCliCopied] = useState(false);
 
   if (id === 'building') {
     const daknode = products.find((product) => product.id === 'daknode')!;
@@ -166,75 +276,260 @@ function DestinationContent({ id }: { id: DestinationId }) {
           </div>
         </div>
 
-        {/* Interactive Architecture Schematic */}
-        <div className="sky-atlas-schematic-card">
+        {/* Interactive Architecture & Showcase Card */}
+        <div className="sky-atlas-schematic-card daknode-hybrid-card">
           <div className="schematic-header">
             <div className="schematic-title-group">
               <span className="schematic-radar-dot" />
-              <span className="schematic-title">COMMUNICATION TOPOLOGY SCHEMATIC</span>
+              <span className="schematic-title">DAKNODE PLATFORM & TOPOLOGY</span>
             </div>
-            <span className="schematic-freq">FREQ: 1420.4 MHz</span>
+
+            {/* 3-Way Mode Switcher Tabs */}
+            <div className="daknode-view-tabs" role="tablist" aria-label="DakNode Showcase Views">
+              <button
+                type="button"
+                className={`dak-tab-btn ${dakView === 'cli' ? 'is-active' : ''}`}
+                onClick={() => setDakView('cli')}
+                role="tab"
+                aria-selected={dakView === 'cli'}
+              >
+                <span className="tab-glyph">⚡</span> CLI & Inboxes
+              </button>
+              <button
+                type="button"
+                className={`dak-tab-btn ${dakView === 'website' ? 'is-active' : ''}`}
+                onClick={() => setDakView('website')}
+                role="tab"
+                aria-selected={dakView === 'website'}
+              >
+                <span className="tab-glyph">🌐</span> Live Site
+              </button>
+              <button
+                type="button"
+                className={`dak-tab-btn ${dakView === 'topology' ? 'is-active' : ''}`}
+                onClick={() => setDakView('topology')}
+                role="tab"
+                aria-selected={dakView === 'topology'}
+              >
+                <span className="tab-glyph">⇋</span> Topology
+              </button>
+            </div>
           </div>
 
-          <div className="schematic-canvas">
-            {/* Connection Lines (SVG) */}
-            <svg className="schematic-svg-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#e5b967" stopOpacity="0.7" />
-                  <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.7" />
-                </linearGradient>
-              </defs>
-              <line x1="15" y1="32" x2="38" y2="32" stroke="url(#lineGrad)" strokeWidth="0.8" strokeDasharray="2,2" />
-              <line x1="38" y1="32" x2="55" y2="50" stroke="url(#lineGrad)" strokeWidth="0.8" />
-              <line x1="55" y1="50" x2="72" y2="32" stroke="url(#lineGrad)" strokeWidth="0.8" />
-              <line x1="72" y1="32" x2="88" y2="50" stroke="url(#lineGrad)" strokeWidth="0.8" strokeDasharray="2,2" />
-              <line x1="55" y1="50" x2="72" y2="68" stroke="url(#lineGrad)" strokeWidth="0.8" />
-              <circle cx="26" cy="32" r="1" fill="#e5b967" className="pulse-photon" />
-              <circle cx="46" cy="41" r="1" fill="#e5b967" className="pulse-photon-2" />
-              <circle cx="63" cy="41" r="1" fill="#60a5fa" className="pulse-photon" />
-              <circle cx="80" cy="41" r="1" fill="#60a5fa" className="pulse-photon-2" />
-            </svg>
-
-            {/* Interactive Nodes */}
-            {dakNodeGraph.map((node) => {
-              const isSelected = activeNode === node.id;
-              return (
-                <button
-                  type="button"
-                  key={node.id}
-                  className={`schematic-node node-${node.type} ${isSelected ? 'is-active' : ''}`}
-                  style={{ left: `${node.x}%`, top: `${node.y}%` }}
-                  onMouseEnter={() => setActiveNode(node.id)}
-                  onClick={() => setActiveNode(node.id)}
-                >
-                  <span className="node-glow" />
-                  <span className="node-icon">
-                    {node.type === 'agent' && '🤖'}
-                    {node.type === 'security' && '🔒'}
-                    {node.type === 'core' && '⚡'}
-                    {node.type === 'queue' && '⇋'}
-                    {node.type === 'delivery' && '✉'}
-                  </span>
-                  <span className="node-label">{node.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Node Inspector Footer */}
-          <div className="schematic-inspector">
-            {(() => {
-              const current = dakNodeGraph.find((n) => n.id === activeNode) || dakNodeGraph[2];
-              return (
-                <div className="inspector-content">
-                  <span className="inspector-tag">INSPECTING // {current.type.toUpperCase()}</span>
-                  <strong className="inspector-label">{current.label}</strong>
-                  <p className="inspector-role">{current.role}</p>
+          {/* VIEW 1: CLI & Inboxes (Interactive Terminal Simulator from daknode.com) */}
+          {dakView === 'cli' && (
+            <div className="daknode-terminal-deck">
+              <div className="terminal-subnav">
+                <div className="terminal-window-dots" aria-hidden="true">
+                  <span className="window-dot dot-red" />
+                  <span className="window-dot dot-yellow" />
+                  <span className="window-dot dot-green" />
                 </div>
-              );
-            })()}
-          </div>
+                <div className="terminal-subtabs">
+                  <span className="subtab-item is-active">⚡ INSTALL SKILL</span>
+                  <span className="subtab-item">AGENT SELF-SIGNUP</span>
+                  <span className="subtab-item">HERMES</span>
+                </div>
+              </div>
+
+              <div className="terminal-body-box">
+                <div className="terminal-file-header">
+                  <span className="terminal-path">~/your-project</span>
+                  <button
+                    type="button"
+                    className="terminal-copy-btn"
+                    onClick={() => {
+                      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                        navigator.clipboard.writeText('npx skills add https://daknode.com/skill');
+                      }
+                      setCliCopied(true);
+                      setTimeout(() => setCliCopied(false), 2000);
+                    }}
+                  >
+                    {cliCopied ? '✓ COPIED' : '📋 COPY'}
+                  </button>
+                </div>
+
+                <p className="terminal-explainer">
+                  Using an AI coding assistant? Install the DakNode skill to give it instant knowledge of the API — inbox provisioning, inbound events, and reading threads. Works with Claude Code and Cursor.
+                </p>
+
+                <div className="terminal-cli-code">
+                  <span className="prompt-sym">$</span>
+                  <span className="prompt-cmd">npx skills add https://daknode.com/skill</span>
+                </div>
+
+                <div className="terminal-cli-output">
+                  <span className="check-mark">✓ [ok]</span> skill installed · Claude Code · Cursor
+                </div>
+
+                {/* Live Inbox Demo Container */}
+                <div className="terminal-live-inbox-box">
+                  <div className="live-inbox-header">
+                    <span className="live-tag">LIVE INBOX</span>
+                    <code className="live-address">eagertrail371@demo.inbound.daknode.com</code>
+                    <span className="live-expiry">Expires in 14:54</span>
+                  </div>
+                  <div className="live-inbox-waiting">
+                    <span className="live-ping-dot" />
+                    <span>Waiting for your first email · Send a message to the address above from any mail client.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="terminal-footer-bar">
+                <div className="terminal-badges">
+                  <span>● Persistent agent identity</span>
+                  <span>● Real-time inbound events</span>
+                  <span>● API-first infrastructure</span>
+                </div>
+                <a
+                  href="https://daknode.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="terminal-cta-btn"
+                >
+                  GET AN API KEY ↗
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* VIEW 2: Website Screenshot Mockup (Real Browser Frame of daknode.com) */}
+          {dakView === 'website' && (
+            <div className="daknode-browser-mockup">
+              <div className="browser-chrome-bar">
+                <div className="terminal-window-dots" aria-hidden="true">
+                  <span className="window-dot dot-red" />
+                  <span className="window-dot dot-yellow" />
+                  <span className="window-dot dot-green" />
+                </div>
+                <div className="browser-url-bar">
+                  <span className="url-lock">🔒</span>
+                  <span className="url-text">https://daknode.com</span>
+                </div>
+                <a
+                  href="https://daknode.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="browser-visit-link"
+                >
+                  Open Website ↗
+                </a>
+              </div>
+
+              <div className="browser-viewport">
+                <img
+                  src="/daknode-preview.png"
+                  alt="DakNode Platform - Give every AI agent a real inbox"
+                  className="browser-screenshot-img"
+                  loading="eager"
+                />
+                <div className="browser-hover-overlay">
+                  <div className="overlay-badge">
+                    <span className="overlay-kicker">DAKNODE.COM PRODUCTION DECK</span>
+                    <h4 className="overlay-title">Give every AI agent a real inbox</h4>
+                    <p className="overlay-desc">Persistent email identities, OAuth, SPF/DKIM verification, and real-time webhook routing.</p>
+                  </div>
+                  <a
+                    href="https://daknode.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="overlay-action-btn"
+                  >
+                    Visit Live Platform ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* VIEW 3: Topology Schematic (The 3-Tier Clean Architectural Diagram) */}
+          {dakView === 'topology' && (
+            <>
+              <div className="schematic-canvas">
+                <svg className="schematic-svg-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="traceGradInbound" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.4" />
+                      <stop offset="100%" stopColor="#e5b967" stopOpacity="0.8" />
+                    </linearGradient>
+                    <linearGradient id="traceGradOutbound" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#e5b967" stopOpacity="0.8" />
+                      <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.6" />
+                    </linearGradient>
+                  </defs>
+
+                  <path d="M 22 30 C 36 30, 36 51, 50 51" stroke="url(#traceGradInbound)" strokeWidth="0.85" fill="none" strokeDasharray="3,3" />
+                  <path d="M 22 72 C 36 72, 36 51, 50 51" stroke="url(#traceGradInbound)" strokeWidth="0.85" fill="none" />
+                  <path d="M 50 51 C 64 51, 64 26, 78 26" stroke="url(#traceGradOutbound)" strokeWidth="0.85" fill="none" />
+                  <line x1="50" y1="51" x2="78" y2="51" stroke="url(#traceGradOutbound)" strokeWidth="0.85" />
+                  <path d="M 50 51 C 64 51, 64 76, 78 76" stroke="url(#traceGradOutbound)" strokeWidth="0.85" fill="none" />
+
+                  <circle cx="36" cy="40" r="1.2" fill="#e5b967" className="pulse-photon" />
+                  <circle cx="36" cy="61" r="1.2" fill="#60a5fa" className="pulse-photon-2" />
+                  <circle cx="64" cy="38" r="1.2" fill="#60a5fa" className="pulse-photon" />
+                  <circle cx="64" cy="51" r="1.2" fill="#e5b967" className="pulse-photon-2" />
+                  <circle cx="64" cy="64" r="1.2" fill="#34d399" className="pulse-photon" />
+                </svg>
+
+                {dakNodeGraph.map((node) => {
+                  const isSelected = activeNode === node.id;
+                  return (
+                    <button
+                      type="button"
+                      key={node.id}
+                      className={`schematic-node node-${node.type} ${isSelected ? 'is-active' : ''}`}
+                      style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                      onMouseEnter={() => setActiveNode(node.id)}
+                      onClick={() => setActiveNode(node.id)}
+                      aria-pressed={isSelected}
+                    >
+                      <span className="node-glow" />
+                      <span className="node-icon-box">
+                        <NodeSvgIcon type={node.type} />
+                      </span>
+                      <span className="node-text-col">
+                        <span className="node-category">{node.category}</span>
+                        <span className="node-label">{node.label}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="schematic-inspector">
+                {(() => {
+                  const current = dakNodeGraph.find((n) => n.id === activeNode) || dakNodeGraph[2];
+                  return (
+                    <div className="inspector-panel-grid">
+                      <div className="inspector-panel-left">
+                        <div className="inspector-badge-row">
+                          <span className="inspector-tag">INSPECTING // {current.category}</span>
+                          <span className="inspector-latency">LATENCY: {current.latency}</span>
+                        </div>
+                        <strong className="inspector-label">{current.label}</strong>
+                        <p className="inspector-role">{current.role}</p>
+                      </div>
+                      <div className="inspector-panel-right">
+                        <div className="inspector-stat-pill">
+                          <span className="stat-pill-label">PROTOCOL</span>
+                          <span className="stat-pill-value">{current.protocol}</span>
+                        </div>
+                        <div className="inspector-stat-pill">
+                          <span className="stat-pill-label">TELEMETRY</span>
+                          <span className="stat-pill-value stat-live">
+                            <span className="stat-pulse-dot" />
+                            ACTIVE
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </>
+          )}
         </div>
       </div>
     );
