@@ -105,9 +105,12 @@ interface ArchNode {
   role: string;
   protocol: string;
   latency: string;
+  throughput: string;
+  statusBadge: string;
   x: number;
   y: number;
-  type: 'agent' | 'core' | 'queue' | 'delivery' | 'security';
+  type: 'agent' | 'security' | 'core' | 'queue' | 'inbox' | 'webhook';
+  accentColor: string;
 }
 
 const dakNodeGraph: ArchNode[] = [
@@ -115,67 +118,85 @@ const dakNodeGraph: ArchNode[] = [
     id: 'agent',
     label: 'Autonomous AI Agents',
     category: 'INGRESS / CLIENTS',
-    role: 'Autonomous inbound and outbound agent workloads issuing secure protocol requests.',
+    role: 'Autonomous AI assistants (Claude Code, Cursor) and background agent daemons issuing authenticated API requests.',
     protocol: 'gRPC / HTTPS',
     latency: '3.2 ms',
-    x: 22,
+    throughput: '42.5k req/s',
+    statusBadge: 'CONNECTED',
+    x: 18,
     y: 30,
     type: 'agent',
+    accentColor: '#38bdf8',
   },
   {
     id: 'auth',
     label: 'Zero-Trust Gate',
     category: 'SECURITY SANDBOX',
-    role: 'Cryptographic token validation, permission isolation, and ephemeral agent credentials.',
+    role: 'Cryptographic token validation, permission isolation, and ephemeral agent credentials with mTLS encryption.',
     protocol: 'mTLS · Ed25519',
-    latency: '1.8 ms',
-    x: 22,
+    latency: '1.4 ms',
+    throughput: '99.99% PASS',
+    statusBadge: 'VERIFIED',
+    x: 18,
     y: 72,
     type: 'security',
+    accentColor: '#f59e0b',
   },
   {
     id: 'core',
     label: 'DakNode Engine',
     category: 'CENTRAL BROKER',
-    role: 'Core distributed event orchestrator, routing engine, and persistent state management kernel.',
-    protocol: 'Internal Bus',
-    latency: '0.9 ms',
+    role: 'High-performance distributed event orchestrator, routing engine, mailbox state manager, and Raft consensus broker.',
+    protocol: 'Internal Bus · Raft',
+    latency: '0.8 ms',
+    throughput: '128k events/s',
+    statusBadge: 'HEALTHY',
     x: 50,
     y: 51,
     type: 'core',
+    accentColor: '#e5b967',
   },
   {
     id: 'queue',
     label: 'Redis Event Queue',
     category: 'ASYNC STREAM BUS',
-    role: 'In-memory asynchronous message queue executing reliable sub-15ms guaranteed delivery.',
+    role: 'In-memory asynchronous message queue executing reliable sub-15ms guaranteed FIFO message delivery.',
     protocol: 'Redis Streams',
-    latency: '4.1 ms',
-    x: 78,
-    y: 26,
+    latency: '2.1 ms',
+    throughput: '85.2k msg/s',
+    statusBadge: 'BUFFERED',
+    x: 82,
+    y: 25,
     type: 'queue',
+    accentColor: '#f43f5e',
   },
   {
     id: 'inbox',
     label: 'Agent Inboxes',
     category: 'PERSISTENT IDENTITIES',
-    role: 'Dedicated SPF, DKIM, DMARC programmatic mailbox identities for autonomous AI agents.',
+    role: 'Dedicated SPF, DKIM, DMARC programmatic mailbox identities for autonomous AI agents with thread history.',
     protocol: 'OAuth2 · SMTP',
-    latency: '11.5 ms',
-    x: 78,
+    latency: '9.5 ms',
+    throughput: 'Zero-Leak Mail',
+    statusBadge: 'PROVISIONED',
+    x: 82,
     y: 51,
-    type: 'delivery',
+    type: 'inbox',
+    accentColor: '#10b981',
   },
   {
     id: 'webhook',
     label: 'Realtime Webhooks',
     category: 'PUSH DISPATCH',
-    role: 'High-throughput outbound webhook dispatch delivering events instantly to external systems.',
+    role: 'High-throughput outbound webhook dispatch delivering events instantly to agent webhooks in under 15ms.',
     protocol: 'HTTP/2 Push',
-    latency: '8.4 ms',
-    x: 78,
-    y: 76,
-    type: 'delivery',
+    latency: '4.8 ms',
+    throughput: '< 15ms Push',
+    statusBadge: 'STREAMING',
+    x: 82,
+    y: 77,
+    type: 'webhook',
+    accentColor: '#a855f7',
   },
 ];
 
@@ -183,41 +204,52 @@ function NodeSvgIcon({ type }: { type: ArchNode['type'] }) {
   switch (type) {
     case 'agent':
       return (
-        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <rect x="3" y="4" width="18" height="16" rx="3" />
-          <circle cx="8.5" cy="10" r="1.5" />
-          <circle cx="15.5" cy="10" r="1.5" />
-          <path d="M9 15h6" />
-          <path d="M12 2v2" />
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="10" rx="2" />
+          <circle cx="12" cy="5" r="2" />
+          <path d="M12 7v4" />
+          <line x1="8" y1="16" x2="8" y2="16" strokeWidth="3" />
+          <line x1="16" y1="16" x2="16" y2="16" strokeWidth="3" />
         </svg>
       );
     case 'security':
       return (
-        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-          <circle cx="12" cy="11" r="1.5" />
-          <path d="M12 12.5v2.5" />
+          <path d="M9 12l2 2 4-4" />
         </svg>
       );
     case 'core':
       return (
-        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect x="4" y="4" width="16" height="16" rx="2" />
+          <rect x="9" y="9" width="6" height="6" />
+          <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3" />
         </svg>
       );
     case 'queue':
       return (
-        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M4 6h16M4 12h16M4 18h16" />
-          <polyline points="16 3 20 6 16 9" />
-          <polyline points="8 15 4 18 8 21" />
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+          <line x1="12" y1="22.08" x2="12" y2="12" />
         </svg>
       );
-    case 'delivery':
+    case 'inbox':
       return (
-        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <rect width="20" height="16" x="2" y="4" rx="2" />
-          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+          <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+        </svg>
+      );
+    case 'webhook':
+      return (
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c.01-.7.2-1.4.57-2" />
+          <circle cx="18" cy="17" r="3" />
+          <circle cx="18" cy="7" r="3" />
+          <path d="M18 9.98v4" />
+          <circle cx="6" cy="17" r="3" />
         </svg>
       );
   }
@@ -432,91 +464,193 @@ function DestinationContent({ id }: { id: DestinationId }) {
           )}
 
           {/* VIEW 3: Topology Schematic (The 3-Tier Clean Architectural Diagram) */}
-          {dakView === 'topology' && (
-            <>
-              <div className="schematic-canvas">
-                <svg className="schematic-svg-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                  <defs>
-                    <linearGradient id="traceGradInbound" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#e5b967" stopOpacity="0.8" />
-                    </linearGradient>
-                    <linearGradient id="traceGradOutbound" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#e5b967" stopOpacity="0.8" />
-                      <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.6" />
-                    </linearGradient>
-                  </defs>
+          {/* VIEW 3: Topology Schematic (Standard Cloud Architecture Flow) */}
+          {dakView === 'topology' && (() => {
+            const current = dakNodeGraph.find((n) => n.id === activeNode) || dakNodeGraph[2];
+            const connections = [
+              { id: 'agent-core', from: 'agent', to: 'core', d: 'M 270 114 C 345 114, 335 194, 410 194', color: '#38bdf8' },
+              { id: 'auth-core', from: 'auth', to: 'core', d: 'M 270 274 C 345 274, 335 194, 410 194', color: '#f59e0b' },
+              { id: 'core-queue', from: 'core', to: 'queue', d: 'M 590 194 C 655 194, 665 95, 730 95', color: '#f43f5e' },
+              { id: 'core-inbox', from: 'core', to: 'inbox', d: 'M 590 194 L 730 194', color: '#10b981' },
+              { id: 'core-webhook', from: 'core', to: 'webhook', d: 'M 590 194 C 655 194, 665 293, 730 293', color: '#a855f7' },
+            ];
 
-                  <path d="M 22 30 C 36 30, 36 51, 50 51" stroke="url(#traceGradInbound)" strokeWidth="0.85" fill="none" strokeDasharray="3,3" />
-                  <path d="M 22 72 C 36 72, 36 51, 50 51" stroke="url(#traceGradInbound)" strokeWidth="0.85" fill="none" />
-                  <path d="M 50 51 C 64 51, 64 26, 78 26" stroke="url(#traceGradOutbound)" strokeWidth="0.85" fill="none" />
-                  <line x1="50" y1="51" x2="78" y2="51" stroke="url(#traceGradOutbound)" strokeWidth="0.85" />
-                  <path d="M 50 51 C 64 51, 64 76, 78 76" stroke="url(#traceGradOutbound)" strokeWidth="0.85" fill="none" />
+            return (
+              <div className="topology-schematic-deck">
+                {/* Pipeline Stage Bar */}
+                <div className="topology-stage-bar">
+                  <div className="stage-step">
+                    <span className="stage-step-tag">01 · INGRESS</span>
+                    <span className="stage-step-title">Clients & Security</span>
+                  </div>
+                  <div className="stage-flow-indicator" aria-hidden="true">➔</div>
+                  <div className="stage-step stage-step-core">
+                    <span className="stage-step-tag">02 · BROKER</span>
+                    <span className="stage-step-title">DakNode Engine</span>
+                  </div>
+                  <div className="stage-flow-indicator" aria-hidden="true">➔</div>
+                  <div className="stage-step">
+                    <span className="stage-step-tag">03 · EGRESS</span>
+                    <span className="stage-step-title">Dispatch & Storage</span>
+                  </div>
+                </div>
 
-                  <circle cx="36" cy="40" r="1.2" fill="#e5b967" className="pulse-photon" />
-                  <circle cx="36" cy="61" r="1.2" fill="#60a5fa" className="pulse-photon-2" />
-                  <circle cx="64" cy="38" r="1.2" fill="#60a5fa" className="pulse-photon" />
-                  <circle cx="64" cy="51" r="1.2" fill="#e5b967" className="pulse-photon-2" />
-                  <circle cx="64" cy="64" r="1.2" fill="#34d399" className="pulse-photon" />
-                </svg>
+                {/* Interactive Node Graph Canvas */}
+                <div className="schematic-canvas">
+                  <svg className="topology-svg-canvas" viewBox="0 0 1000 380" preserveAspectRatio="none" aria-hidden="true">
+                    {/* Base Inactive Circuit Wires */}
+                    {connections.map((conn) => (
+                      <path
+                        key={`base-${conn.id}`}
+                        d={conn.d}
+                        className="topology-track"
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    ))}
 
-                {dakNodeGraph.map((node) => {
-                  const isSelected = activeNode === node.id;
-                  return (
-                    <button
-                      type="button"
-                      key={node.id}
-                      className={`schematic-node node-${node.type} ${isSelected ? 'is-active' : ''}`}
-                      style={{ left: `${node.x}%`, top: `${node.y}%` }}
-                      onMouseEnter={() => setActiveNode(node.id)}
-                      onClick={() => setActiveNode(node.id)}
-                      aria-pressed={isSelected}
-                    >
-                      <span className="node-glow" />
-                      <span className="node-icon-box">
-                        <NodeSvgIcon type={node.type} />
-                      </span>
-                      <span className="node-text-col">
-                        <span className="node-category">{node.category}</span>
-                        <span className="node-label">{node.label}</span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+                    {/* Active Animated Data Stream Packets */}
+                    {connections.map((conn) => {
+                      const isConnActive = activeNode === 'core' || activeNode === conn.from || activeNode === conn.to;
+                      return (
+                        <path
+                          key={`stream-${conn.id}`}
+                          d={conn.d}
+                          className={`topology-stream ${isConnActive ? 'is-active' : ''}`}
+                          style={{ stroke: conn.color }}
+                          vectorEffect="non-scaling-stroke"
+                        />
+                      );
+                    })}
 
-              <div className="schematic-inspector">
-                {(() => {
-                  const current = dakNodeGraph.find((n) => n.id === activeNode) || dakNodeGraph[2];
-                  return (
-                    <div className="inspector-panel-grid">
-                      <div className="inspector-panel-left">
-                        <div className="inspector-badge-row">
-                          <span className="inspector-tag">INSPECTING // {current.category}</span>
-                          <span className="inspector-latency">LATENCY: {current.latency}</span>
-                        </div>
-                        <strong className="inspector-label">{current.label}</strong>
-                        <p className="inspector-role">{current.role}</p>
-                      </div>
-                      <div className="inspector-panel-right">
-                        <div className="inspector-stat-pill">
-                          <span className="stat-pill-label">PROTOCOL</span>
-                          <span className="stat-pill-value">{current.protocol}</span>
-                        </div>
-                        <div className="inspector-stat-pill">
-                          <span className="stat-pill-label">TELEMETRY</span>
-                          <span className="stat-pill-value stat-live">
-                            <span className="stat-pulse-dot" />
-                            ACTIVE
+                    {/* Clean Connection Pin Terminals */}
+                    <circle cx="270" cy="114" r="3" fill="#38bdf8" />
+                    <circle cx="270" cy="274" r="3" fill="#f59e0b" />
+                    <circle cx="410" cy="194" r="3.5" fill="#e5b967" />
+                    <circle cx="590" cy="194" r="3.5" fill="#e5b967" />
+                    <circle cx="730" cy="95" r="3" fill="#f43f5e" />
+                    <circle cx="730" cy="194" r="3" fill="#10b981" />
+                    <circle cx="730" cy="293" r="3" fill="#a855f7" />
+                  </svg>
+
+                  {/* Architecture Node Cards */}
+                  {dakNodeGraph.map((node) => {
+                    const isSelected = activeNode === node.id;
+                    return (
+                      <button
+                        type="button"
+                        key={node.id}
+                        className={`topology-node node-${node.type} ${isSelected ? 'is-active' : ''}`}
+                        style={{
+                          left: `${node.x}%`,
+                          top: `${node.y}%`,
+                          '--node-accent': node.accentColor,
+                        } as CSSProperties}
+                        onMouseEnter={() => setActiveNode(node.id)}
+                        onClick={() => setActiveNode(node.id)}
+                        aria-pressed={isSelected}
+                      >
+                        {/* Input Port Pin on Left */}
+                        {(node.id === 'core' || node.id === 'queue' || node.id === 'inbox' || node.id === 'webhook') && (
+                          <span className="topology-port port-left" aria-hidden="true" />
+                        )}
+
+                        <div className="node-top-meta">
+                          <span className="node-cat-tag">{node.category}</span>
+                          <span className="node-latency-chip">
+                            <span className="chip-led-dot" />
+                            {node.latency}
                           </span>
                         </div>
+
+                        <div className="node-main-row">
+                          <div className="node-icon-wrapper" aria-hidden="true">
+                            <NodeSvgIcon type={node.type} />
+                          </div>
+                          <div className="node-title-group">
+                            <span className="node-main-label">{node.label}</span>
+                            <span className="node-subprotocol">{node.protocol}</span>
+                          </div>
+                        </div>
+
+                        {/* Output Port Pin on Right */}
+                        {(node.id === 'agent' || node.id === 'auth' || node.id === 'core') && (
+                          <span className="topology-port port-right" aria-hidden="true" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Professional Telemetry Console Inspector */}
+                <div className="schematic-inspector">
+                  <div className="inspector-console-bar">
+                    <div className="console-status-group">
+                      <span className="console-pulse-indicator" />
+                      <span className="console-system-title">DAKNODE ARCHITECTURE TOPOLOGY // COMPONENT INSPECTOR</span>
+                    </div>
+                    <div className="console-sla-badge">
+                      <span className="sla-glyph">⚡</span>
+                      <span>SUB-15MS P99 LATENCY SLA</span>
+                    </div>
+                  </div>
+
+                  <div className="inspector-panel-grid">
+                    <div className="inspector-panel-left">
+                      <div className="inspector-identity-row">
+                        <div className={`inspector-avatar avatar-${current.type}`} style={{ color: current.accentColor }}>
+                          <NodeSvgIcon type={current.type} />
+                        </div>
+                        <div className="inspector-heading-col">
+                          <div className="inspector-category-kicker">{current.category}</div>
+                          <h4 className="inspector-node-title">{current.label}</h4>
+                        </div>
+                      </div>
+                      <p className="inspector-role-desc">{current.role}</p>
+                    </div>
+
+                    <div className="inspector-panel-right">
+                      <div className="inspector-stat-pill">
+                        <span className="stat-pill-label">PROTOCOL</span>
+                        <span className="stat-pill-value">{current.protocol}</span>
+                      </div>
+                      <div className="inspector-stat-pill">
+                        <span className="stat-pill-label">LATENCY</span>
+                        <span className="stat-pill-value stat-latency">{current.latency}</span>
+                      </div>
+                      <div className="inspector-stat-pill">
+                        <span className="stat-pill-label">THROUGHPUT</span>
+                        <span className="stat-pill-value">{current.throughput}</span>
+                      </div>
+                      <div className="inspector-stat-pill">
+                        <span className="stat-pill-label">TELEMETRY</span>
+                        <span className="stat-pill-value stat-live">
+                          <span className="stat-pulse-dot" />
+                          {current.statusBadge}
+                        </span>
                       </div>
                     </div>
-                  );
-                })()}
+                  </div>
+
+                  {/* Quick Select Buttons */}
+                  <div className="inspector-quick-switcher" role="tablist" aria-label="Quick Select Topology Nodes">
+                    <span className="switcher-label">INSPECT:</span>
+                    {dakNodeGraph.map((node) => (
+                      <button
+                        type="button"
+                        key={node.id}
+                        className={`quick-node-btn ${node.id === activeNode ? 'is-active' : ''}`}
+                        onClick={() => setActiveNode(node.id)}
+                        style={{ '--btn-accent': node.accentColor } as CSSProperties}
+                      >
+                        <span className="quick-dot" />
+                        <span>{node.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </>
-          )}
+            );
+          })()}
         </div>
       </div>
     );
