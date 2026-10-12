@@ -584,12 +584,11 @@ body.is-sun-mode .hud-header {
    ========================================================================= */
 
 .sky-atlas-portal-header {
-  min-height: 84px;
-  padding: 1rem 0;
+  min-height: auto;
+  padding: 1.25rem 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
+  justify-content: flex-end;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 

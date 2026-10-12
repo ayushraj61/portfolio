@@ -616,40 +616,8 @@ export default function SkyAtlas() {
 
                 {/* Inner Content Deck */}
                 <div className="sky-atlas-portal-inner">
-                  {/* Top Holographic Navigation Bar */}
+                  {/* Top Bar with Return to Sky Button */}
                   <header className="sky-atlas-portal-header">
-                    <div className="portal-header-left">
-                      <span className="portal-brand-symbol">✧</span>
-                      <div className="portal-brand-text">
-                        <span className="brand-title">UNIVERSE {destination.number} OF 04 // {destination.name.toUpperCase()}</span>
-                        <span className="brand-sub">
-                          {destination.classification} · {destination.coordinates}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Universe Switcher Tabs in Header */}
-                    <nav className="portal-header-tabs" aria-label="Switch Universe">
-                      {universes.map((item) => {
-                        const isActive = item.id === destination.id;
-                        return (
-                          <button
-                            key={item.id}
-                            type="button"
-                            className={`portal-tab-pill ${isActive ? 'is-active' : ''}`}
-                            style={{ '--tab-accent': item.color } as CSSProperties}
-                            onClick={() => setSelected(item.id)}
-                            aria-current={isActive ? 'page' : undefined}
-                          >
-                            <span className="tab-indicator" />
-                            <span className="tab-num">{item.number}</span>
-                            <span className="tab-label">{item.shortName}</span>
-                          </button>
-                        );
-                      })}
-                    </nav>
-
-                    {/* Close / Return to Sky Button */}
                     <button
                       type="button"
                       ref={closeButton}
