@@ -14,61 +14,9 @@
 }
 
 /* =========================================================================
-   CONSTELLATION CONNECTING LINES (SVG)
-   Delicate 0.75px astronomical hairlines connecting the 4 sectors
-   ========================================================================= */
-
-.sky-atlas-lines-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.sky-atlas-lines-svg line {
-  transition: stroke 0.4s ease, opacity 0.4s ease;
-}
-
-/* Faint traveling photon pulses along constellation lines */
-@keyframes photon-travel-1 {
-  0% { cx: 49%; cy: 31%; opacity: 0; }
-  25% { opacity: 0.6; }
-  75% { opacity: 0.6; }
-  100% { cx: 72%; cy: 24%; opacity: 0; }
-}
-
-@keyframes photon-travel-2 {
-  0% { cx: 49%; cy: 31%; opacity: 0; }
-  25% { opacity: 0.6; }
-  75% { opacity: 0.6; }
-  100% { cx: 53%; cy: 51%; opacity: 0; }
-}
-
-@keyframes photon-travel-3 {
-  0% { cx: 72%; cy: 24%; opacity: 0; }
-  25% { opacity: 0.6; }
-  75% { opacity: 0.6; }
-  100% { cx: 76%; cy: 46%; opacity: 0; }
-}
-
-@keyframes photon-travel-4 {
-  0% { cx: 53%; cy: 51%; opacity: 0; }
-  25% { opacity: 0.6; }
-  75% { opacity: 0.6; }
-  100% { cx: 76%; cy: 46%; opacity: 0; }
-}
-
-.constellation-pulse-photon.photon-1 { animation: photon-travel-1 5s ease-in-out infinite; }
-.constellation-pulse-photon.photon-2 { animation: photon-travel-2 5.6s ease-in-out 1.2s infinite; }
-.constellation-pulse-photon.photon-3 { animation: photon-travel-3 5.2s ease-in-out 0.6s infinite; }
-.constellation-pulse-photon.photon-4 { animation: photon-travel-4 5.8s ease-in-out 2.1s infinite; }
-
-/* =========================================================================
-   CELESTIAL DEEP-SKY UNIVERSES (IN THE NIGHT SKY)
-   Organic, luminous, ethereal deep-space wonders merged into the photo.
-   ZERO RESTING TEXT. 100% natural astronomical integration.
+   CELESTIAL DEEP-SKY UNIVERSES (IN THE NIGHT & SUN SKY)
+   Astrophotography Realism: Natural starlight, optical diffraction,
+   and ethereal stardust ionization. ZERO RESTING TEXT. ZERO CONNECTING LINES.
    ========================================================================= */
 
 .sky-atlas-constellations {
@@ -93,12 +41,12 @@
   pointer-events: auto;
   z-index: 2;
   outline: none;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
 }
 
 .sky-atlas-universe:focus-visible {
   outline: 1px dashed var(--atlas-accent);
-  outline-offset: 12px;
+  outline-offset: 10px;
 }
 
 /* Luminous Deep-Sky Universe Body (Screen blend merges directly into the photograph) */
@@ -107,134 +55,119 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   pointer-events: none;
   mix-blend-mode: screen;
 }
 
-/* 1. Translucent Cosmic Nebula Gas Cloud */
+/* 1. Translucent Cosmic Nebula Gas Cloud (Continuous Gaussian Falloff, NO hard borders!) */
 .cosmic-nebula-haze {
   position: absolute;
-  inset: -16px;
+  inset: -14px;
   border-radius: 50%;
   background: radial-gradient(
     circle at center,
     var(--atlas-glow) 0%,
-    color-mix(in srgb, var(--atlas-accent) 26%, transparent) 38%,
-    color-mix(in srgb, var(--atlas-accent) 8%, transparent) 62%,
+    color-mix(in srgb, var(--atlas-accent) 22%, transparent) 35%,
+    color-mix(in srgb, var(--atlas-accent) 6%, transparent) 60%,
     transparent 78%
   );
-  filter: blur(8px);
-  opacity: 0.58;
-  animation: cosmic-breathe 6.5s ease-in-out infinite;
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: blur(6px);
+  opacity: 0.6;
+  animation: cosmic-twinkle 5.5s ease-in-out infinite;
+  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
 }
 
 .sky-atlas-universe:hover .cosmic-nebula-haze,
 .sky-atlas-universe:focus-visible .cosmic-nebula-haze {
-  inset: -26px;
+  inset: -22px;
   opacity: 0.95;
-  filter: blur(10px);
+  filter: blur(8px);
 }
 
-@keyframes cosmic-breathe {
-  0%, 100% { transform: scale(0.92); opacity: 0.48; }
-  50% { transform: scale(1.15); opacity: 0.75; }
+@keyframes cosmic-twinkle {
+  0%, 100% {
+    transform: scale(0.92);
+    opacity: 0.52;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.78;
+  }
 }
 
-/* 2. Interstellar Accretion Dust / Spiral Disc */
+/* Magnetic Pulse: enticing starlight breathing that invites user interaction */
+.universe-building .cosmic-nebula-haze { animation-delay: 0s; }
+.universe-products .cosmic-nebula-haze { animation-delay: 1.4s; }
+.universe-technology .cosmic-nebula-haze { animation-delay: 2.8s; }
+.universe-experience .cosmic-nebula-haze { animation-delay: 4.2s; }
+
+/* 2. Soft Interstellar Dust Glow (subtle elliptical stardust disk, NO hard border!) */
 .cosmic-accretion-ring {
   position: absolute;
-  inset: 6px;
+  inset: -4px;
   border-radius: 50%;
-  transition: all 0.5s ease;
-  pointer-events: none;
-}
-
-/* Universe 01: DakNode — Pulsar Radiation Discs */
-.universe-building .cosmic-accretion-ring {
-  border: 1px dashed rgba(229, 185, 103, 0.45);
-  box-shadow: 0 0 14px rgba(229, 185, 103, 0.3);
-  transform: rotate(20deg) scaleY(0.55);
-  animation: pulsar-rotate 16s linear infinite;
-}
-
-/* Universe 02: Products — Spiral Galaxy Disc (Andromeda style) */
-.universe-products .cosmic-accretion-ring {
-  border: 1.5px solid rgba(96, 165, 250, 0.42);
-  box-shadow: 0 0 16px rgba(96, 165, 250, 0.35);
-  transform: rotate(-35deg) scaleY(0.42);
-  animation: pulsar-rotate 22s linear infinite reverse;
-}
-
-/* Universe 03: Tech — Emission Nebula ionized ring */
-.universe-technology .cosmic-accretion-ring {
-  border: 1px solid rgba(52, 211, 153, 0.38);
-  box-shadow: 0 0 14px rgba(52, 211, 153, 0.28);
-  transform: rotate(50deg) scaleY(0.5);
-  animation: pulsar-rotate 18s linear infinite;
-}
-
-/* Universe 04: Experience — Chrono Beacon celestial cluster */
-.universe-experience .cosmic-accretion-ring {
-  border: 1px solid rgba(192, 132, 252, 0.4);
-  box-shadow: 0 0 16px rgba(192, 132, 252, 0.3);
-  transform: rotate(-15deg) scaleY(0.45);
-  animation: pulsar-rotate 20s linear infinite;
-}
-
-@keyframes pulsar-rotate {
-  from { transform: rotate(0deg) scaleY(0.48); }
-  to { transform: rotate(360deg) scaleY(0.48); }
-}
-
-.sky-atlas-universe:hover .cosmic-accretion-ring {
-  border-color: var(--atlas-accent);
-  box-shadow: 0 0 22px var(--atlas-glow);
-}
-
-/* 3. Embedded micro-stars (stellar cluster points) */
-.cluster-star {
-  position: absolute;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 0 4px #ffffff, 0 0 8px var(--atlas-accent);
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--atlas-accent) 28%, transparent) 0%,
+    transparent 68%
+  );
+  filter: blur(3px);
+  opacity: 0.65;
+  transform: rotate(-25deg) scaleY(0.5);
   pointer-events: none;
   transition: all 0.4s ease;
 }
 
+.sky-atlas-universe:hover .cosmic-accretion-ring {
+  opacity: 1;
+  filter: blur(4px);
+  transform: rotate(0deg) scale(1.2);
+}
+
+/* 3. Embedded Companion Micro-Stars (Open cluster starlight points) */
+.cluster-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 3px #ffffff, 0 0 6px var(--atlas-accent);
+  pointer-events: none;
+  transition: all 0.35s ease;
+}
+
 .cluster-star.star-1 {
-  top: 14px;
-  left: 12px;
-  width: 2px;
-  height: 2px;
-  opacity: 0.7;
+  top: 7px;
+  left: 6px;
+  width: 1.5px;
+  height: 1.5px;
+  opacity: 0.65;
 }
 
 .cluster-star.star-2 {
-  bottom: 13px;
-  right: 12px;
-  width: 1.5px;
-  height: 1.5px;
-  opacity: 0.55;
+  bottom: 8px;
+  right: 6px;
+  width: 1.2px;
+  height: 1.2px;
+  opacity: 0.5;
 }
 
 .cluster-star.star-3 {
-  top: 19px;
-  right: 14px;
-  width: 2px;
-  height: 2px;
-  opacity: 0.8;
+  top: 11px;
+  right: 7px;
+  width: 1.8px;
+  height: 1.8px;
+  opacity: 0.75;
 }
 
 .sky-atlas-universe:hover .cluster-star {
-  box-shadow: 0 0 6px #ffffff, 0 0 12px var(--atlas-accent);
+  box-shadow: 0 0 5px #ffffff, 0 0 10px var(--atlas-accent);
   opacity: 1;
 }
 
-/* 4. Galactic Nucleus / Stellar Core */
+/* 4. White-Hot Galactic Nucleus / Stellar Core (The brilliant light anchor) */
 .galactic-nucleus {
   position: absolute;
   width: 8px;
@@ -248,49 +181,148 @@
 
 .nucleus-glow {
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: radial-gradient(circle, #ffffff 0%, var(--atlas-accent) 45%, transparent 75%);
-  filter: blur(2px);
-  animation: nucleus-pulse 3.5s ease-in-out infinite;
+  filter: blur(1.5px);
+  animation: nucleus-breathe 4s ease-in-out infinite;
 }
 
 .nucleus-point {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: 3.5px;
+  height: 3.5px;
   border-radius: 50%;
   background: #ffffff;
-  box-shadow: 0 0 5px 1px #ffffff, 0 0 12px 3px var(--atlas-glow);
+  box-shadow: 0 0 4px 1px #ffffff, 0 0 10px 2.5px var(--atlas-glow);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-@keyframes nucleus-pulse {
-  0%, 100% { transform: scale(0.9); opacity: 0.7; }
-  50% { transform: scale(1.25); opacity: 1; }
+@keyframes nucleus-breathe {
+  0%, 100% { transform: scale(0.88); opacity: 0.75; }
+  50% { transform: scale(1.22); opacity: 1; }
 }
 
-.sky-atlas-universe:hover .nucleus-point {
+.sky-atlas-universe:hover .nucleus-point,
+.sky-atlas-universe:focus-visible .nucleus-point {
   transform: scale(1.4);
-  box-shadow: 0 0 8px 2px #ffffff, 0 0 18px 5px var(--atlas-glow);
+  box-shadow: 0 0 6px 2px #ffffff, 0 0 15px 4px var(--atlas-glow);
 }
 
-/* 5. Subtle Starlight Flare (soft lens beam) */
+/* 5. Authentic Telescope Diffraction Spikes (Razor-thin 0.5px hairline rays) */
 .stellar-flare {
   position: absolute;
-  width: 28px;
+  width: 24px;
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.75) 50%, transparent 100%);
-  opacity: 0.4;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%);
+  opacity: 0.55;
   pointer-events: none;
-  transition: all 0.4s ease;
+  transition: all 0.35s ease;
 }
 
-.sky-atlas-universe:hover .stellar-flare {
-  width: 42px;
+.stellar-flare::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1px;
+  height: 24px;
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%);
+}
+
+.sky-atlas-universe:hover .stellar-flare,
+.sky-atlas-universe:focus-visible .stellar-flare {
+  width: 36px;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 3px var(--atlas-accent));
+}
+
+.sky-atlas-universe:hover .stellar-flare::after,
+.sky-atlas-universe:focus-visible .stellar-flare::after {
+  height: 36px;
+}
+
+/* =========================================================================
+   SUN MODE / DAYLIGHT HORIZON ADAPTATION
+   Clean, refined morning star glints. NO blurry milky halos or degraded sky visual!
+   ========================================================================= */
+
+body.is-sun-mode .universe-celestial-body {
+  mix-blend-mode: normal;
+  filter: none;
+}
+
+body.is-sun-mode .cosmic-nebula-haze {
+  opacity: 0;
+  display: none;
+}
+
+body.is-sun-mode .cosmic-accretion-ring {
+  opacity: 0;
+  display: none;
+}
+
+body.is-sun-mode .nucleus-glow {
+  width: 9px;
+  height: 9px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 225, 160, 0.3) 50%, transparent 80%);
+  filter: blur(1px);
+}
+
+body.is-sun-mode .nucleus-point {
+  width: 3px;
+  height: 3px;
+  background: #ffffff;
+  box-shadow: 0 0 3px 1px #ffffff, 0 0 7px 1.5px rgba(255, 215, 140, 0.45);
+}
+
+body.is-sun-mode .cluster-star {
+  opacity: 0.45;
+  box-shadow: 0 0 2px #ffffff;
+}
+
+body.is-sun-mode .stellar-flare {
+  width: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 250, 235, 0.75) 50%, transparent 100%);
+  opacity: 0.6;
+}
+
+body.is-sun-mode .stellar-flare::after {
+  height: 18px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 250, 235, 0.75) 50%, transparent 100%);
+}
+
+body.is-sun-mode .sky-atlas-universe:hover .stellar-flare,
+body.is-sun-mode .sky-atlas-universe:focus-visible .stellar-flare {
+  width: 26px;
   opacity: 0.9;
-  filter: drop-shadow(0 0 4px var(--atlas-accent));
+}
+
+body.is-sun-mode .sky-atlas-universe:hover .stellar-flare::after,
+body.is-sun-mode .sky-atlas-universe:focus-visible .stellar-flare::after {
+  height: 26px;
+}
+
+body.is-sun-mode .sky-atlas-universe:hover .nucleus-point,
+body.is-sun-mode .sky-atlas-universe:focus-visible .nucleus-point {
+  transform: scale(1.3);
+  box-shadow: 0 0 5px 1.5px #ffffff, 0 0 11px 2.5px rgba(255, 215, 140, 0.65);
+}
+
+body.is-sun-mode .universe-hud-tooltip {
+  background: rgba(14, 9, 7, 0.94);
+  border-color: rgba(229, 185, 103, 0.45);
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9), 0 0 20px rgba(229, 185, 103, 0.2);
+  color: #fcefe2;
+}
+
+body.is-sun-mode .hud-header {
+  border-bottom-color: rgba(255, 220, 160, 0.14);
+  color: #dfc19f;
 }
 
 /* =========================================================================

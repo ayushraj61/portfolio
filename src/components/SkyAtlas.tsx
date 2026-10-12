@@ -442,32 +442,12 @@ export default function SkyAtlas() {
           Pure astrophotography precision: real optical stars, diffraction spikes,
           precision hairline reticles, and architectural astronomical labels.
          ========================================================================= */}
+      {/* =========================================================================
+          THE IN-SKY UNIVERSE SHOWCASE
+          Deep-sky celestial wonders integrated seamlessly into the photographic sky.
+          Zero connecting lines. Zero resting text.
+         ========================================================================= */}
       <div className="sky-atlas" aria-label="Explore my work through the night sky">
-        {/* Subtle, delicate constellation lines connecting the stars */}
-        <svg className="sky-atlas-lines-svg" aria-hidden="true" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="constellationGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#e5b967" stopOpacity="0.25" />
-              <stop offset="50%" stopColor="#60a5fa" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#c084fc" stopOpacity="0.25" />
-            </linearGradient>
-          </defs>
-
-          {/* Desktop connecting lines — delicate hairlines */}
-          <g className="desktop-constellation-lines">
-            <line x1="49%" y1="31%" x2="72%" y2="24%" stroke="url(#constellationGrad)" strokeWidth="0.75" strokeDasharray="2,5" />
-            <line x1="49%" y1="31%" x2="53%" y2="51%" stroke="url(#constellationGrad)" strokeWidth="0.75" strokeDasharray="2,5" />
-            <line x1="72%" y1="24%" x2="76%" y2="46%" stroke="url(#constellationGrad)" strokeWidth="0.75" strokeDasharray="2,5" />
-            <line x1="53%" y1="51%" x2="76%" y2="46%" stroke="url(#constellationGrad)" strokeWidth="0.75" strokeDasharray="2,5" />
-
-            {/* Traveling photon pulses along lines */}
-            <circle cx="60.5%" cy="27.5%" r="1" fill="#e5b967" className="constellation-pulse-photon photon-1" />
-            <circle cx="51%" cy="41%" r="1" fill="#34d399" className="constellation-pulse-photon photon-2" />
-            <circle cx="74%" cy="35%" r="1" fill="#60a5fa" className="constellation-pulse-photon photon-3" />
-            <circle cx="64.5%" cy="48.5%" r="1" fill="#c084fc" className="constellation-pulse-photon photon-4" />
-          </g>
-        </svg>
-
         {/* The 4 Celestial Deep-Sky Universes — Zero resting text, pure cosmic wonders */}
         <div className="sky-atlas-constellations">
           {universes.map((item) => {
