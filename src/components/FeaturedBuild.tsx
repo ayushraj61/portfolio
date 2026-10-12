@@ -83,8 +83,12 @@ export default function FeaturedBuild() {
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
         >
+          {/* Deep Space Pulsar Aperture Backdrop */}
+          <div className="featured-pulsar-aperture" aria-hidden="true" />
+
           {/* Active signal ring animation */}
           <div className="featured-signal-rings" aria-hidden="true">
+            <span className="featured-pulsar-center" />
             <span className="signal-ring ring-1" />
             <span className="signal-ring ring-2" />
             <span className="signal-ring ring-3" />

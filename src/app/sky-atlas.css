@@ -524,6 +524,65 @@ body.is-sun-mode .hud-header {
   overflow: hidden;
 }
 
+/* Ambient deep space nebula optical aura (diffuse glow) */
+.portal-nebula-aura {
+  position: absolute;
+  inset: -12%;
+  background-size: cover;
+  background-position: center 35%;
+  opacity: 0.22;
+  filter: blur(55px) saturate(1.5) brightness(1.1);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: portalNebulaBreathe 22s ease-in-out infinite alternate;
+  transition: background-image 0.9s ease-in-out, opacity 0.9s ease-in-out;
+}
+
+/* Sharp telescopic deep space optical layer */
+.portal-nebula-photo {
+  position: absolute;
+  inset: -8%;
+  background-size: cover;
+  background-position: center 35%;
+  opacity: 0.44;
+  mix-blend-mode: screen;
+  filter: contrast(1.24) saturate(1.22) brightness(0.96);
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 34%, black 30%, rgba(0, 0, 0, 0.6) 62%, transparent 92%);
+  animation: portalNebulaBreathe 18s ease-in-out infinite alternate;
+  pointer-events: none;
+  transition: background-image 0.8s ease-in-out, opacity 0.8s ease-in-out;
+}
+
+/* Per-destination tailored framing for maximum beauty */
+[data-destination='products'] .portal-nebula-photo,
+[data-destination='products'] .portal-nebula-aura {
+  background-position: 74% 28%;
+  opacity: 0.46;
+}
+
+[data-destination='technology'] .portal-nebula-photo,
+[data-destination='technology'] .portal-nebula-aura {
+  background-position: 62% 32%;
+  opacity: 0.45;
+}
+
+[data-destination='experience'] .portal-nebula-photo,
+[data-destination='experience'] .portal-nebula-aura {
+  background-position: center 36%;
+  opacity: 0.48;
+}
+
+[data-destination='building'] .portal-nebula-photo,
+[data-destination='building'] .portal-nebula-aura {
+  background-position: center 34%;
+  opacity: 0.42;
+}
+
+@keyframes portalNebulaBreathe {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.06) translate(-1%, -1%); }
+}
+
 .portal-nebula-glow {
   position: absolute;
   inset: 0;
@@ -738,31 +797,6 @@ body.is-sun-mode .hud-header {
   max-width: 820px;
 }
 
-.heading-meta-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.3rem 0.75rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--atlas-accent) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--atlas-accent) 35%, transparent);
-  color: var(--atlas-accent);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  margin-bottom: 0.85rem;
-}
-
-.meta-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--atlas-accent);
-  box-shadow: 0 0 8px var(--atlas-accent);
-}
-
 .heading-title {
   margin: 0.3rem 0 0.65rem;
   font-family: 'Syne', sans-serif;
@@ -793,13 +827,14 @@ body.is-sun-mode .hud-header {
 }
 
 .sky-atlas-heading-orb {
-  width: 70%;
-  height: 70%;
+  width: 72%;
+  height: 72%;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 32%, #ffffff 0%, var(--atlas-accent) 30%, #0c1829 70%, #030812 100%);
-  box-shadow: 0 0 50px var(--atlas-glow), inset -14px -14px 22px rgba(0, 0, 0, 0.9);
+  background-size: cover;
+  background-position: center center;
   position: relative;
-  animation: orb-spin 25s linear infinite;
+  animation: orb-spin 35s linear infinite;
+  overflow: hidden;
 }
 
 .heading-orb-pulse-ring {
@@ -821,14 +856,14 @@ body.is-sun-mode .hud-header {
   transform: rotate(-30deg) scaleY(0.4);
 }
 
-.orb-coordinates {
-  position: absolute;
-  bottom: -16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.52rem;
-  letter-spacing: 0.12em;
-  color: #7d93a8;
-  white-space: nowrap;
+@keyframes orb-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes ring-rotate-cw {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @keyframes orb-spin {

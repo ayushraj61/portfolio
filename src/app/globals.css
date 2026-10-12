@@ -920,6 +920,31 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
+/* Pulsar Aperture Lens */
+.featured-pulsar-aperture {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 260px;
+  height: 260px;
+  background-image: url('/cosmos/supernova-core.jpg');
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  opacity: 0.16;
+  mix-blend-mode: screen;
+  filter: contrast(1.2) brightness(0.9);
+  mask-image: radial-gradient(circle at center, black 15%, rgba(0, 0, 0, 0.45) 45%, transparent 72%);
+  pointer-events: none;
+  animation: pulsarApertureRotate 60s linear infinite;
+  z-index: 0;
+}
+
+@keyframes pulsarApertureRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Signal rings emanating from the card */
 .featured-signal-rings {
   position: absolute;
@@ -928,6 +953,22 @@ h1, h2, h3, h4, h5, h6 {
   width: 60px;
   height: 60px;
   pointer-events: none;
+  z-index: 1;
+}
+
+.featured-pulsar-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-image: url('/cosmos/supernova-core.jpg');
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 0 10px rgba(212, 168, 83, 0.8), 0 0 4px #ffffff;
+  z-index: 2;
 }
 
 .signal-ring {

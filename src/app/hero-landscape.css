@@ -36,6 +36,27 @@
   will-change: transform;
 }
 
+.hero-jwst-nebula {
+  position: absolute;
+  inset: -24px;
+  z-index: 1;
+  background-image: url('/cosmos/deep-nebula-jwst.jpg');
+  background-size: cover;
+  background-position: 65% 35%;
+  mix-blend-mode: screen;
+  opacity: 0.32;
+  filter: contrast(1.18) saturate(1.15) brightness(0.85);
+  mask-image: radial-gradient(ellipse 65% 55% at 58% 34%, black 20%, rgba(0, 0, 0, 0.4) 52%, transparent 82%);
+  transform: translate3d(calc(var(--sky-x, 0px) * 0.75), calc(var(--sky-y, 0px) * 0.75), 0);
+  transition: opacity 2.5s ease-in-out;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.day-mode .hero-jwst-nebula {
+  opacity: 0;
+}
+
 .hero-sky-shade {
   position: absolute;
   inset: 0;

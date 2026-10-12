@@ -23,6 +23,13 @@ interface UniverseConfig {
   // Position in the sky (percentages)
   skyDesktop: { x: number; y: number };
   skyMobile: { x: number; y: number };
+  // Astronomical Showcase Data
+  celestialImage: string;
+  celestialName: string;
+  celestialDesignation: string;
+  celestialType: string;
+  telescopeSource: string;
+  spectralClass: string;
 }
 
 const universes: UniverseConfig[] = [
@@ -41,6 +48,12 @@ const universes: UniverseConfig[] = [
     status: 'BROADCASTING TELEMETRY',
     skyDesktop: { x: 49, y: 31 },
     skyMobile: { x: 26, y: 16 },
+    celestialImage: '/cosmos/supernova-core.jpg',
+    celestialName: 'NGC 3132 · Southern Ring Pulsar Core',
+    celestialDesignation: 'ACTIVE PULSAR · PROTOCOL STATION 01',
+    celestialType: 'Stellar Remnant & Ionized Core',
+    telescopeSource: 'Observatory Optical Survey · Spectral Core',
+    spectralClass: 'Class O · High-Energy Ionization',
   },
   {
     id: 'products',
@@ -57,6 +70,12 @@ const universes: UniverseConfig[] = [
     status: '5 ORBITS ACTIVE',
     skyDesktop: { x: 72, y: 24 },
     skyMobile: { x: 74, y: 16 },
+    celestialImage: '/cosmos/planet-exoplanet.jpg',
+    celestialName: 'Kepler-186f Analog · Terra Exoplanet',
+    celestialDesignation: 'ORBITAL FLEET GRAVITY WELL · STATION 02',
+    celestialType: 'Habitable Core & Terrestrial Exoplanet',
+    telescopeSource: 'Deep Astronomical Reconnaissance',
+    spectralClass: 'Class M Planetary System',
   },
   {
     id: 'technology',
@@ -73,6 +92,12 @@ const universes: UniverseConfig[] = [
     status: 'SYSTEM HEALTH 100%',
     skyDesktop: { x: 53, y: 51 },
     skyMobile: { x: 30, y: 26 },
+    celestialImage: '/cosmos/deep-nebula-jwst.jpg',
+    celestialName: 'NGC 2174 · Molecular Stellar Nursery',
+    celestialDesignation: 'NEURAL CLUSTER FILAMENTS · STATION 03',
+    celestialType: 'Ionized Hydrogen Star-Forming Engine',
+    telescopeSource: 'James Webb Space Telescope (JWST) NIRCam',
+    spectralClass: 'H II Region · Molecular Cloud',
   },
   {
     id: 'experience',
@@ -89,6 +114,12 @@ const universes: UniverseConfig[] = [
     status: 'ARCHIVE VERIFIED',
     skyDesktop: { x: 76, y: 46 },
     skyMobile: { x: 76, y: 26 },
+    celestialImage: '/cosmos/nebula-butterfly.jpg',
+    celestialName: 'NGC 6302 · Butterfly Nebula Bipolar Core',
+    celestialDesignation: 'CHRONO BEACON · FLIGHT PATH · STATION 04',
+    celestialType: 'Bipolar Planetary Nebula & Supersonic Wings',
+    telescopeSource: 'Hubble Space Telescope (WFC3/UVIS)',
+    spectralClass: 'Supersonic Gas Envelope (>950,000 km/h)',
   },
 ];
 
@@ -1023,7 +1054,22 @@ export default function SkyAtlas() {
                 }}
               >
                 {/* Cosmic Hyperspace Star-Warp Background */}
-                <div className="sky-atlas-portal-cosmos" aria-hidden="true">
+                <div 
+                  className="sky-atlas-portal-cosmos" 
+                  style={{ '--universe-color': destination.color } as CSSProperties} 
+                  data-destination={destination.id}
+                  aria-hidden="true"
+                >
+                  {/* Deep Cosmic Diffuse Optical Aura */}
+                  <div 
+                    className="portal-nebula-aura"
+                    style={{ backgroundImage: `url(${destination.celestialImage})` }}
+                  />
+                  {/* Sharp Telescopic Optical Layer */}
+                  <div 
+                    className="portal-nebula-photo" 
+                    style={{ backgroundImage: `url(${destination.celestialImage})` }} 
+                  />
                   <div className="portal-nebula-glow" />
                   <div className="portal-stars-dense" />
                   <div className="portal-grid-matrix" />
@@ -1059,7 +1105,13 @@ export default function SkyAtlas() {
                       <div className="sky-atlas-heading-orb-wrapper" aria-hidden="true">
                         <div className="heading-orb-pulse-ring ring-outer" />
                         <div className="heading-orb-pulse-ring ring-mid" />
-                        <div className="sky-atlas-heading-orb" />
+                        <div 
+                          className="sky-atlas-heading-orb"
+                          style={{
+                            backgroundImage: `radial-gradient(circle at 40% 38%, rgba(255, 255, 255, 0.95) 0%, transparent 35%), url(${destination.celestialImage})`,
+                            boxShadow: `0 0 45px ${destination.accentGlow}, 0 0 15px rgba(255, 255, 255, 0.45), inset -12px -12px 24px rgba(0, 0, 0, 0.95), inset 4px 4px 10px rgba(255, 255, 255, 0.25)`
+                          }}
+                        />
                       </div>
                     </div>
 

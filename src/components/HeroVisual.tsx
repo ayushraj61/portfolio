@@ -158,6 +158,8 @@ export default function HeroVisual() {
   return (
     <div ref={visualRef} className={`hero-visual-container ${isDay ? 'day-mode' : ''}`} aria-hidden="true">
       <div className="hero-sky-photo sky-layer" />
+      {/* Deep-Space Optical Nebula (JWST Cosmic Star Nursery) */}
+      <div className="hero-jwst-nebula sky-layer" aria-hidden="true" />
       <div className="hero-sky-shade" />
       {/* ROTATING COSMOS */}
       <motion.div
