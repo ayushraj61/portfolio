@@ -635,10 +635,6 @@ export default function SkyAtlas() {
                     {/* Universe Hero Presentation Banner */}
                     <div className="sky-atlas-portal-heading">
                       <div className="heading-copy">
-                        <div className="heading-meta-pill">
-                          <span className="meta-dot" />
-                          <span className="meta-text">{destination.classification}</span>
-                        </div>
                         <h2 className="heading-title">{destination.name}</h2>
                         <p className="heading-tagline">{destination.intro}</p>
                       </div>
