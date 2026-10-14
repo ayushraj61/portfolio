@@ -12,9 +12,8 @@ import { scrollToStop } from '@/data/journey';
 
 const navItems = [
   { label: 'About', href: '#about' },
-  { label: 'Current Build', href: '#building' },
-  { label: 'Work', href: '#work' },
-  { label: 'Technical Work', href: '#tech-depth' },
+  { label: 'Work', href: '#building' },
+  { label: 'Tech', href: '#tech-depth' },
   { label: 'Resume', href: socialLinks.resume, external: true },
 ];
 
