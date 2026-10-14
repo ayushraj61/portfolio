@@ -954,7 +954,7 @@ function playTransitionSound(type: 'cyber' | 'crt') {
     const now = ctx.currentTime;
 
     if (type === 'crt') {
-      const duration = 0.24;
+      const duration = 0.20;
       const bufferSize = ctx.sampleRate * duration;
       const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const output = noiseBuffer.getChannelData(0);
@@ -1019,7 +1019,7 @@ export default function SkyAtlas() {
     playTransitionSound(type);
     setIsClosing(true);
 
-    const closeDuration = type === 'cyber' ? 210 : 250;
+    const closeDuration = type === 'cyber' ? 210 : 200;
     setTimeout(() => {
       setSelected(null);
       setIsClosing(false);
