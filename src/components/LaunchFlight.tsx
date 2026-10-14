@@ -36,7 +36,7 @@ const WAYPOINTS: MilestoneWaypoint[] = [
     stemLength: 75,
     triggerProgress: 0.06,
     year: '2023 · YEAR 01',
-    headline: 'entered college & hacked early.',
+    headline: 'entered college with boundless curiosity.',
     detail:
       'UIET Panjab University, Hoshiarpur. Studied Python, data structures, and core algorithms. Selected for Smart India Hackathon (SIH) in college and submitted initial prototype.',
   },
@@ -170,8 +170,8 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
   const positionMilestoneCards = useCallback(() => {
     const isMobile = window.innerWidth < 768;
     const scaleY = window.innerHeight / SVG_HEIGHT;
-    const cardWidth = isMobile ? Math.min(265, window.innerWidth - 36) : 320;
-    const stemLen = isMobile ? 44 : 75;
+    const cardWidth = isMobile ? Math.min(265, window.innerWidth - 36) : 340;
+    const stemLen = isMobile ? 36 : 42;
 
     WAYPOINTS.forEach((m) => {
       const card = document.getElementById(`milestone-card-${m.idx}`);
@@ -498,7 +498,7 @@ export default function LaunchFlight({ onComplete, onSkip, onReset }: LaunchFlig
     waypointsGroup.innerHTML = '';
 
     const isMobile = window.innerWidth < 768;
-    const stemLen = isMobile ? 44 : 75;
+    const stemLen = isMobile ? 36 : 42;
 
     WAYPOINTS.forEach((m) => {
       const targetY = m.stemDir === 'up' ? m.y - stemLen : m.y + stemLen;

@@ -1112,7 +1112,7 @@ export default function SkyAtlas() {
         <div className="sky-atlas-mobile-dock" aria-label="Quick universe selection">
           <div className="mobile-dock-header">
             <span className="dock-icon">✧</span>
-            <span>BUILDER&apos;S SKY // 4 UNIVERSES</span>
+            <span>UNIVERSE</span>
           </div>
           <div className="mobile-dock-pills">
             {universes.map((item) => (
@@ -1205,6 +1205,7 @@ export default function SkyAtlas() {
                   <div className="portal-stars-dense" />
                   <div className="portal-grid-matrix" />
                   <div className="portal-vortex-ring" />
+                  <div className="portal-readability-scrim" />
                 </div>
 
                 {/* Inner Content Deck */}
