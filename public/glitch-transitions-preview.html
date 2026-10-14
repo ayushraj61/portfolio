@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glitch Transitions Preview — 3 Hacking & CRT Styles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030712;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+      --border: rgba(255, 255, 255, 0.12);
+      --gold: #dfb66f;
+      --cyan: #00f3ff;
+      --magenta: #ff0055;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Top Command Header */
+    .preview-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+      background: rgba(3, 7, 18, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .brand-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--cyan);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    .brand-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    /* Style Switcher Tabs */
+    .style-tabs {
+      display: flex;
+      gap: 0.4rem;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.25rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .style-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .style-tab-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .style-tab-btn.is-active {
+      color: #030712;
+      background: var(--cyan);
+      box-shadow: 0 0 16px rgba(0, 243, 255, 0.4);
+    }
+
+    .preview-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .action-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .action-btn.primary {
+      background: linear-gradient(135deg, #00f3ff, #38bdf8);
+      color: #030712;
+      border: none;
+      box-shadow: 0 0 16px rgba(0, 243, 255, 0.35);
+    }
+
+    .action-btn.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 24px rgba(0, 243, 255, 0.55);
+    }
+
+    .speed-toggle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-dim);
+      cursor: pointer;
+    }
+
+    .speed-toggle.slow {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(223, 182, 111, 0.12);
+    }
+
+    /* The Simulated Night Sky Base View */
+    .simulated-sky {
+      position: relative;
+      min-height: 100vh;
+      background: #010409 url('/cosmos/deep-nebula-jwst.jpg') center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 1.5rem 3rem;
+      overflow: hidden;
+    }
+
+    .simulated-sky::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(3, 7, 18, 0.35) 0%, rgba(3, 7, 18, 0.88) 85%);
+      pointer-events: none;
+    }
+
+    .sky-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 780px;
+    }
+
+    .sky-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(223, 182, 111, 0.35);
+      background: rgba(3, 8, 16, 0.6);
+    }
+
+    .sky-heading {
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      background: linear-gradient(180deg, #ffffff 40%, rgba(255, 255, 255, 0.65) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sky-sub {
+      font-size: 1.05rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+    }
+
+    /* 4 Interactive Celestial Constellation Stars */
+    .celestial-orbit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .celestial-star-card {
+      background: rgba(2, 6, 18, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .celestial-star-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--card-color, var(--cyan));
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 25px var(--card-glow, rgba(0, 243, 255, 0.25));
+    }
+
+    .star-core-visual {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff 0%, var(--card-color, #38bdf8) 40%, transparent 75%);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulseStar 3s ease-in-out infinite alternate;
+    }
+
+    .star-core-visual::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px 3px #ffffff, 0 0 18px 6px var(--card-color);
+    }
+
+    @keyframes pulseStar {
+      0% { transform: scale(0.92); opacity: 0.8; }
+      100% { transform: scale(1.18); opacity: 1; }
+    }
+
+    .star-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .star-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+    }
+
+    .star-enter-prompt {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--card-color, var(--cyan));
+      font-weight: 600;
+      opacity: 0.85;
+    }
+
+    /* =========================================================================
+       THE FULL SCREEN UNIVERSE PORTAL (MODAL)
+       ========================================================================= */
+    .universe-portal-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: #02050b;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: none;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .universe-portal-modal.is-open {
+      display: block;
+    }
+
+    .portal-backdrop-cosmos {
+      position: fixed;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .portal-readability-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(2, 6, 18, 0.95) 0%, rgba(2, 6, 18, 0.85) 40%, rgba(2, 6, 18, 0.45) 75%, rgba(2, 6, 18, 0.2) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .portal-content-wrapper {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 6rem 2rem 4rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .portal-close-btn {
+      position: fixed;
+      top: 1.5rem;
+      right: 2rem;
+      z-index: 100;
+      background: rgba(3, 7, 18, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      backdrop-filter: blur(12px);
+      transition: all 0.2s ease;
+    }
+
+    .portal-close-btn:hover {
+      border-color: var(--cyan);
+      background: rgba(0, 243, 255, 0.15);
+      color: var(--cyan);
+    }
+
+    .portal-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--portal-accent, var(--cyan));
+      letter-spacing: 0.15em;
+      margin-bottom: 0.5rem;
+    }
+
+    .portal-title {
+      font-size: clamp(2.5rem, 6vw, 4.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.2rem;
+      line-height: 1.05;
+    }
+
+    .portal-desc {
+      font-size: 1.2rem;
+      color: #cbd5e1;
+      max-width: 680px;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .portal-metrics-row {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+    .portal-metric-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 1rem 1.4rem;
+    }
+
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--portal-accent, #fff);
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+    }
+
+    /* =========================================================================
+       TRANSITION STYLE 1: CYBER HOLOGRAM INTERCEPT (HACKING ZITTERNESS)
+       ========================================================================= */
+    .style-cyber.is-opening {
+      animation: cyberGlitchEnter var(--trans-speed, 0.42s) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .style-cyber.is-closing {
+      animation: cyberGlitchExit var(--trans-speed, 0.32s) ease-in forwards;
+    }
+
+    /* Cyber Glitch Tearing / Slices */
+    @keyframes cyberGlitchEnter {
+      0% {
+        opacity: 0;
+        clip-path: polygon(0 15%, 100% 15%, 100% 18%, 0 18%);
+        transform: translate(-12px, 0) scale(0.98);
+        filter: brightness(3) contrast(2) drop-shadow(-8px 0 var(--cyan)) drop-shadow(8px 0 var(--magenta));
+      }
+      15% {
+        opacity: 0.9;
+        clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%, 0 55%, 100% 55%, 100% 100%, 0 100%);
+        transform: translate(16px, -4px) skewX(-2deg);
+        filter: brightness(1.6) contrast(1.8) drop-shadow(10px 0 var(--cyan)) drop-shadow(-10px 0 var(--magenta));
+      }
+      35% {
+        opacity: 0.6;
+        clip-path: polygon(0 25%, 100% 25%, 100% 75%, 0 75%);
+        transform: translate(-18px, 4px) skewX(3deg);
+        filter: brightness(2) contrast(1.5) drop-shadow(-12px 0 var(--cyan));
+      }
+      55% {
+        opacity: 1;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        transform: translate(6px, -2px) scale(1.01);
+        filter: brightness(1.2) drop-shadow(4px 0 var(--magenta));
+      }
+      75% {
+        transform: translate(-2px, 0);
+        filter: brightness(1.05);
+      }
+      100% {
+        opacity: 1;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        transform: translate(0, 0) scale(1);
+        filter: brightness(1) drop-shadow(0 0 0 transparent);
+      }
+    }
+
+    @keyframes cyberGlitchExit {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+      30% {
+        opacity: 0.8;
+        transform: translate(14px, -2px) skewX(-3deg);
+        clip-path: polygon(0 20%, 100% 20%, 100% 35%, 0 35%, 0 60%, 100% 60%, 100% 85%, 0 85%);
+        filter: brightness(2.2) drop-shadow(-12px 0 var(--cyan)) drop-shadow(12px 0 var(--magenta));
+      }
+      70% {
+        opacity: 0.4;
+        transform: translate(-20px, 4px) scale(0.96);
+        clip-path: polygon(0 48%, 100% 48%, 100% 52%, 0 52%);
+        filter: brightness(3);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.92);
+        clip-path: polygon(0 50%, 100% 50%, 100% 50%, 0 50%);
+      }
+    }
+
+    /* Digital Scanline & Telemetry Glitch Overlay */
+    .cyber-telemetry-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10001;
+      display: none;
+    }
+
+    .style-cyber.is-opening ~ .cyber-telemetry-layer,
+    .style-cyber.is-closing ~ .cyber-telemetry-layer {
+      display: block;
+    }
+
+    .telemetry-code {
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--cyan);
+      background: rgba(0, 0, 0, 0.85);
+      padding: 0.5rem 0.8rem;
+      border-left: 3px solid var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      animation: telemetryFlash 0.35s steps(3) forwards;
+    }
+
+    @keyframes telemetryFlash {
+      0% { opacity: 0; transform: translateY(-10px); }
+      50% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(0); }
+    }
+
+    /* =========================================================================
+       TRANSITION STYLE 2: RETRO CRT BROKEN TV ("HUNG TELEVISION")
+       ========================================================================= */
+    .style-crt.is-opening {
+      animation: crtBrokenTvEnter var(--trans-speed, 0.48s) cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    .style-crt.is-closing {
+      animation: crtTubeCollapseExit var(--trans-speed, 0.33s) cubic-bezier(0.7, 0, 0.84, 0) forwards;
+    }
+
+    /* Authentic Hung Television Glitch */
+    @keyframes crtBrokenTvEnter {
+      0% {
+        opacity: 0;
+        transform: scaleY(0.005) scaleX(0.85);
+        filter: brightness(8) contrast(3);
+      }
+      12% {
+        opacity: 1;
+        transform: scaleY(1.08) scaleX(1.03) translate(0, -6%);
+        filter: brightness(3.5) contrast(2.5);
+      }
+      22% {
+        transform: scaleY(0.96) scaleX(0.98) translate(0, 4%);
+        filter: brightness(2.2);
+      }
+      38% {
+        /* Hung frame freeze twitch */
+        transform: translate(-14px, 0) skewX(-1.5deg);
+        filter: brightness(1.7) contrast(1.4);
+      }
+      52% {
+        transform: translate(10px, 0) skewX(1deg);
+        filter: brightness(1.3);
+      }
+      70% {
+        transform: translate(-3px, 0);
+        filter: brightness(1.1);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translate(0, 0);
+        filter: brightness(1);
+      }
+    }
+
+    /* Vintage Cathode Ray Tube (CRT) Power-Down Collapse */
+    @keyframes crtTubeCollapseExit {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: brightness(1.5);
+      }
+      35% {
+        /* Collapse into horizontal blinding scan beam */
+        opacity: 1;
+        transform: scaleY(0.008) scaleX(1.1);
+        filter: brightness(6) contrast(4);
+        background: #fff;
+      }
+      65% {
+        /* Shrink into a center glowing white point */
+        opacity: 1;
+        transform: scaleY(0.008) scaleX(0.04);
+        filter: brightness(10);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0);
+        filter: brightness(0);
+      }
+    }
+
+    /* CRT Static Canvas & Raster Scanlines */
+    .crt-screen-fx {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10002;
+      display: none;
+    }
+
+    .style-crt.is-opening ~ .crt-screen-fx,
+    .style-crt.is-closing ~ .crt-screen-fx {
+      display: block;
+    }
+
+    .crt-scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.45) 0px,
+        rgba(0, 0, 0, 0.45) 2px,
+        transparent 2px,
+        transparent 4px
+      );
+      opacity: 0.75;
+      animation: crtScanlineDrift 0.2s linear infinite;
+    }
+
+    @keyframes crtScanlineDrift {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(4px); }
+    }
+
+    .crt-noise-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.35;
+      mix-blend-mode: overlay;
+    }
+
+    /* =========================================================================
+       TRANSITION STYLE 3: MINIMALIST DIGITAL TWITCH
+       ========================================================================= */
+    .style-minimal.is-opening {
+      animation: minimalTwitchEnter var(--trans-speed, 0.34s) ease-out forwards;
+    }
+
+    .style-minimal.is-closing {
+      animation: minimalTwitchExit var(--trans-speed, 0.24s) ease-in forwards;
+    }
+
+    @keyframes minimalTwitchEnter {
+      0% {
+        opacity: 0;
+        transform: scale(0.985);
+        filter: brightness(1.8);
+      }
+      18% {
+        opacity: 0.95;
+        transform: scale(1.008) translate(-3px, 0);
+        filter: brightness(1.4);
+      }
+      35% {
+        opacity: 0.4;
+        transform: scale(0.995) translate(3px, 0);
+      }
+      55% {
+        opacity: 1;
+        transform: translate(-1px, 0);
+        filter: brightness(1.1);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translate(0, 0);
+        filter: brightness(1);
+      }
+    }
+
+    @keyframes minimalTwitchExit {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      40% {
+        opacity: 0.7;
+        transform: scale(0.99) translate(-4px, 0);
+        filter: brightness(1.6);
+      }
+      75% {
+        opacity: 0.2;
+        transform: scale(0.97) translate(2px, 0);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0.96);
+      }
+    }
+
+    /* =========================================================================
+       TRANSITION STYLE 0: ORIGINAL WARP APERTURE (CIRCULAR STAR RIPPLE)
+       ========================================================================= */
+    .style-warp.is-opening {
+      animation: warpCircleEnter var(--trans-speed, 0.52s) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .style-warp.is-closing {
+      animation: warpCircleExit var(--trans-speed, 0.4s) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes warpCircleEnter {
+      0% {
+        opacity: 0.7;
+        clip-path: circle(0px at 50% 30%);
+        transform: scale(0.96);
+      }
+      100% {
+        opacity: 1;
+        clip-path: circle(150vmax at 50% 30%);
+        transform: scale(1);
+      }
+    }
+
+    @keyframes warpCircleExit {
+      0% {
+        opacity: 1;
+        clip-path: circle(150vmax at 50% 30%);
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        clip-path: circle(0px at 50% 30%);
+        transform: scale(0.96);
+      }
+    }
+
+    /* Comparison Bar at the bottom */
+    .comparison-drawer {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      background: rgba(3, 7, 18, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+    }
+
+    .drawer-info {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    .drawer-info strong {
+      color: #fff;
+    }
+
+    /* Audio Toggle indicator */
+    .audio-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      padding: 0.3rem 0.7rem;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .audio-btn.is-active {
+      color: var(--cyan);
+      border-color: var(--cyan);
+      background: rgba(0, 243, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar: Style Selector & Controls -->
+  <header class="preview-header">
+    <div class="brand">
+      <span class="brand-tag">TRANSITION LAB</span>
+      <span class="brand-title">Universe Glitch & Zitterness Preview</span>
+    </div>
+
+    <!-- Transition Styles -->
+    <div class="style-tabs">
+      <button class="style-tab-btn is-active" data-style="cyber" onclick="setStyle('cyber')">
+        <span>01</span> Cyber Hologram
+      </button>
+      <button class="style-tab-btn" data-style="crt" onclick="setStyle('crt')">
+        <span>02</span> Retro CRT Broken TV
+      </button>
+      <button class="style-tab-btn" data-style="minimal" onclick="setStyle('minimal')">
+        <span>03</span> Minimalist Digital Twitch
+      </button>
+      <button class="style-tab-btn" data-style="warp" onclick="setStyle('warp')">
+        <span>00</span> Original Warp Aperture
+      </button>
+    </div>
+
+    <div class="preview-actions">
+      <button class="speed-toggle" id="speedBtn" onclick="toggleSpeed()">Speed: Normal (400ms)</button>
+      <button class="audio-btn" id="audioBtn" onclick="toggleAudio()">
+        <span>🔊</span> Glitch SFX: OFF
+      </button>
+    </div>
+  </header>
+
+  <!-- Simulated Night Sky Page -->
+  <main class="simulated-sky">
+    <div class="sky-content">
+      <span class="sky-badge">✦ NIGHT SKY VIEW · TAP TO TRIGGER GLITCH</span>
+      <h1 class="sky-heading">Enter The Universe</h1>
+      <p class="sky-sub">
+        Tap any universe star below to test the glitch transition. You can switch between all 3 styles in the top bar to compare how they feel when opening and closing.
+      </p>
+
+      <!-- 4 Universe Constellation Stars -->
+      <div class="celestial-orbit-grid">
+        
+        <!-- 01: DakNode -->
+        <article class="celestial-star-card" style="--card-color: #d4a853; --card-glow: rgba(212, 168, 83, 0.4);" onclick="openUniverse('daknode')">
+          <div class="star-core-visual"></div>
+          <h3 class="star-name">DakNode</h3>
+          <span class="star-sub">ACTIVE PULSAR</span>
+          <span class="star-enter-prompt">OPEN GLITCH ↗</span>
+        </article>
+
+        <!-- 02: Products -->
+        <article class="celestial-star-card" style="--card-color: #38bdf8; --card-glow: rgba(56, 189, 248, 0.4);" onclick="openUniverse('products')">
+          <div class="star-core-visual"></div>
+          <h3 class="star-name">Product Universe</h3>
+          <span class="star-sub">5 ORBITS ACTIVE</span>
+          <span class="star-enter-prompt">OPEN GLITCH ↗</span>
+        </article>
+
+        <!-- 03: Technology -->
+        <article class="celestial-star-card" style="--card-color: #34d399; --card-glow: rgba(52, 211, 153, 0.4);" onclick="openUniverse('technology')">
+          <div class="star-core-visual"></div>
+          <h3 class="star-name">Tech Stack</h3>
+          <span class="star-sub">4 ARCHITECTURES</span>
+          <span class="star-enter-prompt">OPEN GLITCH ↗</span>
+        </article>
+
+        <!-- 04: Experience -->
+        <article class="celestial-star-card" style="--card-color: #c084fc; --card-glow: rgba(192, 132, 252, 0.4);" onclick="openUniverse('experience')">
+          <div class="star-core-visual"></div>
+          <h3 class="star-name">Experience</h3>
+          <span class="star-sub">MISSION ARCHIVE</span>
+          <span class="star-enter-prompt">OPEN GLITCH ↗</span>
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- The Full-Screen Universe Portal Modal -->
+  <div class="universe-portal-modal style-cyber" id="universeModal">
+    <div class="portal-backdrop-cosmos" id="portalBackdrop"></div>
+    <div class="portal-readability-scrim"></div>
+
+    <button class="portal-close-btn" onclick="closeUniverse()">
+      <span>✕</span> CLOSE [ESC]
+    </button>
+
+    <div class="portal-content-wrapper">
+      <span class="portal-eyebrow" id="modalEyebrow">// ACTIVE TELEMETRY LOCK</span>
+      <h2 class="portal-title" id="modalTitle">Product Universe</h2>
+      <p class="portal-desc" id="modalDesc">
+        Useful ideas, business automation, and production products in stable orbit.
+      </p>
+
+      <div class="portal-metrics-row">
+        <div class="portal-metric-card">
+          <div class="metric-val" id="metric1Val">128k/s</div>
+          <div class="metric-lbl" id="metric1Lbl">THROUGHPUT CORE</div>
+        </div>
+        <div class="portal-metric-card">
+          <div class="metric-val" id="metric2Val">&lt; 15ms</div>
+          <div class="metric-lbl" id="metric2Lbl">FIFO LATENCY SLA</div>
+        </div>
+        <div class="portal-metric-card">
+          <div class="metric-val" id="metric3Val">mTLS v1.3</div>
+          <div class="metric-lbl" id="metric3Lbl">SECURITY ENCLAVE</div>
+        </div>
+      </div>
+
+      <div>
+        <button class="action-btn primary" onclick="replayGlitch()">
+          <span>⚡</span> Replay Current Glitch Transition
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Telemetry overlay for Style 1 -->
+  <div class="cyber-telemetry-layer" id="cyberTelemetry">
+    <div class="telemetry-code" id="telemetryText">// SIGNAL INTERCEPTED · PARSING ORBIT...</div>
+  </div>
+
+  <!-- CRT Screen effects for Style 2 -->
+  <div class="crt-screen-fx" id="crtFx">
+    <div class="crt-scanlines"></div>
+    <canvas class="crt-noise-canvas" id="noiseCanvas"></canvas>
+  </div>
+
+  <!-- Bottom Helper Drawer -->
+  <div class="comparison-drawer">
+    <span class="drawer-info">
+      Current Mode: <strong id="currentStyleLabel">01 Cyber Hologram Intercept</strong>
+    </span>
+    <button class="action-btn" onclick="openUniverse('products')">
+      <span>🚀</span> Open Modal
+    </button>
+  </div>
+
+  <script>
+    // Universe Data
+    const UNIVERSE_DATA = {
+      daknode: {
+        title: 'DakNode Protocol',
+        eyebrow: '01 · ACTIVE PULSAR · PROTOCOL STATION',
+        desc: 'Developer infrastructure providing autonomous AI agents with persistent email identities, programmatic mailboxes, sub-15ms guaranteed FIFO event streams, and zero-trust sandboxed boundaries.',
+        accent: '#d4a853',
+        image: '/cosmos/supernova-core.jpg',
+        metrics: [
+          { val: '128k/s', lbl: 'EVENT BUS THROUGHPUT' },
+          { val: 'mTLS v1.3', lbl: 'ZERO-TRUST GATE' },
+          { val: 'FIFO', lbl: 'REDIS STREAMS CLUSTER' }
+        ]
+      },
+      products: {
+        title: 'Product Universe',
+        eyebrow: '02 · ORBITAL FLEET · 5 DEPLOYED SYSTEMS',
+        desc: 'Useful ideas, business automation, and production products in stable orbit. Features DakNode, Outlay, HyperFlow, SplitMe, and OutFund with live architectural screenshots.',
+        accent: '#38bdf8',
+        image: '/cosmos/planet-exoplanet.jpg',
+        metrics: [
+          { val: '5 SYSTEMS', lbl: 'DEPLOYED FLEET' },
+          { val: '100% LIVE', lbl: 'PRODUCTION RUNTIME' },
+          { val: 'ZERO-LEAK', lbl: 'ISOLATED DATA ENCLAVES' }
+        ]
+      },
+      technology: {
+        title: 'Technology Constellation',
+        eyebrow: '03 · CORE ARCHITECTURES & STACK',
+        desc: 'High-throughput backend engineering, distributed queues, vector memory architectures, and scalable full-stack TypeScript systems.',
+        accent: '#34d399',
+        image: '/cosmos/deep-nebula-jwst.jpg',
+        metrics: [
+          { val: 'Go / Python', lbl: 'BACKEND ENGINES' },
+          { val: 'PostgreSQL', lbl: 'ACID PERSISTENCE' },
+          { val: 'Next.js 16', lbl: 'MODERN REACT CORE' }
+        ]
+      },
+      experience: {
+        title: 'Journey & Experience',
+        eyebrow: '04 · TIMELINE & ARCHIVE',
+        desc: 'The complete timeline: from entering college with boundless curiosity and early hackathons to building autonomous agent protocols and enterprise automation platforms.',
+        accent: '#c084fc',
+        image: '/cosmos/nebula-butterfly.jpg',
+        metrics: [
+          { val: '4 YEARS', lbl: 'ENGINEERING JOURNEY' },
+          { val: '3+ STARTUPS', lbl: 'VENTURES & BUILDS' },
+          { val: 'SIH FINALIST', lbl: 'NATIONAL HACKATHONS' }
+        ]
+      }
+    };
+
+    let currentStyle = 'cyber'; // 'cyber' | 'crt' | 'minimal'
+    let isSlow = false;
+    let audioEnabled = false;
+    let audioCtx = null;
+    let activeUniverseId = 'products';
+
+    const modal = document.getElementById('universeModal');
+    const backdrop = document.getElementById('portalBackdrop');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalEyebrow = document.getElementById('modalEyebrow');
+    const modalDesc = document.getElementById('modalDesc');
+    const speedBtn = document.getElementById('speedBtn');
+    const audioBtn = document.getElementById('audioBtn');
+    const styleLabel = document.getElementById('currentStyleLabel');
+    const telemetryText = document.getElementById('telemetryText');
+
+    function setStyle(style) {
+      currentStyle = style;
+      document.querySelectorAll('.style-tab-btn').forEach(btn => {
+        btn.classList.toggle('is-active', btn.dataset.style === style);
+      });
+
+      const labels = {
+        cyber: '01 Cyber Hologram Intercept (Initial Clean Version)',
+        crt: '02 Retro CRT Broken TV (Hung Broadcast + Tube Collapse)',
+        minimal: '03 Minimalist Digital Twitch (High-Tech Micro Twitch)',
+        warp: '00 Original Warp Aperture (Circular Star Ripple from Website)'
+      };
+      styleLabel.textContent = labels[style];
+
+      modal.className = `universe-portal-modal style-${style} ${modal.classList.contains('is-open') ? 'is-open' : ''}`;
+    }
+
+    function toggleSpeed() {
+      isSlow = !isSlow;
+      if (isSlow) {
+        document.documentElement.style.setProperty('--trans-speed', '1.2s');
+        speedBtn.textContent = 'Speed: Slow-Mo (1.2s)';
+        speedBtn.classList.add('slow');
+      } else {
+        document.documentElement.style.setProperty('--trans-speed', '0.42s');
+        speedBtn.textContent = 'Speed: Normal (400ms)';
+        speedBtn.classList.remove('slow');
+      }
+    }
+
+    // Synthesized retro/cyber SFX via Web Audio API
+    function playGlitchSound() {
+      if (!audioEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const duration = isSlow ? 0.6 : 0.28;
+        const now = audioCtx.currentTime;
+
+        if (currentStyle === 'crt') {
+          // CRT Static buzz & cathode pop
+          const bufferSize = audioCtx.sampleRate * duration;
+          const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+          const output = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            output[i] = Math.random() * 2 - 1;
+          }
+          const whiteNoise = audioCtx.createBufferSource();
+          whiteNoise.buffer = noiseBuffer;
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(1400, now);
+          filter.Q.setValueAtTime(2.5, now);
+
+          const gain = audioCtx.createGain();
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+          whiteNoise.connect(filter);
+          filter.connect(gain);
+          gain.connect(audioCtx.destination);
+          whiteNoise.start(now);
+        } else {
+          // Cyber hologram electronic glitch chirps
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(160, now);
+          osc.frequency.exponentialRampToValueAtTime(840, now + 0.08);
+          osc.frequency.exponentialRampToValueAtTime(120, now + duration);
+
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + duration);
+        }
+      } catch (err) {
+        console.warn('Audio not allowed', err);
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      audioBtn.classList.toggle('is-active', audioEnabled);
+      audioBtn.innerHTML = audioEnabled ? '<span>🔊</span> Glitch SFX: ON' : '<span>🔇</span> Glitch SFX: OFF';
+      if (audioEnabled) playGlitchSound();
+    }
+
+    function openUniverse(id) {
+      activeUniverseId = id;
+      const data = UNIVERSE_DATA[id] || UNIVERSE_DATA.products;
+
+      modalTitle.textContent = data.title;
+      modalEyebrow.textContent = data.eyebrow;
+      modalDesc.textContent = data.desc;
+      backdrop.style.backgroundImage = `url(${data.image})`;
+      document.documentElement.style.setProperty('--portal-accent', data.accent);
+
+      if (data.metrics) {
+        document.getElementById('metric1Val').textContent = data.metrics[0].val;
+        document.getElementById('metric1Lbl').textContent = data.metrics[0].lbl;
+        document.getElementById('metric2Val').textContent = data.metrics[1].val;
+        document.getElementById('metric2Lbl').textContent = data.metrics[1].lbl;
+        document.getElementById('metric3Val').textContent = data.metrics[2].val;
+        document.getElementById('metric3Lbl').textContent = data.metrics[2].lbl;
+      }
+
+      telemetryText.textContent = `// INTERCEPTING ${data.title.toUpperCase()} · SIGNAL LOCKED`;
+
+      playGlitchSound();
+
+      modal.className = `universe-portal-modal style-${currentStyle} is-open is-opening`;
+
+      const animDuration = isSlow ? 1200 : 420;
+      setTimeout(() => {
+        modal.classList.remove('is-opening');
+      }, animDuration);
+    }
+
+    function closeUniverse() {
+      playGlitchSound();
+      modal.classList.add('is-closing');
+
+      const animDuration = isSlow ? 1000 : 360;
+      setTimeout(() => {
+        modal.classList.remove('is-open', 'is-closing');
+      }, animDuration);
+    }
+
+    function replayGlitch() {
+      modal.classList.remove('is-opening', 'is-closing');
+      void modal.offsetWidth; // trigger reflow
+      playGlitchSound();
+      modal.classList.add('is-opening');
+      const animDuration = isSlow ? 1200 : 420;
+      setTimeout(() => {
+        modal.classList.remove('is-opening');
+      }, animDuration);
+    }
+
+    // Keyboard ESC to close
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+        closeUniverse();
+      }
+    });
+
+    // Generate CRT Static Noise on Canvas
+    const canvas = document.getElementById('noiseCanvas');
+    const ctx = canvas.getContext('2d');
+    function resizeCanvas() {
+      canvas.width = Math.floor(window.innerWidth / 4);
+      canvas.height = Math.floor(window.innerHeight / 4);
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function renderNoise() {
+      if (currentStyle === 'crt' && (modal.classList.contains('is-opening') || modal.classList.contains('is-closing'))) {
+        const w = canvas.width;
+        const h = canvas.height;
+        const imgData = ctx.createImageData(w, h);
+        const buffer = new Uint32Array(imgData.data.buffer);
+        const len = buffer.length;
+        for (let i = 0; i < len; i++) {
+          if (Math.random() < 0.3) {
+            buffer[i] = 0xffffffff;
+          } else {
+            buffer[i] = 0x00000000;
+          }
+        }
+        ctx.putImageData(imgData, 0, 0);
+      }
+      requestAnimationFrame(renderNoise);
+    }
+    renderNoise();
+  </script>
+</body>
+</html>
