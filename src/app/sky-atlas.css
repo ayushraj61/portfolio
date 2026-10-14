@@ -582,7 +582,7 @@ body.is-sun-mode .hud-header {
 }
 
 /* =========================================================================
-   STYLE 2: RETRO CRT BROKEN TV (1.4x open speed = 0.34s, closing speed increased by 1.25x = 0.20s)
+   STYLE 2: RETRO CRT BROKEN TV (1.4x open speed = 0.34s, closing speed at 60% = 0.33s)
    Assigned to: Product Universe (Orbital Fleet) & Experience (Timeline Archive)
    ========================================================================= */
 .sky-atlas-portal.style-crt.is-opening {
@@ -590,7 +590,7 @@ body.is-sun-mode .hud-header {
 }
 
 .sky-atlas-portal.style-crt.is-closing {
-  animation: crtTubeCollapseExit 0.20s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+  animation: crtTubeCollapseExit 0.33s cubic-bezier(0.7, 0, 0.84, 0) forwards;
 }
 
 @keyframes crtBrokenTvEnter {
