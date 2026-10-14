@@ -12,7 +12,7 @@ export default function Footer() {
         <div className="footer-inner">
           <div>
             <p className="footer-brand">
-              Ayush Raj · Software Engineer · AI Builder · Product Builder
+              Ayush Raj · Software Engineer · AI Systems · Product Building
             </p>
           </div>
           <p className="footer-tagline">Built with curiosity, code, and too many ideas.</p>

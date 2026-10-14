@@ -143,7 +143,7 @@ export default function LaunchScreen({ onLaunch, onSkip }: LaunchScreenProps) {
               </motion.div>
               <motion.div className="launch-name" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .8, delay: .3 }}>Ayush Raj</motion.div>
               <motion.p className="launch-subtitle" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7, delay: .5 }}>
-                Software Engineer · AI Builder · Product Builder
+                Software Engineer · AI Systems · Product Building
               </motion.p>
               <motion.button className="launch-btn" onClick={handleLaunch} autoFocus initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .6, delay: .8 }} whileHover={{ scale: 1.05 }} whileTap={{ scale: .98 }}>
                 <span className="launch-btn-dot" />Begin Journey

@@ -12,14 +12,14 @@ import './sky-atlas.css';
 
 export const metadata: Metadata = {
   icons: { icon: '/mark.svg' },
-  title: 'Ayush Raj — Software Engineer & AI Builder',
+  title: 'Ayush Raj — Software Engineer · AI Systems · Product Building',
   description:
-    'Ayush Raj is a software engineer and AI builder focused on backend systems, AI products, automation, and product development. Building at the intersection of software, AI, and real-world problems.',
+    'Ayush Raj is a software engineer focused on AI systems, backend architecture, and product building. Building at the intersection of software, AI, and real-world problems.',
   keywords: [
     'Ayush Raj',
     'Software Engineer',
-    'AI Builder',
-    'Product Builder',
+    'AI Systems',
+    'Product Building',
     'Backend Engineer',
     'DakNode',
     'HyperFlow',
@@ -30,16 +30,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    title: 'Ayush Raj — Software Engineer & AI Builder',
+    title: 'Ayush Raj — Software Engineer · AI Systems · Product Building',
     description:
-      'Software engineer and AI builder focused on backend systems, AI products, automation, and product development.',
+      'Software engineer focused on AI systems, backend architecture, and product building.',
     siteName: 'Ayush Raj',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ayush Raj — Software Engineer & AI Builder',
+    title: 'Ayush Raj — Software Engineer · AI Systems · Product Building',
     description:
-      'Software engineer and AI builder focused on backend systems, AI products, automation, and product development.',
+      'Software engineer focused on AI systems, backend architecture, and product building.',
   },
   robots: {
     index: true,
