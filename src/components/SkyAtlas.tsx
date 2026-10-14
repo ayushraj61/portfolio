@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { experienceData, products, techStack } from '@/data/products';
@@ -932,18 +932,99 @@ function DestinationContent({ id }: { id: DestinationId }) {
   );
 }
 
+// Transition type assignment:
+// Style 1 (Cyber Hologram Intercept): DakNode (protocol pulsar) & Tech Stack (technology)
+// Style 2 (Retro CRT Broken TV): Product Universe (orbital fleet) & Experience (journey timeline)
+const getTransitionType = (id: DestinationId): 'cyber' | 'crt' => {
+  return id === 'building' || id === 'technology' ? 'cyber' : 'crt';
+};
+
+// Web Audio API Synthesizer (Zero network requests, zero latency)
+function playTransitionSound(type: 'cyber' | 'crt') {
+  if (typeof window === 'undefined') return;
+  try {
+    const AudioCtx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+    const now = ctx.currentTime;
+
+    if (type === 'crt') {
+      const duration = 0.24;
+      const bufferSize = ctx.sampleRate * duration;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      const whiteNoise = ctx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1400, now);
+      filter.Q.setValueAtTime(2.5, now);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.16, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+      whiteNoise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      whiteNoise.start(now);
+    } else {
+      const duration = 0.22;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(160, now);
+      osc.frequency.exponentialRampToValueAtTime(840, now + 0.08);
+      osc.frequency.exponentialRampToValueAtTime(120, now + duration);
+
+      gain.gain.setValueAtTime(0.11, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + duration);
+    }
+  } catch {
+    // Autoplay policy or unsupported environments handled gracefully
+  }
+}
+
 export default function SkyAtlas() {
   const [selected, setSelected] = useState<DestinationId | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
   const [hovered, setHovered] = useState<DestinationId | null>(null);
   const [origin, setOrigin] = useState({ x: 0, y: 0 });
-  const [isWarping, setIsWarping] = useState(false);
   const trigger = useRef<HTMLButtonElement | null>(null);
   const closeButton = useRef<HTMLButtonElement | null>(null);
   const portal = useRef<HTMLDivElement | null>(null);
-  const reducedMotion = useReducedMotion();
+  const noiseCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const destination = universes.find((item) => item.id === selected);
   const isOpen = selected !== null;
+  const transitionType = destination ? getTransitionType(destination.id) : 'cyber';
+
+  const closeUniverse = useCallback(() => {
+    if (!destination || isClosing) return;
+    const type = getTransitionType(destination.id);
+    playTransitionSound(type);
+    setIsClosing(true);
+
+    const closeDuration = type === 'cyber' ? 210 : 250;
+    setTimeout(() => {
+      setSelected(null);
+      setIsClosing(false);
+    }, closeDuration);
+  }, [destination, isClosing]);
 
   // Body scroll locking and keyboard accessibility
   useEffect(() => {
@@ -953,7 +1034,7 @@ export default function SkyAtlas() {
     const frame = requestAnimationFrame(() => closeButton.current?.focus());
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setSelected(null);
+      if (event.key === 'Escape') closeUniverse();
       // Quick universe switching with 1-4 keys
       if (event.key === '1') setSelected('building');
       if (event.key === '2') setSelected('products');
@@ -995,20 +1076,51 @@ export default function SkyAtlas() {
       window.removeEventListener('keydown', onKeyDown);
       trigger.current?.focus();
     };
-  }, [isOpen, selected]);
+  }, [isOpen, selected, closeUniverse]);
+
+  // Real-time CRT Static Noise Canvas Loop (Only for Style 2: products & experience)
+  useEffect(() => {
+    if (!destination || (destination.id !== 'products' && destination.id !== 'experience')) return;
+    const canvas = noiseCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    canvas.width = Math.floor(window.innerWidth / 4);
+    canvas.height = Math.floor(window.innerHeight / 4);
+
+    let animationId: number;
+    let frames = 0;
+    const render = () => {
+      if (frames < 20) {
+        const w = canvas.width;
+        const h = canvas.height;
+        const imgData = ctx.createImageData(w, h);
+        const buffer = new Uint32Array(imgData.data.buffer);
+        const len = buffer.length;
+        for (let i = 0; i < len; i++) {
+          buffer[i] = Math.random() < 0.28 ? 0xffffffff : 0x00000000;
+        }
+        ctx.putImageData(imgData, 0, 0);
+        frames++;
+        animationId = requestAnimationFrame(render);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    };
+    render();
+
+    return () => {
+      cancelAnimationFrame(animationId);
+    };
+  }, [destination, isClosing]);
 
   const openUniverse = (id: DestinationId, button: HTMLButtonElement) => {
-    const bounds = button.getBoundingClientRect();
-    const x = bounds.left + bounds.width / 2;
-    const y = bounds.top + bounds.height / 2;
-    setOrigin({ x, y });
-    trigger.current = button;
-    setIsWarping(true);
+    const type = getTransitionType(id);
+    playTransitionSound(type);
+    setIsClosing(false);
     setSelected(id);
-
-    setTimeout(() => {
-      setIsWarping(false);
-    }, 700);
+    trigger.current = button;
   };
 
   const clipOrigin = `${origin.x}px ${origin.y}px`;
@@ -1111,171 +1223,159 @@ export default function SkyAtlas() {
       </div>
 
       {/* =========================================================================
-          THE FULL-SCREEN UNIVERSE PORTAL (WARP APERTURE TRANSITION)
-          Expands from the exact clicked star coordinates like opening a universe!
+          THE FULL-SCREEN UNIVERSE PORTAL (GLITCH & CRT CUSTOM TRANSITIONS)
+          Style 1 (Cyber Hologram Intercept): DakNode & Tech Stack (1.4x open, 1.5x close)
+          Style 2 (Retro CRT Broken TV): Product Universe & Experience (1.4x open, 1.5x close)
          ========================================================================= */}
-      {typeof document !== 'undefined' &&
-        createPortal(
-          <AnimatePresence>
-            {destination && (
-              <motion.div
-                ref={portal}
-                className={`sky-atlas-portal ${isWarping ? 'is-warping' : ''}`}
-                key="sky-atlas-portal"
-                role="dialog"
-                aria-modal="true"
-                aria-label={`${destination.name} Universe`}
-                style={
-                  {
-                    '--atlas-accent': destination.color,
-                    '--atlas-glow': destination.accentGlow,
-                  } as CSSProperties
-                }
-                initial={
-                  reducedMotion
-                    ? { opacity: 0 }
-                    : {
-                        clipPath: `circle(0px at ${clipOrigin})`,
-                        opacity: 0.7,
-                        scale: 0.96,
-                      }
-                }
-                animate={
-                  reducedMotion
-                    ? { opacity: 1 }
-                    : {
-                        clipPath: `circle(150vmax at ${clipOrigin})`,
-                        opacity: 1,
-                        scale: 1,
-                      }
-                }
-                exit={
-                  reducedMotion
-                    ? { opacity: 0 }
-                    : {
-                        clipPath: `circle(0px at ${clipOrigin})`,
-                        opacity: 0,
-                        scale: 0.96,
-                      }
-                }
-                transition={{
-                  duration: reducedMotion ? 0.2 : 0.52,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
+      {typeof document !== 'undefined' && destination
+        ? createPortal(
+            <div
+              ref={portal}
+              className={`sky-atlas-portal style-${transitionType} ${isClosing ? 'is-closing' : 'is-opening'}`}
+              key="sky-atlas-portal"
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${destination.name} Universe`}
+              style={
+                {
+                  '--atlas-accent': destination.color,
+                  '--atlas-glow': destination.accentGlow,
+                } as CSSProperties
+              }
+            >
+              {/* Real-time CRT Scanlines and Noise Overlay for Style 2 */}
+              {transitionType === 'crt' && (
+                <div className="crt-screen-fx" aria-hidden="true">
+                  <div className="crt-scanlines" />
+                  <canvas ref={noiseCanvasRef} className="crt-noise-canvas" />
+                </div>
+              )}
+
+              {/* Cyber Telemetry HUD Tag for Style 1 */}
+              {transitionType === 'cyber' && (
+                <div className="cyber-telemetry-layer" aria-hidden="true">
+                  <div className="telemetry-code">
+                    // {destination.name.toUpperCase()} · TELEMETRY LOCKED
+                  </div>
+                </div>
+              )}
+
+              {/* Cosmic Hyperspace Star-Warp Background */}
+              <div 
+                className="sky-atlas-portal-cosmos" 
+                style={{ '--universe-color': destination.color } as CSSProperties} 
+                data-destination={destination.id}
+                aria-hidden="true"
               >
-                {/* Cosmic Hyperspace Star-Warp Background */}
+                {/* Deep Cosmic Diffuse Optical Aura */}
                 <div 
-                  className="sky-atlas-portal-cosmos" 
-                  style={{ '--universe-color': destination.color } as CSSProperties} 
-                  data-destination={destination.id}
-                  aria-hidden="true"
-                >
-                  {/* Deep Cosmic Diffuse Optical Aura */}
-                  <div 
-                    className="portal-nebula-aura"
-                    style={{ backgroundImage: `url(${destination.celestialImage})` }}
-                  />
-                  {/* Sharp Telescopic Optical Layer */}
-                  <div 
-                    className="portal-nebula-photo" 
-                    style={{ backgroundImage: `url(${destination.celestialImage})` }} 
-                  />
-                  <div className="portal-nebula-glow" />
-                  <div className="portal-stars-dense" />
-                  <div className="portal-grid-matrix" />
-                  <div className="portal-vortex-ring" />
-                  <div className="portal-readability-scrim" />
-                </div>
+                  className="portal-nebula-aura"
+                  style={{ backgroundImage: `url(${destination.celestialImage})` }}
+                />
+                {/* Sharp Telescopic Optical Layer */}
+                <div 
+                  className="portal-nebula-photo" 
+                  style={{ backgroundImage: `url(${destination.celestialImage})` }} 
+                />
+                <div className="portal-nebula-glow" />
+                <div className="portal-stars-dense" />
+                <div className="portal-grid-matrix" />
+                <div className="portal-vortex-ring" />
+                <div className="portal-readability-scrim" />
+              </div>
 
-                {/* Inner Content Deck */}
-                <div className="sky-atlas-portal-inner">
-                  {/* Top Bar with Return to Sky Button */}
-                  <header className="sky-atlas-portal-header">
-                    <button
-                      type="button"
-                      ref={closeButton}
-                      className="sky-atlas-close-btn"
-                      onClick={() => setSelected(null)}
-                      aria-label="Return to night sky"
+              {/* Inner Content Deck */}
+              <div className="sky-atlas-portal-inner">
+                {/* Top Bar with Return to Sky Button */}
+                <header className="sky-atlas-portal-header">
+                  <button
+                    type="button"
+                    ref={closeButton}
+                    className="sky-atlas-close-btn"
+                    onClick={closeUniverse}
+                    aria-label="Return to night sky"
+                  >
+                    <span className="close-btn-text">← Return to Sky</span>
+                    <span className="close-btn-kbd" aria-hidden="true">ESC</span>
+                  </button>
+                </header>
+
+                {/* Main Universe Content Area */}
+                <main className="sky-atlas-portal-main">
+                  {/* Universe Hero Presentation Banner */}
+                  <div className="sky-atlas-portal-heading">
+                    <div className="heading-copy">
+                      <h2 className="heading-title">{destination.name}</h2>
+                      <p className="heading-tagline">{destination.intro}</p>
+                    </div>
+
+                    {/* 3D Celestial Hologram Orb */}
+                    <div className="sky-atlas-heading-orb-wrapper" aria-hidden="true">
+                      <div className="heading-orb-pulse-ring ring-outer" />
+                      <div className="heading-orb-pulse-ring ring-mid" />
+                      <div 
+                        className="sky-atlas-heading-orb"
+                        style={{
+                          backgroundImage: `radial-gradient(circle at 40% 38%, rgba(255, 255, 255, 0.95) 0%, transparent 35%), url(${destination.celestialImage})`,
+                          boxShadow: `0 0 45px ${destination.accentGlow}, 0 0 15px rgba(255, 255, 255, 0.45), inset -12px -12px 24px rgba(0, 0, 0, 0.95), inset 4px 4px 10px rgba(255, 255, 255, 0.25)`
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Animated Tab Content Container */}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={destination.id}
+                      initial={{ opacity: 0, y: 22, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -16, scale: 0.98 }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      <span className="close-btn-text">← Return to Sky</span>
-                      <span className="close-btn-kbd" aria-hidden="true">ESC</span>
-                    </button>
-                  </header>
+                      <DestinationContent id={destination.id} />
+                    </motion.div>
+                  </AnimatePresence>
+                </main>
 
-                  {/* Main Universe Content Area */}
-                  <main className="sky-atlas-portal-main">
-                    {/* Universe Hero Presentation Banner */}
-                    <div className="sky-atlas-portal-heading">
-                      <div className="heading-copy">
-                        <h2 className="heading-title">{destination.name}</h2>
-                        <p className="heading-tagline">{destination.intro}</p>
-                      </div>
-
-                      {/* 3D Celestial Hologram Orb */}
-                      <div className="sky-atlas-heading-orb-wrapper" aria-hidden="true">
-                        <div className="heading-orb-pulse-ring ring-outer" />
-                        <div className="heading-orb-pulse-ring ring-mid" />
-                        <div 
-                          className="sky-atlas-heading-orb"
-                          style={{
-                            backgroundImage: `radial-gradient(circle at 40% 38%, rgba(255, 255, 255, 0.95) 0%, transparent 35%), url(${destination.celestialImage})`,
-                            boxShadow: `0 0 45px ${destination.accentGlow}, 0 0 15px rgba(255, 255, 255, 0.45), inset -12px -12px 24px rgba(0, 0, 0, 0.95), inset 4px 4px 10px rgba(255, 255, 255, 0.25)`
+                {/* Universe Footer Command Deck */}
+                <footer className="sky-atlas-portal-footer">
+                  <div className="footer-universe-nav">
+                    <span className="footer-nav-label">QUICK JUMP:</span>
+                    <div className="footer-pills">
+                      {universes.map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          className={`footer-jump-btn ${item.id === destination.id ? 'is-active' : ''}`}
+                          onClick={() => {
+                            const type = getTransitionType(item.id);
+                            playTransitionSound(type);
+                            setSelected(item.id);
                           }}
-                        />
-                      </div>
+                        >
+                          <span className="jump-bullet" style={{ color: item.color }}>✦</span>
+                          <span>{item.name}</span>
+                        </button>
+                      ))}
                     </div>
+                  </div>
 
-                    {/* Animated Tab Content Container */}
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={destination.id}
-                        initial={{ opacity: 0, y: 22, scale: 0.98 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -16, scale: 0.98 }}
-                        transition={{ duration: reducedMotion ? 0 : 0.35, ease: [0.16, 1, 0.3, 1] }}
-                      >
-                        <DestinationContent id={destination.id} />
-                      </motion.div>
-                    </AnimatePresence>
-                  </main>
-
-                  {/* Universe Footer Command Deck */}
-                  <footer className="sky-atlas-portal-footer">
-                    <div className="footer-universe-nav">
-                      <span className="footer-nav-label">QUICK JUMP:</span>
-                      <div className="footer-pills">
-                        {universes.map((item) => (
-                          <button
-                            key={item.id}
-                            type="button"
-                            className={`footer-jump-btn ${item.id === destination.id ? 'is-active' : ''}`}
-                            onClick={() => setSelected(item.id)}
-                          >
-                            <span className="jump-bullet" style={{ color: item.color }}>✦</span>
-                            <span>{item.name}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="footer-actions">
-                      <a
-                        href={`#${destination.section}`}
-                        className="footer-section-scroll-link"
-                        onClick={() => setSelected(null)}
-                      >
-                        <span>Explore full {destination.name} section on page</span>
-                        <span aria-hidden="true">↓</span>
-                      </a>
-                    </div>
-                  </footer>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>,
-          document.body
-        )}
+                  <div className="footer-actions">
+                    <a
+                      href={`#${destination.section}`}
+                      className="footer-section-scroll-link"
+                      onClick={closeUniverse}
+                    >
+                      <span>Explore full {destination.name} section on page</span>
+                      <span aria-hidden="true">↓</span>
+                    </a>
+                  </div>
+                </footer>
+              </div>
+            </div>,
+            document.body
+          )
+        : null}
     </>
   );
 }
