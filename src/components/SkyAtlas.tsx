@@ -1108,27 +1108,6 @@ export default function SkyAtlas() {
           })}
         </div>
 
-        {/* Mobile Quick Dock (accessible at top of mobile screen) */}
-        <div className="sky-atlas-mobile-dock" aria-label="Quick universe selection">
-          <div className="mobile-dock-header">
-            <span className="dock-icon">✧</span>
-            <span>UNIVERSE</span>
-          </div>
-          <div className="mobile-dock-pills">
-            {universes.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className="mobile-dock-pill"
-                style={{ '--atlas-accent': item.color } as CSSProperties}
-                onClick={(e) => openUniverse(item.id, e.currentTarget)}
-              >
-                <span className="pill-dot" />
-                <span className="pill-name">{item.shortName}</span>
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* =========================================================================

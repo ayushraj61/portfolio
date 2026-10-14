@@ -487,13 +487,6 @@ body.is-sun-mode .hud-header {
   transform: translateY(0) scale(1);
 }
 
-/* =========================================================================
-   MOBILE DOCK (Small screens)
-   ========================================================================= */
-
-.sky-atlas-mobile-dock {
-  display: none;
-}
 
 /* =========================================================================
    THE EXPANDED UNIVERSE PORTAL (WORLD CLASS VIEW)
@@ -2355,57 +2348,11 @@ body.is-sun-mode .hud-header {
   }
 
   .sky-atlas-universe {
-    transform: translate(-50%, -50%) scale(0.85);
-  }
-
-  /* Show floating mobile dock pill */
-  .sky-atlas-mobile-dock {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    position: absolute;
-    top: 5.5rem;
-    right: 1.2rem;
-    z-index: 10;
-    pointer-events: auto;
-  }
-
-  .mobile-dock-header {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.52rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: #dfb66f;
-  }
-
-  .mobile-dock-pills {
-    display: flex;
-    gap: 0.35rem;
-    flex-wrap: wrap;
-  }
-
-  .mobile-dock-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.3rem 0.6rem;
-    border-radius: 999px;
-    background: rgba(3, 8, 16, 0.85);
-    border: 1px solid color-mix(in srgb, var(--atlas-accent) 45%, transparent);
-    color: #ffffff;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.58rem;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .pill-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--atlas-accent);
+    transform: translate(-50%, -50%) scale(1);
+    min-width: 48px;
+    min-height: 48px;
+    padding: 8px;
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Portal adaptations on mobile */
